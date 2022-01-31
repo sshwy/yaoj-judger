@@ -1,0 +1,6 @@
+*.local
+local.*
+*.local.*
+*.so
+*.a
+*.o
