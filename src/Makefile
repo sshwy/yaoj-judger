@@ -1,14 +1,18 @@
-.PHONY: all runner clean
-all: runner
+COMMON_TARGET=judger.o common.o tkill.o
+RUNNER_TARGET=runner/std_io.o
+ARCHIVE_LIBRARY=$(subst .o,.a,$(subst runner/,libjudger_,$(RUNNER_TARGET)))
 
-runner: judger.o common.o tkill.o
-	$(MAKE) -C runner PROJECT_ROOT=../$(PROJECT_ROOT)
+.PHONY: all clean
 
-# https://www.gnu.org/software/make/manual/make.html#Implicit-Rules
-judger.o: common.h judger.h judger.c
-common.o: common.h common.c
-tkill.o: common.h tkill.h tkill.c
+# 对于每个 runner 分别构建链接库
+all: $(COMMON_TARGET) $(RUNNER_TARGET)
+	$(AR) -r $(PROJECT_ROOT)libjudger_std_io.a runner/stdio.o $(COMMON_TARGET)
 
 clean:
-	$(RM) -f judger.o common.o; \
-	$(MAKE) clean -C runner PROJECT_ROOT=../$(PROJECT_ROOT)
+	$(RM) -f $(COMMON_TARGET) $(RUNNER_TARGET) $(addprefix $(PROJECT_ROOT),$(ARCHIVE_LIBRARY)); \
+
+# https://www.gnu.org/software/make/manual/make.html#Implicit-Rules
+judger.o: common.h judger.h
+common.o: common.h
+tkill.o: common.h tkill.h
+runner/std_io.o: runner/runner.h common.h

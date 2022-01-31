@@ -2,7 +2,7 @@ CC=gcc
 SUBDIRS=src policy
 PROJECT_ROOT?=
 
-.PHONY: $(SUBDIRS) clean kafel
+.PHONY: $(SUBDIRS) clean kafel clean_all
 all: kafel $(SUBDIRS)
 	$(MAKE) -C tests PROJECT_ROOT=../$(PROJECT_ROOT)
 
@@ -12,7 +12,6 @@ all: kafel $(SUBDIRS)
 # $(VAR) is equivalent to ${VAR}
 $(SUBDIRS):
 	$(MAKE) -C $@ PROJECT_ROOT=../$(PROJECT_ROOT)
-
 
 # kafel: build kafel/libkafel.a & kafel/libkafel.so
 kafel:
@@ -24,6 +23,9 @@ clean:
 	for dir in $(SUBDIRS); do \
 		$(MAKE) clean -C $$dir PROJECT_ROOT=../$(PROJECT_ROOT); \
 	done
+
+clean_all: clean
+	$(MAKE) clean -C kafel
 
 test:
 	$(MAKE) test -C tests
