@@ -1,4 +1,5 @@
 #include <linux/seccomp.h>
+#include <stdio.h>
 #include <string.h>
 #include <sys/prctl.h>
 #include <sys/time.h>
@@ -113,6 +114,8 @@ void perform(struct perform_ctxt *ctxt, struct policy_ctxt pctxt,
   register_builtin_hook(&hctxt);
 
   run_hook_chain(hctxt.before_fork, ctxt);
+
+  fflush(log_fp); // avoid multi logging
 
   const pid_t child_pid = fork();
   ASSERT(child_pid >= 0, "fork failed.");
