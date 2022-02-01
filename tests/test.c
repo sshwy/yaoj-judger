@@ -11,6 +11,7 @@ int main(int argc, char **argv, char **env) {
       .virtual_memory = 30 * MB,
       .actual_memory = 30 * MB,
       .output_size = 1 * KB,
+      .stack_memory = 2 * MB,
   };
   struct runner_ctxt ectxt = {.argc = argc - 1, .argv = argv + 1, .env = env};
   struct hook_ctxt hctxt = create_hook_ctxt();

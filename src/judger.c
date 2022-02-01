@@ -1,8 +1,6 @@
 #include <linux/seccomp.h>
-#include <stdio.h>
 #include <string.h>
 #include <sys/prctl.h>
-#include <sys/time.h>
 #include <sys/wait.h>
 
 #include "builtin_hook.h"
@@ -67,13 +65,14 @@ void apply_resource_child(struct rsclim_ctxt rctxt) {
   ASSERT(rctxt.virtual_memory >= 0, "invalid virtual_memory\n");
   ASSERT(rctxt.actual_memory >= 0, "invalid actual_memory\n");
   ASSERT(rctxt.output_size >= 0, "invalid output_size\n");
+  ASSERT(rctxt.stack_memory >= 0, "invalid stack_memory\n");
 
   if (rctxt.time > 0) {
     // upper bound
-    int time_insecond = rctxt.time / 1000 + !!(rctxt.time % 1000);
+    int time_ins = rctxt.time / 1000 + !!(rctxt.time % 1000);
     // 实际上只限制了 CPU 的时间，可以看作一个 hard limit，真要干还是得开线程
-    set_rlimit(RLIMIT_CPU, time_insecond, CPU_TIME_H_LIMIT);
-    LOG_INFO("set cpu time (RLIMIT_CPU): %ds\n", time_insecond);
+    set_rlimit(RLIMIT_CPU, time_ins, CPU_TIME_H_LIMIT);
+    LOG_INFO("set cpu time (RLIMIT_CPU): %ds\n", time_ins);
   }
 
   if (rctxt.virtual_memory > 0) {
@@ -88,6 +87,13 @@ void apply_resource_child(struct rsclim_ctxt rctxt) {
     set_rlimit(RLIMIT_FSIZE, rctxt.output_size,
                max(rctxt.output_size, FSIZE_H_LIMIT));
     LOG_INFO("set output limit: %.3lf KB\n", rctxt.output_size * 1.0 / KB);
+  }
+
+  if (rctxt.stack_memory > 0) {
+    set_rlimit(RLIMIT_STACK, rctxt.stack_memory,
+               max(rctxt.stack_memory, STACK_H_LIMIT));
+    LOG_INFO("set stack memory limit: %.3lf KB\n",
+             rctxt.stack_memory * 1.0 / KB);
   }
 }
 
@@ -105,18 +111,15 @@ void perform_child(struct policy_ctxt pctxt, struct rsclim_ctxt rctxt,
 void perform(struct perform_ctxt *ctxt, struct policy_ctxt pctxt,
              struct rsclim_ctxt rctxt, struct runner_ctxt ectxt,
              struct hook_ctxt hctxt) {
-
   ctxt->pctxt = &pctxt;
   ctxt->rctxt = &rctxt;
   ctxt->ectxt = &ectxt;
   ctxt->hctxt = &hctxt;
 
   register_builtin_hook(&hctxt);
-
   run_hook_chain(hctxt.before_fork, ctxt);
 
   fflush(log_fp); // avoid multi logging
-
   const pid_t child_pid = fork();
   ASSERT(child_pid >= 0, "fork failed.");
 
@@ -146,6 +149,5 @@ void perform(struct perform_ctxt *ctxt, struct policy_ctxt pctxt,
   ctxt->rctxt = NULL;
   ctxt->ectxt = NULL;
   ctxt->hctxt = NULL;
-
   LOG_INFO("judge finished.\n");
 }

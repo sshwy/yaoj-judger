@@ -94,6 +94,7 @@ struct result {
 
 #define CPU_TIME_H_LIMIT 300 // 5 minutes
 #define FSIZE_H_LIMIT (64 * MB)
+#define STACK_H_LIMIT (64 * MB)
 #define AS_H_LIMIT (512 * MB)
 
 #define RSC_UNLIMITED 0
@@ -101,6 +102,7 @@ struct rsclim_ctxt {
   int time;           // in milliseconds. 0 for unlimited
   int virtual_memory; // in bytes, for RLIMIT_AS. 0 for unlimited
   int actual_memory;  // in bytes, compared with ru_maxrss. 0 for unlimited
+  int stack_memory;   // in bptes. 0 for unlimited
   int output_size;    // in bytes. 0 for unlimited
 };
 
@@ -118,6 +120,9 @@ struct hook_ctxt {
   struct hook_chain *before_return;
 };
 
+/**
+ * @brief Context of perform, used by hook.
+ */
 struct perform_ctxt {
   int status; // child prcess status
   struct result result;

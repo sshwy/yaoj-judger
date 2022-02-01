@@ -7,7 +7,10 @@
 //     fprintf(stderr, "receive SIXCPU\n");
 //   }
 // }
-int nd[1000000];
+void f(int depth) {
+  if (depth < 40000)
+    f(depth + 1);
+}
 int main() {
   // if (signal(SIGXCPU, handle_sigxcpu) == SIG_ERR) {
   //   fprintf(stderr, "can't catch SIGXCPU");
@@ -15,10 +18,9 @@ int main() {
 
   int a, b;
   scanf("%d%d", &a, &b);
-  for (int i = 0; i < 100000; i++)
-    nd[i] = i + 1;
   for (int i = 0; i < 5e8; i++) // sleep
     ;
+  f(0);
   // int pid = fork();
   // if (pid == 0) {
   //   printf("child");
@@ -28,5 +30,5 @@ int main() {
   //   printf("fork error");
   // }
   printf("%d\n", a + b);
-  return 1;
+  return 0;
 }
