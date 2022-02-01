@@ -37,8 +37,8 @@ extern FILE *log_fp;
 #define ASSERT(condition, args...)                                             \
   do {                                                                         \
     if (!(condition)) {                                                        \
-      fprintf(log_fp, RED(ERROR) "(" __FILE__ "): ");                          \
-      fprintf(log_fp, ##args);                                                 \
+      fprintf(stderr, RED(ERROR) "(" __FILE__ "): ");                          \
+      fprintf(stderr, ##args);                                                 \
       exit(1);                                                                 \
     }                                                                          \
   } while (0)

@@ -9,4 +9,4 @@ POLICY sample {
   }
 }
 
-USE sample DEFAULT ALLOW
+USE sample DEFAULT KILL

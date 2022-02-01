@@ -1,0 +1,8 @@
+OK=0
+RE=1
+MLE=2
+TLE=3
+OLE=4
+SE=5
+DSC=6
+ECE=7

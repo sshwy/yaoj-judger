@@ -1,17 +1,15 @@
+TESTER=test.local
 .PHONY: all compile test force
 all: compile
 
-compile: test.local main.local
+compile: test.local
 
 # force
 test.local: force
-	$(CC) test.c -L../ -ljudger_std_io -lkafel -lpthread -static -o test.local -g
-
-main.local: main.c
-	$(CC) main.c -o main.local
+	$(CC) test.c -L../ -ljudger_std_io -lkafel -lpthread -static -o test.local
 
 test: compile
-	./test.local main.local main.in main.out main.err && $(MAKE) printlog
+	$(MAKE) test -C std_io TESTER=../$(TESTER)
 
 printlog:
 	@echo "======[log]==============="; \
@@ -19,6 +17,7 @@ printlog:
 	echo "======[log finished]======" \
 
 clean:
-	$(RM) test.local
+	$(RM) test.local && \
+	$(MAKE) clean -C std_io TESTER=../$(TESTER)
 
 force: ;
