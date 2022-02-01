@@ -6,13 +6,17 @@
 
 不过代码是手撸的，很新！
 
+## Getting Start
+
 如何上手？现在还在 prototype 阶段，还没写文档，麻烦您阅读源码……
 
-## 简介
+啊，不过现在已经写了 test 了！您可以去 [tests/](https://github.com/sshwy/yaoj-judger/tree/master/tests) 了解一下！
+
+## Overview
 
 基于 [kafel](https://github.com/google/kafel) 的一个沙箱模块。主要用于 OI/ACM 的代码评测。
 
-## 设计思路
+## Design
 
 早期思路来源于 [QingdaoU/Judger](https://github.com/QingdaoU/Judger)，在此鸣谢。在此基础上引入 kafel 以更友好的方式配置系统调用规则，并重新整理了执行逻辑。
 
@@ -33,15 +37,40 @@
 
 大致步骤如下：解析 policy => runner 的一些前置操作（prework） => 设置资源限制 => 应用 policy => 执行 runner（run）
 
+在此基础上我们新增了 hooks 框架，一定程度上规范了程序的评测过程。可以阅读 [src/judger.c](https://github.com/sshwy/yaoj-judger/blob/master/src/judger.c#L111-L153)。逻辑如下：
+
+原进程（父进程 perform）：
+
+- `ctxt`（意为 context，上下文，存储 perform 过程中的所有结果，提供给 hook）的初始化
+- 执行 `before_fork` hook
+- fork 一个子进程用于执行目标程序
+- 执行 `after_fork` hook
+- 父进程新开一个线程用于 kill 超时未结束的子进程
+- 等待子进程结束（要么是自己结束，要么是被 kill），并获取子进程的状态（signal+return code）和资源使用情况
+- 执行 `after_wait` hook
+- 关闭刚才开的线程，处理一些（可能有的）杂事
+- 执行 `before_return` hook
+- 结束
+
+子进程（[perform_child](https://github.com/sshwy/yaoj-judger/blob/master/src/judger.c#L100-L109)）：
+
+- 解析 kafel policy
+- 执行 runner 的前置操作（prework）
+- 设置 rlimit 资源限制
+- 应用 policy
+- 执行目标程序
+
+这样一来大部分的逻辑判断（计时、判断运行结果）就可以封装为 hooks 了。
+
 ## Todo
 
 - 其他 runner 的开发
 
 ## Reference
 
-https://zhuanlan.zhihu.com/p/363174561
-https://www.conventionalcommits.org/en/v1.0.0/
-https://www-uxsup.csx.cam.ac.uk/courses/moved.Building/signals.pdf
+- [linux 安全模块 -- seccomp 详解](https://zhuanlan.zhihu.com/p/363174561)
+- [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)
+- [A list of signals and what they mean](https://www-uxsup.csx.cam.ac.uk/courses/moved.Building/signals.pdf)
 
 ## Thanks to
 
