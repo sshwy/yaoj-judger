@@ -1,0 +1,47 @@
+/**
+ * @file hook.h
+ * @author sshwy (jy.cat@qq.com)
+ * @brief Hooks used by judger.
+ * @date 2022-02-01
+ *
+ * @copyright Copyright (c) 2022
+ *
+ */
+#ifndef YAOJUDGER_HOOK_H
+#define YAOJUDGER_HOOK_H
+
+#include "common.h"
+
+enum HOOK_TYPE {
+  BEFORE_FORK,
+  AFTER_FORK,
+  AFTER_WAIT,
+  BEFORE_RETURN,
+};
+
+struct hook_chain {
+  void (*hook)(struct perform_ctxt *ctxt);
+  struct hook_chain *next;
+};
+
+/**
+ * @brief Run all hooks one by one in the list with param `rlp`
+ * @param phead
+ * @param rlp
+ */
+void run_hook_chain(struct hook_chain *phead, struct perform_ctxt *ctxt);
+
+/**
+ * @brief Create an empty hook chain, returning its head pointer.
+ * @return struct hook_chain*
+ */
+struct hook_chain *create_hook_chain();
+
+struct hook_chain *pushfront_hook(struct hook_chain *phead,
+                                  void (*hook)(struct perform_ctxt *));
+
+void register_hook(struct hook_ctxt *ctxt, enum HOOK_TYPE type,
+                   void (*hook)(struct perform_ctxt *ctxt));
+
+struct hook_ctxt create_hook_ctxt();
+#endif

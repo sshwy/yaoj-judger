@@ -42,6 +42,10 @@
 
 https://zhuanlan.zhihu.com/p/363174561
 
+## Known Bugs
+
+父进程会执行两次……可以看 builtin_hook.c 的 log。目前看来没啥影响？
+
 ## Thanks to
 
 [QingdaoU/Judger](https://github.com/QingdaoU/Judger): [SATA LICENSE](https://github.com/QingdaoU/Judger/raw/newnew/LICENSE)

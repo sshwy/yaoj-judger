@@ -1,3 +1,12 @@
+/**
+ * @file common.h
+ * @author sshwy (jy.cat@qq.com)
+ * @brief Common macros, functions and structures.
+ * @date 2022-02-01
+ *
+ * @copyright Copyright (c) 2022
+ *
+ */
 #ifndef YAOJUDGER_COMMON_H
 #define YAOJUDGER_COMMON_H
 
@@ -34,18 +43,31 @@ extern FILE *log_fp;
     }                                                                          \
   } while (0)
 
+/**
+ * @brief Kafel policy context
+ */
 struct policy_ctxt {
   char *dirname; // provide policy search path
   char *policy;  // provide without suffix or path, just name, indicating
                  // [dirname]/[policy].policy
 };
+struct policy_ctxt create_policy_ctxt(char *dirname, char *policy);
 
-// 理论上所有 runner 的接口应该是一样的（可变参数）
+/**
+ * @brief Context for all runners.
+ *
+ */
 struct runner_ctxt {
   int argc;
   char **argv, **env;
 };
 
+/**
+ * @brief Compile the kafel policy described in `pctxt`
+ *
+ * @param pctxt
+ * @return struct sock_fprog
+ */
 struct sock_fprog compile_policy(struct policy_ctxt pctxt);
 
 enum result_code {
@@ -86,5 +108,26 @@ void fprint_result(FILE *fp, struct result *resp);
 void fprint_rusage(FILE *fp, struct rusage *rsp);
 
 char *path_join(const char *first, const char *second);
+
+int max(int a, int b);
+
+struct hook_ctxt {
+  struct hook_chain *before_fork;
+  struct hook_chain *after_fork;
+  struct hook_chain *after_wait;
+  struct hook_chain *before_return;
+};
+
+struct perform_ctxt {
+  int status; // child prcess status
+  struct result result;
+  struct rusage rusage;
+
+  // read-only
+  const struct policy_ctxt *pctxt;
+  const struct rsclim_ctxt *rctxt;
+  const struct runner_ctxt *ectxt;
+  const struct hook_ctxt *hctxt;
+};
 
 #endif

@@ -17,8 +17,8 @@ int main() {
   scanf("%d%d", &a, &b);
   for (int i = 0; i < 100000; i++)
     nd[i] = i + 1;
-  // for (;;) // sleep
-  //   ;
+  for (int i = 0; i < 5e8; i++) // sleep
+    ;
   // int pid = fork();
   // if (pid == 0) {
   //   printf("child");

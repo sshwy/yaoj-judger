@@ -5,7 +5,7 @@ compile: test.local main.local
 
 # force
 test.local: force
-	$(CC) test.c -L../ -ljudger_std_io -lkafel -lpthread -static -o test.local
+	$(CC) test.c -L../ -ljudger_std_io -lkafel -lpthread -static -o test.local -g
 
 main.local: main.c
 	$(CC) main.c -o main.local

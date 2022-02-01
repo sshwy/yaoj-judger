@@ -4,7 +4,9 @@
 #include <sys/time.h>
 #include <sys/wait.h>
 
+#include "builtin_hook.h"
 #include "common.h"
+#include "hook.h"
 #include "judger.h"
 #include "runner/runner.h"
 #include "tkill.h"
@@ -13,8 +15,12 @@ FILE *log_fp;
 
 char *filename;
 
-int max(int a, int b) { return a > b ? a : b; }
-
+/**
+ * @brief Compile kafel policy in child process
+ *
+ * @param pctxt
+ * @return struct sock_fprog
+ */
 struct sock_fprog compile_policy_child(struct policy_ctxt pctxt) {
   char file[200];
   strcpy(file, pctxt.policy);
@@ -54,6 +60,7 @@ void set_rlimit(__rlimit_resource_t type, rlim_t cur, rlim_t max) {
   const struct rlimit rl = {.rlim_cur = cur, .rlim_max = max};
   setrlimit(type, &rl);
 }
+
 void apply_resource_child(struct rsclim_ctxt rctxt) {
   ASSERT(rctxt.time >= 0, "invalid cpu_time\n");
   ASSERT(rctxt.virtual_memory >= 0, "invalid virtual_memory\n");
@@ -85,6 +92,7 @@ void apply_resource_child(struct rsclim_ctxt rctxt) {
 
 void perform_child(struct policy_ctxt pctxt, struct rsclim_ctxt rctxt,
                    struct runner_ctxt ectxt) {
+  LOG_INFO("perform child (%d)\n", getpid());
   struct sock_fprog prog = compile_policy_child(pctxt);
   ASSERT(prework(ectxt) == 0, "perform: prework error.\n");
   apply_resource_child(rctxt);
@@ -93,10 +101,18 @@ void perform_child(struct policy_ctxt pctxt, struct rsclim_ctxt rctxt,
   run(ectxt);
 }
 
-struct result perform(struct policy_ctxt pctxt, struct rsclim_ctxt rctxt,
-                      struct runner_ctxt ectxt) {
-  struct timeval start, end;
-  gettimeofday(&start, NULL);
+void perform(struct perform_ctxt *ctxt, struct policy_ctxt pctxt,
+             struct rsclim_ctxt rctxt, struct runner_ctxt ectxt,
+             struct hook_ctxt hctxt) {
+
+  ctxt->pctxt = &pctxt;
+  ctxt->rctxt = &rctxt;
+  ctxt->ectxt = &ectxt;
+  ctxt->hctxt = &hctxt;
+
+  register_builtin_hook(&hctxt);
+
+  run_hook_chain(hctxt.before_fork, ctxt);
 
   const pid_t child_pid = fork();
   ASSERT(child_pid >= 0, "fork failed.");
@@ -105,83 +121,28 @@ struct result perform(struct policy_ctxt pctxt, struct rsclim_ctxt rctxt,
     perform_child(pctxt, rctxt, ectxt);
     exit(EXIT_FAILURE);
   }
+  run_hook_chain(hctxt.after_fork, ctxt);
 
   pthread_t tid = 0;
   struct tkill_ctxt tctxt = {.pid = child_pid, .time = rctxt.time};
   if (rctxt.time != RSC_UNLIMITED)
     tid = start_timeout_killer(&tctxt);
 
-  int status;
-  struct rusage resource_usage;
-
-  if (wait4(child_pid, &status, WSTOPPED, &resource_usage) == -1) {
+  if (wait4(child_pid, &ctxt->status, WSTOPPED, &ctxt->rusage) == -1) {
     kill(child_pid, SIGKILL);
     ERRNO_EXIT(-1, "wait failed.\n");
   }
+  run_hook_chain(hctxt.after_wait, ctxt);
 
   if (rctxt.time != RSC_UNLIMITED)
     stop_timeout_killer(tid);
 
-  gettimeofday(&end, NULL);
+  run_hook_chain(hctxt.before_return, ctxt);
 
-  struct result result = {
-      .code = SE,
-      .exit_code = 0,
-      .signal = 0,
-      .real_memory = resource_usage.ru_maxrss,
-      .real_time = (int)(end.tv_sec * 1000 + end.tv_usec / 1000 -
-                         start.tv_sec * 1000 - start.tv_usec / 1000)};
-
-  if (WIFSIGNALED(status)) {
-    LOG_INFO("child process terminated by signal %d.\n", WTERMSIG(status));
-
-    result.signal = WTERMSIG(status);
-
-    switch (WTERMSIG(status)) {
-    case SIGUSR1:
-      result.code = SE;
-      break;
-    case SIGSYS:
-      result.code = DSC;
-      break;
-    case SIGXCPU:
-      result.code = TLE;
-      break;
-    case SIGSEGV:
-      if (rctxt.virtual_memory == RSC_UNLIMITED)
-        result.code = RE;
-      else
-        result.code = MLE;
-      break;
-    case SIGXFSZ:
-      result.code = OLE;
-      break;
-    case SIGKILL:
-      if (rctxt.time != RSC_UNLIMITED && result.real_time > rctxt.time)
-        result.code = TLE;
-      else
-        result.code = SE; // someone unknown killed it
-      break;
-    default:
-      result.code = OK;
-    }
-
-  } else {
-    ASSERT(WIFEXITED(status), "assertion failed.\n");
-    LOG_INFO("child process exited with code %d.\n", WEXITSTATUS(status));
-
-    result.exit_code = WEXITSTATUS(status);
-
-    switch (WEXITSTATUS(status)) {
-    case 0:
-      result.code = OK;
-      break;
-    default:
-      result.code = ECE;
-    }
-  }
+  ctxt->pctxt = NULL;
+  ctxt->rctxt = NULL;
+  ctxt->ectxt = NULL;
+  ctxt->hctxt = NULL;
 
   LOG_INFO("judge finished.\n");
-
-  return result;
 }

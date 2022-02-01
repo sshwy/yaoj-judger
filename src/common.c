@@ -5,6 +5,16 @@
 
 #include "common.h"
 
+struct policy_ctxt create_policy_ctxt(char *dirname, char *policy) {
+  struct policy_ctxt ctxt = {
+      .dirname = dirname,
+      .policy = policy,
+  };
+  return ctxt;
+}
+
+int max(int a, int b) { return a > b ? a : b; }
+
 char *path_join(const char *first, const char *second) {
   size_t flen = strlen(first);
   size_t slen = strlen(second);
@@ -23,14 +33,16 @@ char *path_join(const char *first, const char *second) {
 }
 
 void fprint_result(FILE *fp, struct result *pres) {
-  char code_name[10][30] = {[OK] = "OK",
-                            [RE] = "Runtime Error",
-                            [TLE] = "Time Limit Exceed",
-                            [MLE] = "Memory Limit Exceed",
-                            [DSC] = "Dangerous System Call",
-                            [SE] = "System Error",
-                            [OLE] = "Output Limit Exceed",
-                            [ECE] = "Exit Code Exception"};
+  char code_name[10][30] = {
+      [OK] = "OK",
+      [RE] = "Runtime Error",
+      [TLE] = "Time Limit Exceed",
+      [MLE] = "Memory Limit Exceed",
+      [DSC] = "Dangerous System Call",
+      [SE] = "System Error",
+      [OLE] = "Output Limit Exceed",
+      [ECE] = "Exit Code Exception",
+  };
   fprintf(fp,
           "result: \033[33m\"%s\"\033[0m real_time=%.3lfs real_memory=%.3lfMB "
           "code=%d signal=%d "
