@@ -125,8 +125,8 @@ struct result perform(struct policy_ctxt pctxt, struct rsclim_ctxt rctxt,
   gettimeofday(&end, NULL);
 
   struct result result = {
-      .exit_code = SE,
-      .code = 0,
+      .code = SE,
+      .exit_code = 0,
       .signal = 0,
       .real_memory = resource_usage.ru_maxrss,
       .real_time = (int)(end.tv_sec * 1000 + end.tv_usec / 1000 -
@@ -172,7 +172,13 @@ struct result perform(struct policy_ctxt pctxt, struct rsclim_ctxt rctxt,
 
     result.exit_code = WEXITSTATUS(status);
 
-    switch (WEXITSTATUS(status)) {}
+    switch (WEXITSTATUS(status)) {
+    case 0:
+      result.code = OK;
+      break;
+    default:
+      result.code = ECE;
+    }
   }
 
   LOG_INFO("judge finished.\n");

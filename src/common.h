@@ -56,6 +56,7 @@ enum result_code {
   OLE,    // output limit exceed
   SE,     // system error
   DSC,    // dangerous system call
+  ECE,    // exit code exception
 };
 
 struct result {

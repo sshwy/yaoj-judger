@@ -6,7 +6,7 @@ ARCHIVE_LIBRARY=$(subst .o,.a,$(subst runner/,libjudger_,$(RUNNER_TARGET)))
 
 # 对于每个 runner 分别构建链接库
 all: $(COMMON_TARGET) $(RUNNER_TARGET)
-	$(AR) -r $(PROJECT_ROOT)libjudger_std_io.a runner/stdio.o $(COMMON_TARGET)
+	$(AR) -r $(PROJECT_ROOT)libjudger_std_io.a runner/std_io.o $(COMMON_TARGET)
 
 clean:
 	$(RM) -f $(COMMON_TARGET) $(RUNNER_TARGET) $(addprefix $(PROJECT_ROOT),$(ARCHIVE_LIBRARY)); \

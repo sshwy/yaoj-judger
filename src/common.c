@@ -29,7 +29,8 @@ void fprint_result(FILE *fp, struct result *pres) {
                             [MLE] = "Memory Limit Exceed",
                             [DSC] = "Dangerous System Call",
                             [SE] = "System Error",
-                            [OLE] = "Output Limit Exceed"};
+                            [OLE] = "Output Limit Exceed",
+                            [ECE] = "Exit Code Exception"};
   fprintf(fp,
           "result: \033[33m\"%s\"\033[0m real_time=%.3lfs real_memory=%.3lfMB "
           "code=%d signal=%d "

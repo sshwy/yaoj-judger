@@ -33,6 +33,11 @@
 
 大致步骤如下：解析 policy => runner 的一些前置操作（prework） => 设置资源限制 => 应用 policy => 执行 runner（run）
 
+## Todo
+
+- judger: 完善 WIFEXITED 的状态判定
+- 其他 runner 的开发
+
 ## Reference
 
 https://zhuanlan.zhihu.com/p/363174561

@@ -17,7 +17,6 @@ int main() {
   scanf("%d%d", &a, &b);
   for (int i = 0; i < 100000; i++)
     nd[i] = i + 1;
-  sleep(1);
   // for (;;) // sleep
   //   ;
   // int pid = fork();
@@ -29,5 +28,5 @@ int main() {
   //   printf("fork error");
   // }
   printf("%d\n", a + b);
-  return 0;
+  return 1;
 }
