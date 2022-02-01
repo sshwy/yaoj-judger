@@ -1,4 +1,3 @@
-CC=gcc
 SUBDIRS=src policy
 PROJECT_ROOT?=
 
@@ -19,7 +18,8 @@ kafel:
 	cp kafel/lib* ./
 
 clean:
-	$(RM) -f libkafel.*; \
+	$(RM) libkafel.*; \
+	$(MAKE) clean -C tests PROJECT_ROOT=../$(PROJECT_ROOT); \
 	for dir in $(SUBDIRS); do \
 		$(MAKE) clean -C $$dir PROJECT_ROOT=../$(PROJECT_ROOT); \
 	done

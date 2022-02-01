@@ -25,8 +25,6 @@ int prework(const struct runner_ctxt ctxt) {
     }
   }
 
-  const char *filename = ctxt.argv[0];
-
   const int input_fd = open(ctxt.argv[1], O_RDONLY),
             output_fd = open(ctxt.argv[2], O_WRONLY | O_TRUNC),
             error_fd = open(ctxt.argv[3], O_WRONLY | O_TRUNC);

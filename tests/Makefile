@@ -19,6 +19,6 @@ printlog:
 	echo "======[log finished]======" \
 
 clean:
-	$(RM) -f test.local
+	$(RM) test.local
 
 force: ;

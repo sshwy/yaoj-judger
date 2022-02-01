@@ -6,6 +6,6 @@ syscall.policy: force
 	./update_syscall.local syscall.policy
 
 clean:
-	$(RM) -f update_syscall.local
+	$(RM) update_syscall.local
 
 force: ;

@@ -1,3 +1,4 @@
+CFLAGS+=-fPIC -fvisibility=hidden -O2 -Wall -Wextra
 COMMON_TARGET=judger.o common.o tkill.o hook.o builtin_hook.o
 RUNNER_TARGET=runner/std_io.o
 ARCHIVE_LIBRARY=$(subst .o,.a,$(subst runner/,libjudger_,$(RUNNER_TARGET)))
@@ -9,7 +10,7 @@ all: $(COMMON_TARGET) $(RUNNER_TARGET)
 	$(AR) -r $(PROJECT_ROOT)libjudger_std_io.a runner/std_io.o $(COMMON_TARGET)
 
 clean:
-	$(RM) -f $(COMMON_TARGET) $(RUNNER_TARGET) $(addprefix $(PROJECT_ROOT),$(ARCHIVE_LIBRARY)); \
+	$(RM) $(COMMON_TARGET) $(RUNNER_TARGET) $(addprefix $(PROJECT_ROOT),$(ARCHIVE_LIBRARY))
 
 # https://www.gnu.org/software/make/manual/make.html#Implicit-Rules
 judger.o: common.h judger.h
