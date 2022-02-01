@@ -12,40 +12,6 @@
 
 FILE *log_fp;
 
-char *filename;
-
-/**
- * @brief Compile kafel policy in child process
- *
- * @param pctxt
- * @return struct sock_fprog
- */
-struct sock_fprog compile_policy_child(const struct policy_ctxt *pctxt) {
-  char file[200];
-  strcpy(file, pctxt->policy);
-  strcat(file, ".policy");
-  const char *policy_search_path = pctxt->dirname;
-  filename = path_join(pctxt->dirname, file);
-
-  struct sock_fprog prog;
-
-  kafel_ctxt_t ctxt = kafel_ctxt_create();
-  char *s = ftos(fopen(filename, "rb"));
-
-  kafel_set_input_string(ctxt, s);
-  kafel_add_include_search_path(ctxt, policy_search_path);
-
-  if (kafel_compile(ctxt, &prog)) {
-    ERRNO_EXIT(-1, "policy compilation failed: %s", kafel_error_msg(ctxt));
-  }
-
-  kafel_ctxt_destroy(&ctxt);
-
-  LOG_INFO("compile policy \"%s\" succeed.\n", filename);
-
-  return prog;
-}
-
 int apply_policy_child(struct sock_fprog prog) {
   ASSERT(prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) == 0,
          "error applying policy.\n");
@@ -53,7 +19,7 @@ int apply_policy_child(struct sock_fprog prog) {
          "error applying policy.\n");
 
   free(prog.filter);
-  LOG_INFO("apply policy \"%s\" succeed.\n", filename);
+  LOG_INFO("apply policy succeed.\n");
   return EXIT_SUCCESS;
 }
 
@@ -101,10 +67,11 @@ void apply_resource_child(const struct rsclim_ctxt *rctxt) {
 
 void perform_child(struct perform_ctxt *ctxt) {
   LOG_INFO("perform child (%d)\n", getpid());
-  struct sock_fprog prog = compile_policy_child(ctxt->pctxt);
+  // struct sock_fprog prog = compile_policy(ctxt->pctxt);
   prework(ctxt->ectxt);
   apply_resource_child(ctxt->rctxt);
-  ASSERT(apply_policy_child(prog) == 0, "perform: apply policy child error\n");
+  ASSERT(apply_policy_child(ctxt->prog) == 0,
+         "perform: apply policy child error\n");
   fclose(log_fp); // !!!important
   run(ctxt->ectxt);
 }
@@ -117,6 +84,7 @@ void perform(struct perform_ctxt *ctxt, struct policy_ctxt pctxt,
   ctxt->ectxt = &ectxt;
   ctxt->hctxt = &hctxt;
 
+  runner_hook(ctxt);
   register_builtin_hook(&hctxt);
   run_hook_chain(hctxt.before_fork, ctxt);
 

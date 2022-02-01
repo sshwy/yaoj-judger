@@ -13,6 +13,14 @@
 #include "../common.h"
 
 /**
+ * @brief a special hook for runner to modify ctxt at the start of perform,
+ * before registering builtin hook.
+ *
+ * @param ctxt
+ */
+void runner_hook(const struct perform_ctxt *ctxt);
+
+/**
  * return EXIT_SUCCESS (0) if pass.
  */
 void prework(const struct runner_ctxt *ctxt);

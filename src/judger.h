@@ -12,7 +12,6 @@
 
 #include <linux/filter.h>
 
-#include "../kafel/include/kafel.h"
 #include "./common.h"
 #include "hook.h"
 

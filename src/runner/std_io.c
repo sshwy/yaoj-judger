@@ -20,6 +20,8 @@
 #include "runner.h"
 // std_io: exec input_file output_file error_file
 
+void runner_hook(const struct perform_ctxt *ctxt) {}
+
 void prework(const struct runner_ctxt *ctxt) {
   ASSERT(ctxt->argc == 4, "invalid arguments (argc=%d)\n", ctxt->argc);
 
@@ -49,6 +51,4 @@ void prework(const struct runner_ctxt *ctxt) {
   }
 }
 
-void run(const struct runner_ctxt *ctxt) {
-  int flag = execl(ctxt->argv[0], (char *)NULL);
-}
+void run(const struct runner_ctxt *ctxt) { execl(ctxt->argv[0], (char *)NULL); }

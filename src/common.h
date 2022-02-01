@@ -11,6 +11,7 @@
 #define YAOJUDGER_COMMON_H
 
 #include <errno.h>
+#include <linux/filter.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/resource.h>
@@ -61,14 +62,6 @@ struct runner_ctxt {
   int argc;
   char **argv, **env;
 };
-
-/**
- * @brief Compile the kafel policy described in `pctxt`
- *
- * @param pctxt
- * @return struct sock_fprog
- */
-struct sock_fprog compile_policy(struct policy_ctxt pctxt);
 
 enum result_code {
   OK = 0, // all correct
@@ -124,6 +117,10 @@ struct hook_ctxt {
  * @brief Context of perform, used by hook.
  */
 struct perform_ctxt {
+  struct sock_fprog
+      prog; // policy applied on child process. It may contain some '%s'
+            // indentifier used to inject some content during runtime.
+
   int status; // child prcess status
   struct result result;
   struct rusage rusage;
