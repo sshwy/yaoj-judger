@@ -1,3 +1,16 @@
+/**
+ * @file std_io.c
+ * @author sshwy (jy.cat@qq.com)
+ * @brief Runner for standard IO program.
+ * @date 2022-02-01
+ * @copyright Copyright (c) 2022
+ *
+ * arguments: [exec] [input] [output] [error]
+ *   [exec] for executable filename
+ *   [input] for input filename
+ *   [output] for output filename
+ *   [error] for error log filename
+ */
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,21 +20,13 @@
 #include "runner.h"
 // std_io: exec input_file output_file error_file
 
-int prework(const struct runner_ctxt ctxt) {
-  if (ctxt.argc < 4) {
-    ERRNO_EXIT(
-        EXIT_FAILURE,
-        "invalid arguments (argc=%d), expect [exec] [input] [output] [error]\n",
-        ctxt.argc);
-  }
+void prework(const struct runner_ctxt ctxt) {
+  ASSERT(ctxt.argc == 4, "invalid arguments (argc=%d)\n", ctxt.argc);
 
   for (int i = 0; i < 4; i++) {
     for (int j = i + 1; j < 4; j++) {
-      if (strcmp(ctxt.argv[i], ctxt.argv[j]) == 0) {
-        ERRNO_EXIT(EXIT_FAILURE,
-                   "duplicated files! (exec=%s,input=%s,output=%s,error=%s)\n",
-                   ctxt.argv[0], ctxt.argv[1], ctxt.argv[2], ctxt.argv[3]);
-      }
+      ASSERT(strcmp(ctxt.argv[i], ctxt.argv[j]) != 0,
+             "duplicated files! (i=%d, j=%d", i, j);
     }
   }
 
@@ -42,12 +47,8 @@ int prework(const struct runner_ctxt ctxt) {
   if (dup2(error_fd, fileno(stderr)) < 0) {
     ERRNO_EXIT(errno, "refer stdout to output_fd failed.\n");
   }
-
-  return EXIT_SUCCESS;
 }
 
-int run(const struct runner_ctxt ctxt) {
+void run(const struct runner_ctxt ctxt) {
   int flag = execl(ctxt.argv[0], (char *)NULL);
-  printf("return\n");
-  return flag;
 }

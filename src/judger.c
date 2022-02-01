@@ -101,7 +101,7 @@ void perform_child(struct policy_ctxt pctxt, struct rsclim_ctxt rctxt,
                    struct runner_ctxt ectxt) {
   LOG_INFO("perform child (%d)\n", getpid());
   struct sock_fprog prog = compile_policy_child(pctxt);
-  ASSERT(prework(ectxt) == 0, "perform: prework error.\n");
+  prework(ectxt);
   apply_resource_child(rctxt);
   ASSERT(apply_policy_child(prog) == 0, "perform: apply policy child error\n");
   fclose(log_fp); // !!!important
