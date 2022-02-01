@@ -9,7 +9,7 @@ int main(int argc, char **argv, char **env) {
   struct rsclim_ctxt rctxt = {
       .time = 1500,
       .virtual_memory = 30 * MB,
-      .actual_memory = 30 * MB,
+      .actual_memory = 3 * MB,
       .output_size = 1 * KB,
       .stack_memory = 2 * MB,
   };

@@ -18,17 +18,19 @@ int main() {
 
   int a, b;
   scanf("%d%d", &a, &b);
-  for (int i = 0; i < 5e8; i++) // sleep
-    ;
-  f(0);
-  // int pid = fork();
-  // if (pid == 0) {
-  //   printf("child");
-  // } else if (pid > 0) {
-  //   printf("parent");
-  // } else {
-  //   printf("fork error");
-  // }
+  sleep(1);
+  usleep(800 * 1000);
+  // for (int i = 0; i < 5e8; i++) // sleep
+  //   ;
+  // f(0);
+  //  int pid = fork();
+  //  if (pid == 0) {
+  //    printf("child");
+  //  } else if (pid > 0) {
+  //    printf("parent");
+  //  } else {
+  //    printf("fork error");
+  //  }
   printf("%d\n", a + b);
   return 0;
 }

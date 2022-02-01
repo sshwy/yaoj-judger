@@ -35,12 +35,13 @@
 
 ## Todo
 
-- judger: 完善 WIFEXITED 的状态判定
 - 其他 runner 的开发
 
 ## Reference
 
 https://zhuanlan.zhihu.com/p/363174561
+https://www.conventionalcommits.org/en/v1.0.0/
+https://www-uxsup.csx.cam.ac.uk/courses/moved.Building/signals.pdf
 
 ## Thanks to
 

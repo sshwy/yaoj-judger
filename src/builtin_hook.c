@@ -76,16 +76,19 @@ static void analyze_before_return(struct perform_ctxt *ctxt) {
     LOG_INFO("child process exited with code %d.\n", WEXITSTATUS(ctxt->status));
 
     ctxt->result.exit_code = WEXITSTATUS(ctxt->status);
-
-    switch (WEXITSTATUS(ctxt->status)) {
-    case 0:
-      ctxt->result.code = OK;
-      break;
-    default:
+    if (WEXITSTATUS(ctxt->status) == 0) {
+      if (ctxt->rctxt->actual_memory != RSC_UNLIMITED &&
+          ctxt->result.real_memory * KB > ctxt->rctxt->actual_memory)
+        ctxt->result.code = MLE;
+      else if (ctxt->rctxt->time != RSC_UNLIMITED &&
+               ctxt->result.real_time > ctxt->rctxt->time)
+        ctxt->result.code = TLE;
+      else
+        ctxt->result.code = OK;
+    } else {
       ctxt->result.code = ECE;
     }
   }
-
   LOG_INFO("analyzed result.\n");
 }
 

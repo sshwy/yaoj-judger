@@ -3,9 +3,7 @@
 #include <stdlib.h>
 
 void run_hook_chain(struct hook_chain *phead, struct perform_ctxt *ctxt) {
-  fprintf(stderr, "run_hook_chain\n");
   while (phead != NULL) {
-    fprintf(stderr, "gg run_hook_chain\n");
     phead->hook(ctxt);
     phead = phead->next;
   }
