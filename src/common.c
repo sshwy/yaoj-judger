@@ -63,3 +63,15 @@ void fprint_rusage(FILE *fp, struct rusage *rsp) {
   // PRINT(ru_ixrss, "kb-s");
   // PRINT(ru_idrss, "kb-s");
 }
+
+char *ftos(FILE *fp) {
+  ASSERT(fp != NULL, "ftos: invalid fp\n");
+  fseek(fp, 0, SEEK_END);
+  size_t size = ftell(fp);
+  fseek(fp, 0, SEEK_SET); // rewind(fp);
+  char *s = malloc(size + 1);
+  fread(s, size, 1, fp);
+  s[size] = 0;
+  fclose(fp);
+  return s;
+}

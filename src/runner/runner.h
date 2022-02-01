@@ -15,7 +15,7 @@
 /**
  * return EXIT_SUCCESS (0) if pass.
  */
-void prework(const struct runner_ctxt ctxt);
-void run(const struct runner_ctxt ctxt);
+void prework(const struct runner_ctxt *ctxt);
+void run(const struct runner_ctxt *ctxt);
 
 #endif

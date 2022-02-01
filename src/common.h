@@ -135,4 +135,13 @@ struct perform_ctxt {
   const struct hook_ctxt *hctxt;
 };
 
+/**
+ * @brief read the whole file and return a string containing its content.
+ * @param fp
+ * @return char*
+ *
+ * fp must be opened with at least read access.
+ */
+char *ftos(FILE *fp);
+
 #endif

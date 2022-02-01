@@ -4,3 +4,5 @@ local.*
 *.so
 *.a
 *.o
+tests/**/*.out
+tests/**/*.err
