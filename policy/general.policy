@@ -1,15 +1,10 @@
 #include "syscall.policy"
 
-POLICY sample {
+POLICY basic_allow {
   ALLOW {
     open, write, read, fstat, mmap, mprotect, munmap,
     uname, arch_prctl, brk, access, exit_group,
     close, readlink, sysinfo, pread64, writev, lseek, clock_gettime,
-    newfstatat, openat,
-    execve(path, argv, envp) {
-      path == %0s
-    }
+    newfstatat, openat
   }
 }
-
-USE sample DEFAULT KILL
