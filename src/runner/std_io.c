@@ -51,4 +51,6 @@ void prework(const struct runner_ctxt *ctxt) {
   }
 }
 
-void run(const struct runner_ctxt *ctxt) { execl(ctxt->argv[0], (char *)NULL); }
+void run(const struct runner_ctxt *ctxt) {
+  execl(ctxt->argv[0], "main", (char *)NULL);
+}

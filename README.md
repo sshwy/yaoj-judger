@@ -16,6 +16,8 @@
 
 基于 [kafel](https://github.com/google/kafel) 的一个沙箱模块。主要用于 OI/ACM 的代码评测。
 
+本项目只关注核心：在限制条件下执行某一程序（参数）并得到相应的运行结果分析。
+
 ## Design
 
 早期思路来源于 [QingdaoU/Judger](https://github.com/QingdaoU/Judger)，在此鸣谢。在此基础上引入 kafel 以更友好的方式配置系统调用规则，并重新整理了执行逻辑。
@@ -36,6 +38,8 @@
 那么我们可以针对每种情况分别写 runner，这样 judger 和 runner 模块分开处理。
 
 大致步骤如下：解析 policy => runner 的一些前置操作（prework） => 设置资源限制 => 应用 policy => 执行 runner（run）
+
+### hooks
 
 在此基础上我们新增了 hooks 框架，一定程度上规范了程序的评测过程。可以阅读 [src/judger.c](https://github.com/sshwy/yaoj-judger/blob/master/src/judger.c#L111-L153)。逻辑如下：
 
@@ -61,6 +65,14 @@
 - 执行目标程序
 
 这样一来大部分的逻辑判断（计时、判断运行结果）就可以封装为 hooks 了。
+
+### policy
+
+我们发现 runner 和 policy 不是一一对应的关系。例如对于 go 和 c 的 std_io 评测，由于 go 需要开线程，因此 policy 与 c 有区别。类似地，不同语言的相同接口的 runner 可能在 policy 设置上有相关的差别。
+
+不过并不是任意的 policy+runner 的组合都有意义，并且 policy 是一个相对灵活的模块，因此我们仍将 policy 视作动态传入的参数。
+
+于是，我们将定制化的需求通过魔改 kafel-lang 实现。例如为了实现 policy 针对 runner 的定制，引入 `%[0-9]s` 占位符表示 runner 的参数列表字符串地址。这样可以更好地对 execve 等系统调用进行限制。
 
 ## Todo
 

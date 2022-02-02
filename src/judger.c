@@ -7,6 +7,7 @@
 #include "common.h"
 #include "hook.h"
 #include "judger.h"
+#include "policy.h"
 #include "runner/runner.h"
 #include "tkill.h"
 
@@ -70,7 +71,7 @@ void perform_child(struct perform_ctxt *ctxt) {
   // struct sock_fprog prog = compile_policy(ctxt->pctxt);
   prework(ctxt->ectxt);
   apply_resource_child(ctxt->rctxt);
-  ASSERT(apply_policy_child(ctxt->prog) == 0,
+  ASSERT(apply_policy_child(ctxt->pctxt->prog) == 0,
          "perform: apply policy child error\n");
   fclose(log_fp); // !!!important
   run(ctxt->ectxt);
@@ -87,6 +88,8 @@ void perform(struct perform_ctxt *ctxt, struct policy_ctxt pctxt,
   runner_hook(ctxt);
   register_builtin_hook(&hctxt);
   run_hook_chain(hctxt.before_fork, ctxt);
+
+  compile_policy(&pctxt, ctxt);
 
   fflush(log_fp); // avoid multi logging
   const pid_t child_pid = fork();

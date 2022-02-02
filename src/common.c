@@ -67,14 +67,3 @@ char *ftos(FILE *fp) {
   fclose(fp);
   return s;
 }
-
-struct policy_ctxt create_policy_ctxt(char *dirname, char *policy) {
-  const char *filename =
-      path_join(path_join(dirname, '/', policy), '.', "policy");
-  struct policy_ctxt ctxt = {
-      .dirname = dirname,
-      .policy = policy,
-      .content = ftos(fopen(filename, "r")),
-  };
-  return ctxt;
-}

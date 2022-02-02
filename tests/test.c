@@ -89,6 +89,8 @@ int main(int argc, char **argv, char **env) {
     ERRNO_EXIT(-1, "log_fp == NULL");
   }
 
+  // please replace the first argument with yours <yaoj-judger>/policy (absolue
+  // path is recommended)
   struct policy_ctxt pctxt =
       create_policy_ctxt("/home/sshwy/桌面/yaoj-judger/policy", "policy");
 

@@ -49,17 +49,6 @@ struct policy_ctxt;
 struct runner_ctxt;
 struct rsclim_ctxt;
 
-/**
- * @brief Kafel policy context
- */
-struct policy_ctxt {
-  char *dirname; // provide policy search path
-  char *policy;  // provide without suffix or path, just name, indicating
-                 // [dirname]/[policy].policy
-  char *content; // string content of the policy
-};
-struct policy_ctxt create_policy_ctxt(char *dirname, char *policy);
-
 enum result_code {
   OK = 0, // all correct
   RE,     // runtime error
@@ -103,5 +92,20 @@ int max(int a, int b);
  * fp must be opened with at least read access.
  */
 char *ftos(FILE *fp);
+
+/**
+ * @brief Context of perform.
+ */
+struct perform_ctxt {
+  int status; // child prcess status
+  struct result result;
+  struct rusage rusage;
+
+  // read-only
+  const struct policy_ctxt *pctxt;
+  const struct rsclim_ctxt *rctxt;
+  const struct runner_ctxt *ectxt;
+  const struct hook_ctxt *hctxt;
+};
 
 #endif

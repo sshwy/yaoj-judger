@@ -8,6 +8,8 @@
 #include "builtin_hook.h"
 #include "common.h"
 #include "hook.h"
+#include "judger.h"
+#include "policy.h"
 
 static struct timeval start, end;
 
@@ -94,22 +96,9 @@ static void analyze_before_return(struct perform_ctxt *ctxt) {
   LOG_INFO("analyzed result.\n");
 }
 
-void compile_policy_before_fork(struct perform_ctxt *ctxt) {
-  struct sock_fprog prog;
-  kafel_ctxt_t kctxt = kafel_ctxt_create();
-  kafel_set_input_string(kctxt, ctxt->pctxt->content);
-  kafel_add_include_search_path(kctxt, ctxt->pctxt->dirname);
-  ASSERT(kafel_compile(kctxt, &prog) == 0, "policy compilation failed: %s",
-         kafel_error_msg(kctxt));
-  kafel_ctxt_destroy(&kctxt);
-  LOG_INFO("compile policy \"%s\" succeed.\n", ctxt->pctxt->policy);
-  ctxt->prog = prog;
-}
-
 void register_builtin_hook(struct hook_ctxt *hctxt) {
   // timer_before_fork should be the lastone to invoke
   register_hook(hctxt, BEFORE_FORK, timer_before_fork);
-  register_hook(hctxt, BEFORE_FORK, compile_policy_before_fork);
   register_hook(hctxt, BEFORE_FORK, init_result_before_fork);
 
   register_hook(hctxt, AFTER_WAIT, timer_after_wait);

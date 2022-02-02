@@ -1,7 +1,8 @@
 /**
  * @file judger.h
  * @author sshwy (jy.cat@qq.com)
- * @brief Judger interface.
+ * @brief Judger interface. This should be the entry header file, which any
+ * other header file should not include.
  * @date 2022-02-01
  *
  * @copyright Copyright (c) 2022
@@ -12,28 +13,10 @@
 
 #include <linux/filter.h>
 
-#include "./common.h"
+#include "common.h"
 #include "hook.h"
+#include "policy.h"
 #include "runner/runner.h"
-
-/**
- * @brief Context of perform.
- */
-struct perform_ctxt {
-  struct sock_fprog
-      prog; // policy applied on child process. It may contain some '%s'
-            // indentifier used to inject some content during runtime.
-
-  int status; // child prcess status
-  struct result result;
-  struct rusage rusage;
-
-  // read-only
-  const struct policy_ctxt *pctxt;
-  const struct rsclim_ctxt *rctxt;
-  const struct runner_ctxt *ectxt;
-  const struct hook_ctxt *hctxt;
-};
 
 /**
  * @brief Resource limitation context.

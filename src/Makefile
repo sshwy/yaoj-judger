@@ -1,5 +1,5 @@
 CFLAGS+=-fPIC -fvisibility=hidden -O2 -Wall -Wextra
-COMMON_TARGET=judger.o common.o tkill.o hook.o builtin_hook.o
+COMMON_TARGET=judger.o common.o tkill.o hook.o builtin_hook.o policy.o
 RUNNER_TARGET=runner/std_io.o
 ARCHIVE_LIBRARY=$(subst .o,.a,$(subst runner/,libjudger_,$(RUNNER_TARGET)))
 
@@ -19,3 +19,4 @@ tkill.o: common.h tkill.h
 runner/std_io.o: runner/runner.h common.h
 hook.o: common.h hook.h
 builtin_hook.o: common.h hook.h builtin_hook.h
+policy.o: common.h policy.h
