@@ -20,7 +20,6 @@ static void timer_after_wait(struct perform_ctxt *ctxt) {
   gettimeofday(&end, NULL);
   ctxt->result.real_time = (int)(end.tv_sec * 1000 + end.tv_usec / 1000 -
                                  start.tv_sec * 1000 - start.tv_usec / 1000);
-
   LOG_INFO("get end time, real time: %.3lfs\n",
            ctxt->result.real_time / 1000.0);
 }
@@ -96,28 +95,14 @@ static void analyze_before_return(struct perform_ctxt *ctxt) {
 }
 
 void compile_policy_before_fork(struct perform_ctxt *ctxt) {
-  char file[200];
-  strcpy(file, ctxt->pctxt->policy);
-  strcat(file, ".policy");
-  const char *policy_search_path = ctxt->pctxt->dirname;
-  char *filename = path_join(ctxt->pctxt->dirname, '/', file);
-
   struct sock_fprog prog;
-
   kafel_ctxt_t kctxt = kafel_ctxt_create();
-  char *s = ftos(fopen(filename, "rb"));
-
-  kafel_set_input_string(kctxt, s);
-  kafel_add_include_search_path(kctxt, policy_search_path);
-
-  if (kafel_compile(kctxt, &prog)) {
-    ERRNO_EXIT(-1, "policy compilation failed: %s", kafel_error_msg(kctxt));
-  }
-
+  kafel_set_input_string(kctxt, ctxt->pctxt->content);
+  kafel_add_include_search_path(kctxt, ctxt->pctxt->dirname);
+  ASSERT(kafel_compile(kctxt, &prog) == 0, "policy compilation failed: %s",
+         kafel_error_msg(kctxt));
   kafel_ctxt_destroy(&kctxt);
-
-  LOG_INFO("compile policy \"%s\" succeed.\n", filename);
-
+  LOG_INFO("compile policy \"%s\" succeed.\n", ctxt->pctxt->policy);
   ctxt->prog = prog;
 }
 

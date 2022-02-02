@@ -25,6 +25,21 @@ struct hook_chain {
 };
 
 /**
+ * @brief Context for custom hooks
+ *
+ */
+struct hook_ctxt {
+  // invoked before forking the child process
+  struct hook_chain *before_fork;
+  // invoked right after forking the child process
+  struct hook_chain *after_fork;
+  // invoked right after child process's termination
+  struct hook_chain *after_wait;
+  // invoked before judger(perform) return
+  struct hook_chain *before_return;
+};
+
+/**
  * @brief Run all hooks one by one in the list with param `rlp`
  * @param phead
  * @param rlp

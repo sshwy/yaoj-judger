@@ -1,6 +1,7 @@
-#include "hook.h"
-#include "common.h"
 #include <stdlib.h>
+
+#include "common.h"
+#include "hook.h"
 
 void run_hook_chain(struct hook_chain *phead, struct perform_ctxt *ctxt) {
   while (phead != NULL) {

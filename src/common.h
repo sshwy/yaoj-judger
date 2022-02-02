@@ -1,7 +1,7 @@
 /**
  * @file common.h
  * @author sshwy (jy.cat@qq.com)
- * @brief Common macros, functions and structures.
+ * @brief Common macros, functions and structure declarations (or definitions).
  * @date 2022-02-01
  *
  * @copyright Copyright (c) 2022
@@ -44,6 +44,11 @@ extern FILE *log_fp;
     }                                                                          \
   } while (0)
 
+struct perform_ctxt;
+struct policy_ctxt;
+struct runner_ctxt;
+struct rsclim_ctxt;
+
 /**
  * @brief Kafel policy context
  */
@@ -54,14 +59,6 @@ struct policy_ctxt {
   char *content; // string content of the policy
 };
 struct policy_ctxt create_policy_ctxt(char *dirname, char *policy);
-
-/**
- * @brief Context for all runners.
- */
-struct runner_ctxt {
-  int argc;
-  char **argv, **env;
-};
 
 enum result_code {
   OK = 0, // all correct
@@ -81,6 +78,7 @@ struct result {
   int real_time;   // in milliseconds.
   int real_memory; // in kb.
 };
+void fprint_result(FILE *fp, struct result *resp);
 
 #define KB (1024)
 #define MB (1024 * KB)
@@ -89,48 +87,13 @@ struct result {
 #define FSIZE_H_LIMIT (64 * MB)
 #define STACK_H_LIMIT (64 * MB)
 #define AS_H_LIMIT (512 * MB)
-
 #define RSC_UNLIMITED 0
-struct rsclim_ctxt {
-  int time;           // in milliseconds. 0 for unlimited
-  int virtual_memory; // in bytes, for RLIMIT_AS. 0 for unlimited
-  int actual_memory;  // in bytes, compared with ru_maxrss. 0 for unlimited
-  int stack_memory;   // in bptes. 0 for unlimited
-  int output_size;    // in bytes. 0 for unlimited
-};
 
-void fprint_result(FILE *fp, struct result *resp);
 void fprint_rusage(FILE *fp, struct rusage *rsp);
 
 char *path_join(const char *first, char seperator, const char *second);
 
 int max(int a, int b);
-
-struct hook_ctxt {
-  struct hook_chain *before_fork;
-  struct hook_chain *after_fork;
-  struct hook_chain *after_wait;
-  struct hook_chain *before_return;
-};
-
-/**
- * @brief Context of perform, used by hook.
- */
-struct perform_ctxt {
-  struct sock_fprog
-      prog; // policy applied on child process. It may contain some '%s'
-            // indentifier used to inject some content during runtime.
-
-  int status; // child prcess status
-  struct result result;
-  struct rusage rusage;
-
-  // read-only
-  const struct policy_ctxt *pctxt;
-  const struct rsclim_ctxt *rctxt;
-  const struct runner_ctxt *ectxt;
-  const struct hook_ctxt *hctxt;
-};
 
 /**
  * @brief read the whole file and return a string containing its content.

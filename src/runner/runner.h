@@ -13,6 +13,14 @@
 #include "../common.h"
 
 /**
+ * @brief Context for all runners.
+ */
+struct runner_ctxt {
+  int argc;
+  char **argv, **env;
+};
+
+/**
  * @brief a special hook for runner to modify ctxt at the start of perform,
  * before registering builtin hook.
  *
