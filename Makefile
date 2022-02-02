@@ -1,9 +1,12 @@
-SUBDIRS=src policy
+SUBDIRS=src policy tests
 PROJECT_ROOT?=
 
 .PHONY: $(SUBDIRS) clean kafel clean_all
 all: kafel $(SUBDIRS)
-	$(MAKE) -C tests PROJECT_ROOT=../$(PROJECT_ROOT)
+	$(CC) main.c -o judger_std_io.local \
+		-L./ -ljudger_std_io -lkafel -lpthread -static -I$(PROJECT_ROOT)src -O2 \
+		-Wall -Wextra -Wno-missing-field-initializers -Wno-implicit-fallthrough \
+		-Wno-nonnull
 
 # https://www.gnu.org/software/make/manual/make.html#Overriding
 # https://www.gnu.org/software/make/manual/make.html#Multiple-Targets
@@ -19,7 +22,6 @@ kafel:
 
 clean:
 	$(RM) libkafel.*; \
-	$(MAKE) clean -C tests PROJECT_ROOT=../$(PROJECT_ROOT); \
 	for dir in $(SUBDIRS); do \
 		$(MAKE) clean -C $$dir PROJECT_ROOT=../$(PROJECT_ROOT); \
 	done

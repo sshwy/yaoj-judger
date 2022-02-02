@@ -27,6 +27,7 @@ extern FILE *log_fp;
     fprintf(log_fp, GREEN(INFO) "(" __FILE__ "): ");                           \
     fprintf(log_fp, ##args);                                                   \
   } while (0)
+
 #define ERRNO_EXIT(signal, args...)                                            \
   do {                                                                         \
     fprintf(log_fp, RED(ERROR) "(" __FILE__ "): ");                            \

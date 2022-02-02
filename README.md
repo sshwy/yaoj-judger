@@ -8,9 +8,15 @@
 
 ## Getting Start
 
-如何上手？现在还在 prototype 阶段，还没写文档，麻烦您阅读源码……
+如何上手？现在还在 prototype 阶段，还没写文档，~~麻烦您阅读源码……~~
 
-啊，不过现在已经写了 test 了！您可以去 [tests/](https://github.com/sshwy/yaoj-judger/tree/master/tests) 了解一下！
+```bash
+make
+```
+
+执行完后项目会多一个 `judger_xxx.local` 的可执行文件，执行它可以获取相关帮助信息。
+
+对于更多使用方法，您可以去 [tests/](https://github.com/sshwy/yaoj-judger/tree/master/tests) 了解一下！
 
 ## Overview
 
