@@ -67,3 +67,17 @@ char *ftos(FILE *fp) {
   fclose(fp);
   return s;
 }
+
+const char result_code_name[][10] = {
+    [OK] = "OK",   [RE] = "RE", [MLE] = "MLE", [TLE] = "TLE",
+    [OLE] = "OLE", [SE] = "SE", [DSC] = "DSC", [ECE] = "ECE",
+};
+
+enum result_code atorc(char *arg) {
+  for (int i = 0; i < 8; i++) {
+    if (strcmp(arg, result_code_name[i]) == 0)
+      return i;
+  }
+  ASSERT(0, "\"%s\" doesn't match any result code name.\n", arg);
+  return 0;
+}

@@ -11,10 +11,19 @@
 如何上手？现在还在 prototype 阶段，还没写文档，~~麻烦您阅读源码……~~
 
 ```bash
-make
+make                     # 生成 judger_xxx.local 以及一些链接库
+cd tests/std_io/01_DSC   # 测试一下
+gcc main.c -o main.local # 编译测试用的代码
+touch main.out main.err  # 创建测试代码的 stdout, stderr 对应的文件
+../../../judger_std_io.local main.local main.in main.out main.err \
+  -r DSC \
+  -P ../../../policy \
+  -p c_std_io \
+  --log=log.local
+cat log.local # 看看评测结果吧
 ```
 
-执行完后项目会多一个 `judger_xxx.local` 的可执行文件，执行它可以获取相关帮助信息。
+另外执行 `./judger_xxx.local --help` 可获得更多玩法。
 
 对于更多使用方法，您可以去 [tests/](https://github.com/sshwy/yaoj-judger/tree/master/tests) 了解一下！
 

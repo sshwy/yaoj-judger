@@ -21,7 +21,7 @@ kafel:
 	cp kafel/lib* ./
 
 clean:
-	$(RM) libkafel.*; \
+	$(RM) libkafel.* *.local; \
 	for dir in $(SUBDIRS); do \
 		$(MAKE) clean -C $$dir PROJECT_ROOT=../$(PROJECT_ROOT); \
 	done

@@ -54,7 +54,7 @@ int parse_opt(int key, char *arg, struct argp_state *state) {
     rctxt.output_size = atoi(arg) * MB;
     break;
   case 'r':
-    result_code = atoi(arg);
+    result_code = atorc(arg);
     break;
   case 'p':
     strcpy(policy, arg);
@@ -72,12 +72,17 @@ int parse_opt(int key, char *arg, struct argp_state *state) {
     if (result_code == -1) {
       argp_error(state, "result_code didn't specified.");
     }
+    if (log_fp == NULL) {
+      argp_error(state, "log file didn't specified.");
+    }
     break;
   }
   return 0;
 }
 
 int main(int argc, char **argv, char **env) {
+  log_fp = NULL;
+
   struct argp_option options[] = {
       {"timeout", 't', "TIMEOUT", 0, "specify the time limit in milliseconds"},
       {"memory", 'm', "MEMORY", 0, "specify all three memory limits in MB"},
@@ -88,7 +93,7 @@ int main(int argc, char **argv, char **env) {
       {"stkmem", 773, "STACK_MEMORY", 0,
        "specify the stack memory limit in MB"},
       {"fsize", 'g', "OUTPUT", 0, "specify the output limit in MB"},
-      {"result", 'r', "RESULT", 0, "specify the result code"},
+      {"result", 'r', "RESULT", 0, "specify the result code using name"},
       {"log", 774, "LOG_FILE", 0, "specify judger result file"},
       {"policy", 'p', "POLICY", 0, "specify policy name"},
       {"policydir", 'P', "POLICY_DIR", 0, "specify policy search directory"},
@@ -106,7 +111,6 @@ int main(int argc, char **argv, char **env) {
   // for (int i = 0; i < parsed_argc; i++) printf(": %s\n", parse_argv[i]);
 
   // log_fp = fopen(".log.local", "w");
-  log_fp = stderr;
   ASSERT(log_fp != NULL, "log_fp == NULL");
 
   struct policy_ctxt pctxt = create_policy_ctxt(policy_dir, policy);

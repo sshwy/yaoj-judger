@@ -13,7 +13,7 @@ void *timeout_killer(void *_tkill_ctxt) {
     return NULL;
   }
 
-  LOG_INFO("timeout_killer: pid=%d timeout=%d\n", pid, time);
+  // LOG_INFO("timeout_killer: pid=%d timeout=%d\n", pid, time);
 
   // usleep can't be used, for time args must < 1000ms
   // this may sleep longer that expected, but we will have a check at the end
@@ -39,6 +39,6 @@ pthread_t start_timeout_killer(struct tkill_ctxt *tctxtp) {
 void stop_timeout_killer(pthread_t tid) {
   int signal;
   if ((signal = pthread_cancel(tid) != 0)) {
-    LOG_INFO("pthread_cancel: return %d\n", signal);
+    // LOG_INFO("pthread_cancel: return %d\n", signal);
   };
 }

@@ -56,6 +56,14 @@ enum result_code {
   ECE,    // exit code exception
 };
 
+/**
+ * @brief transform string code name (uppercase) to corresponding code.
+ *
+ * @param arg
+ * @return int
+ */
+enum result_code atorc(char *arg);
+
 struct result {
   enum result_code code;
   int signal;      // terminate signal raised by child process
