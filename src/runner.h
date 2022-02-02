@@ -10,7 +10,7 @@
 #ifndef YAOJUDGER_RUNNER_H
 #define YAOJUDGER_RUNNER_H
 
-#include "../common.h"
+#include "common.h"
 
 /**
  * @brief Context for all runners.

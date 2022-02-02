@@ -1,4 +1,4 @@
-CFLAGS+=-fPIC -fvisibility=hidden -O2 -Wall -Wextra
+CFLAGS+=-fPIC -fvisibility=hidden -O2 -Wall -Wextra -I$(PROJECT_ROOT)src -I$(PROJECT_ROOT)kafel/include
 COMMON_TARGET=judger.o common.o tkill.o hook.o builtin_hook.o policy.o
 RUNNER_TARGET=runner/std_io.o
 ARCHIVE_LIBRARY=$(subst .o,.a,$(subst runner/,libjudger_,$(RUNNER_TARGET)))
@@ -16,7 +16,7 @@ clean:
 judger.o: common.h judger.h
 common.o: common.h
 tkill.o: common.h tkill.h
-runner/std_io.o: runner/runner.h common.h
+runner/std_io.o: runner.h common.h
 hook.o: common.h hook.h
 builtin_hook.o: common.h hook.h builtin_hook.h
 policy.o: common.h policy.h

@@ -3,10 +3,10 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../kafel/include/kafel.h"
 #include "common.h"
+#include "kafel.h"
 #include "policy.h"
-#include "runner/runner.h"
+#include "runner.h"
 
 struct policy_ctxt create_policy_ctxt(char *dirname, char *policy) {
   const char *filename =

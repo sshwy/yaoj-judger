@@ -8,7 +8,7 @@
 #include "hook.h"
 #include "judger.h"
 #include "policy.h"
-#include "runner/runner.h"
+#include "runner.h"
 #include "tkill.h"
 
 FILE *log_fp;
@@ -106,7 +106,7 @@ void perform(struct perform_ctxt *ctxt, struct policy_ctxt pctxt,
   if (rctxt.time != RSC_UNLIMITED)
     tid = start_timeout_killer(&tctxt);
 
-  if (wait4(child_pid, &ctxt->status, WSTOPPED, &ctxt->rusage) == -1) {
+  if (wait4(child_pid, &ctxt->status, WUNTRACED, &ctxt->rusage) == -1) {
     kill(child_pid, SIGKILL);
     ERRNO_EXIT(-1, "wait failed.\n");
   }

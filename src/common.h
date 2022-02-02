@@ -44,11 +44,6 @@ extern FILE *log_fp;
     }                                                                          \
   } while (0)
 
-struct perform_ctxt;
-struct policy_ctxt;
-struct runner_ctxt;
-struct rsclim_ctxt;
-
 enum result_code {
   OK = 0, // all correct
   RE,     // runtime error

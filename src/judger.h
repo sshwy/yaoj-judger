@@ -16,7 +16,7 @@
 #include "common.h"
 #include "hook.h"
 #include "policy.h"
-#include "runner/runner.h"
+#include "runner.h"
 
 /**
  * @brief Resource limitation context.

@@ -1,14 +1,13 @@
-#include <linux/seccomp.h>
 #include <signal.h>
 #include <string.h>
 #include <sys/time.h>
 #include <unistd.h>
 
-#include "../kafel/include/kafel.h"
 #include "builtin_hook.h"
 #include "common.h"
 #include "hook.h"
 #include "judger.h"
+#include "kafel.h"
 #include "policy.h"
 
 static struct timeval start, end;
