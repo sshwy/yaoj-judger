@@ -100,7 +100,7 @@ void compile_policy_before_fork(struct perform_ctxt *ctxt) {
   strcpy(file, ctxt->pctxt->policy);
   strcat(file, ".policy");
   const char *policy_search_path = ctxt->pctxt->dirname;
-  char *filename = path_join(ctxt->pctxt->dirname, file);
+  char *filename = path_join(ctxt->pctxt->dirname, '/', file);
 
   struct sock_fprog prog;
 

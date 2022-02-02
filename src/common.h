@@ -51,12 +51,12 @@ struct policy_ctxt {
   char *dirname; // provide policy search path
   char *policy;  // provide without suffix or path, just name, indicating
                  // [dirname]/[policy].policy
+  char *content; // string content of the policy
 };
 struct policy_ctxt create_policy_ctxt(char *dirname, char *policy);
 
 /**
  * @brief Context for all runners.
- *
  */
 struct runner_ctxt {
   int argc;
@@ -102,7 +102,7 @@ struct rsclim_ctxt {
 void fprint_result(FILE *fp, struct result *resp);
 void fprint_rusage(FILE *fp, struct rusage *rsp);
 
-char *path_join(const char *first, const char *second);
+char *path_join(const char *first, char seperator, const char *second);
 
 int max(int a, int b);
 

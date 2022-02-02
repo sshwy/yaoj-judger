@@ -5,28 +5,20 @@
 
 #include "common.h"
 
-struct policy_ctxt create_policy_ctxt(char *dirname, char *policy) {
-  struct policy_ctxt ctxt = {
-      .dirname = dirname,
-      .policy = policy,
-  };
-  return ctxt;
-}
-
 int max(int a, int b) { return a > b ? a : b; }
 
-char *path_join(const char *first, const char *second) {
+char *path_join(const char *first, char seperator, const char *second) {
   size_t flen = strlen(first);
   size_t slen = strlen(second);
   ASSERT(flen <= SIZE_MAX - 2, "assertion failed\n");        // overflow
   ASSERT(flen + 2 <= SIZE_MAX - slen, "assertion failed\n"); // overflow
-  if (flen > 0 && first[flen - 1] == '/')
+  if (flen > 0 && first[flen - 1] == seperator)
     --flen; // remove trailing '/'
   size_t len = flen + slen + 1;
   char *rv = malloc(len + 1);
   ASSERT(rv != NULL, "assertion failed\n"); // OOM
   memcpy(rv, first, flen);
-  rv[flen] = '/';
+  rv[flen] = seperator;
   memcpy(rv + flen + 1, second, slen);
   rv[len] = '\0';
   return rv;
@@ -74,4 +66,15 @@ char *ftos(FILE *fp) {
   s[size] = 0;
   fclose(fp);
   return s;
+}
+
+struct policy_ctxt create_policy_ctxt(char *dirname, char *policy) {
+  const char *filename =
+      path_join(path_join(dirname, '/', policy), '.', "policy");
+  struct policy_ctxt ctxt = {
+      .dirname = dirname,
+      .policy = policy,
+      .content = ftos(fopen(filename, "r")),
+  };
+  return ctxt;
 }
