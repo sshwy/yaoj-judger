@@ -91,6 +91,18 @@ cat log.local # 看看评测结果吧
 
 已知问题：只能在注册的入口 policy 中使用占位符（没有实现递归替换）
 
+### tackle
+
+可以理解为一个 judger 框架。我们发现任何的“评测”最后都会抽象为：开一个子进程，然后父进程监控子进程（tackle）。因此我们把这部分的逻辑抽象出来后就会发现，judger 本身可能就是一个巨型 hooks 集合。
+
+这样的好处是我们在子进程里也可以套一个 tackle，这样就可以合理地写交互题的 runner 了。
+
+目前还需考虑子进程与父进程的通信问题，这个可以在 tackle 里设置管道实现。实现通信以后应该可以更准确地计时。
+
+可以看看这个流程图理解一下 tackle 与 perform hook 的关系，以及 tackle 的逻辑（也可看 tackle.c，十分简单）：
+
+![tackle](https://mermaid.ink/img/pako:eNqFUttuwyAM_ZWIp05q9wF52FP3BdsjEnKI06ASExGjqErz73NCL9E6aS9gfI59zIFJ2VCjKtUpQt8W30dNQ6rygcGePZYVNiGikeWsqccoQVccDh9FxJMbGKOpkvPsyLQhnIcVqpp2t6lbkTdNSLUmTYKurAVagmsPEYmvBUgZNEvLbdXrSE-OJrg1I94RjobbiFAvmGHXYXyqEq88a3iabOt8baRJ5wgY53mFYLzLj-D4P_mFI_JjlrdAFv2LfHYjOxGRU8wuPYZ6WLBOdJU2TfuXZB64j8FqWji7nPhtVn6XRCTZPuJ46y5PNYQULRrvOsfALtCaHy6DBe9NH7yzl221bMU6payb1OE9W6j2Sm7Xgavl70yaikIrbrFDrUoJa2wgedZK0yzU1Nfi8mftOERVNuAH3CtIHL4uZFXJMeGddHQgF-9urPkHAN_10A)
+
 ## Todo
 
 - 其他 runner 的开发
@@ -98,13 +110,32 @@ cat log.local # 看看评测结果吧
 - 另外 interactor 需要在 runner 里 fork，因此原来的 judger 框架也有待调整。
 - 同时考虑到实际运行时间可能与系统状态有关，相比之下 cpu 运行时间在 ban 掉一些系统调用后算相对合理的一种衡量方式，因此需要灵活设置
 
+
+
 ```mermaid
 graph TD
+subgraph tackle:before_fork
+perform --> register_builtin_hooks --> bfh(before_fork_hook)
+end
 
-perform --> register_builtin_hooks --> before_fork_hook
---> fork -->|parent| after_fork_hook --> new_thread_for_timer --> c_t{{child_terminate}} --> after_wait_hook --> before_return_hook
+bfh --> fork -->|parent| afh(after_fork_hook)
 
-fork -->|child| child_after_fork_hook --> runner_prework --> resource_limitation --> syscall_policy --> runner_run -.-> c_t
+subgraph tackle:after_fork
+afh --> nt(new_thread_for_timer)
+end
+
+nt --> c_t{{child_terminate}} --> awh(after_wait_hook)
+
+subgraph tackle:after_wait
+awh --> cancel_thread_for_timer --> before_return_hook
+end
+
+fork -->|child| cafh
+
+subgraph tackle:child_proc
+cafh(child_after_fork_hook) --> runner_prework --> resource_limitation --> syscall_policy --> runner_run 
+end 
+runner_run -.-> c_t
 ```
 
 ## Reference
