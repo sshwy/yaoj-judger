@@ -94,6 +94,20 @@ cat log.local # 看看评测结果吧
 ## Todo
 
 - 其他 runner 的开发
+- 目前的框架还是有点问题。计时应该从 run 之前开始计时，因此需要考虑 child process 的 hook
+- 另外 interactor 需要在 runner 里 fork，因此原来的 judger 框架也有待调整。
+- 同时考虑到实际运行时间可能与系统状态有关，相比之下 cpu 运行时间在 ban 掉一些系统调用后算相对合理的一种衡量方式，因此需要灵活设置
+
+```mermaid
+graph TD
+
+perform --> runner_hook --> register_builtin_hooks --> before_fork_hook 
+--> fork -->|parent| after_fork_hook --> new_thread_for_timer --> c_t{{child_terminate}} --> after_wait_hook --> before_return_hook
+
+fork -->|child| child_after_fork_hook --> runner_prework --> resource_limitation --> syscall_policy --> runner_run -.-> c_t
+```
+
+
 
 ## Reference
 

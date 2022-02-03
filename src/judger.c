@@ -106,10 +106,16 @@ void perform(struct perform_ctxt *ctxt, struct policy_ctxt pctxt,
   if (rctxt.time != RSC_UNLIMITED)
     tid = start_timeout_killer(&tctxt);
 
-  if (wait4(child_pid, &ctxt->status, WUNTRACED, &ctxt->rusage) == -1) {
+  // if (wait4(child_pid, &ctxt->status, WUNTRACED, &ctxt->rusage) == -1) {
+  if (waitpid(child_pid, &ctxt->status, WUNTRACED) == -1) {
     kill(child_pid, SIGKILL);
     ERRNO_EXIT(-1, "wait failed.\n");
   }
+  struct rusage r2;
+  ASSERT(getrusage(RUSAGE_CHILDREN, &r2) == 0, "test failed.");
+  fprint_rusage(log_fp, &r2);
+  ctxt->rusage = r2;
+
   run_hook_chain(hctxt.after_wait, ctxt);
 
   if (rctxt.time != RSC_UNLIMITED)
