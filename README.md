@@ -100,6 +100,7 @@ cat log.local # 看看评测结果吧
 - [linux 安全模块 -- seccomp 详解](https://zhuanlan.zhihu.com/p/363174561)
 - [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)
 - [A list of signals and what they mean](https://www-uxsup.csx.cam.ac.uk/courses/moved.Building/signals.pdf)
+- https://opensource.qduoj.com/#/judger/how_it_works
 
 ## Thanks to
 
