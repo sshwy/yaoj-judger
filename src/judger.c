@@ -77,19 +77,12 @@ void perform_child(struct perform_ctxt *ctxt) {
   run(ctxt->ectxt);
 }
 
-void perform(struct perform_ctxt *ctxt, struct policy_ctxt pctxt,
-             struct rsclim_ctxt rctxt, struct runner_ctxt ectxt,
-             struct hook_ctxt hctxt) {
-  ctxt->pctxt = &pctxt;
-  ctxt->rctxt = &rctxt;
-  ctxt->ectxt = &ectxt;
-  ctxt->hctxt = &hctxt;
-
+void perform(struct perform_ctxt *ctxt) {
   runner_hook(ctxt);
-  register_builtin_hook(&hctxt);
-  run_hook_chain(hctxt.before_fork, ctxt);
+  register_builtin_hook(ctxt->hctxt);
+  run_hook_chain(ctxt->hctxt->before_fork, ctxt);
 
-  compile_policy(&pctxt, ctxt);
+  compile_policy(ctxt->pctxt, ctxt);
 
   fflush(log_fp); // avoid multi logging
   const pid_t child_pid = fork();
@@ -99,11 +92,11 @@ void perform(struct perform_ctxt *ctxt, struct policy_ctxt pctxt,
     perform_child(ctxt);
     exit(EXIT_FAILURE);
   }
-  run_hook_chain(hctxt.after_fork, ctxt);
+  run_hook_chain(ctxt->hctxt->after_fork, ctxt);
 
   pthread_t tid = 0;
-  struct tkill_ctxt tctxt = {.pid = child_pid, .time = rctxt.time};
-  if (rctxt.time != RSC_UNLIMITED)
+  struct tkill_ctxt tctxt = {.pid = child_pid, .time = ctxt->rctxt->time};
+  if (ctxt->rctxt->time != RSC_UNLIMITED)
     tid = start_timeout_killer(&tctxt);
 
   // if (wait4(child_pid, &ctxt->status, WUNTRACED, &ctxt->rusage) == -1) {
@@ -116,16 +109,12 @@ void perform(struct perform_ctxt *ctxt, struct policy_ctxt pctxt,
   fprint_rusage(log_fp, &r2);
   ctxt->rusage = r2;
 
-  run_hook_chain(hctxt.after_wait, ctxt);
+  run_hook_chain(ctxt->hctxt->after_wait, ctxt);
 
-  if (rctxt.time != RSC_UNLIMITED)
+  if (ctxt->rctxt->time != RSC_UNLIMITED)
     stop_timeout_killer(tid);
 
-  run_hook_chain(hctxt.before_return, ctxt);
+  run_hook_chain(ctxt->hctxt->before_return, ctxt);
 
-  ctxt->pctxt = NULL;
-  ctxt->rctxt = NULL;
-  ctxt->ectxt = NULL;
-  ctxt->hctxt = NULL;
   LOG_INFO("judge finished.\n");
 }

@@ -106,10 +106,10 @@ struct perform_ctxt {
   struct rusage rusage;
 
   // read-only
-  const struct policy_ctxt *pctxt;
-  const struct rsclim_ctxt *rctxt;
-  const struct runner_ctxt *ectxt;
-  const struct hook_ctxt *hctxt;
+  struct policy_ctxt *pctxt;
+  struct rsclim_ctxt *rctxt;
+  struct runner_ctxt *ectxt;
+  struct hook_ctxt *hctxt;
 };
 
 #endif

@@ -34,8 +34,6 @@ struct rsclim_ctxt {
  * @brief Perform a runner parameterized by `ectxt`, limited by `pctxt` and
  * `rctxt`
  */
-void perform(struct perform_ctxt *ctxt, struct policy_ctxt pctxt,
-             struct rsclim_ctxt rctxt, struct runner_ctxt ectxt,
-             struct hook_ctxt hctxt);
+void perform(struct perform_ctxt *ctxt);
 
 #endif /* KAFEL_H */
