@@ -17,7 +17,7 @@ void tackle(tackle_ctxt_t ctxt) {
   if (child_pid == 0) {
     const pid_t real_child_pid = getpid();
     ctxt->child_proc(real_child_pid);
-    return;
+    exit(1); // child process doesn't terminate
   }
 
   ctxt->after_fork(parent_pid, child_pid);
