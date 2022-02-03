@@ -21,15 +21,11 @@ struct runner_ctxt {
 };
 
 /**
- * @brief a special hook for runner to modify ctxt at the start of perform,
- * before registering builtin hook.
+ * @brief do some preparation (eg. arguments checking) before applying syscall
+ * policy and resource limitation. It should be simple because it's counted in
+ * program running time.
  *
  * @param ctxt
- */
-void runner_hook(const struct perform_ctxt *ctxt);
-
-/**
- * return EXIT_SUCCESS (0) if pass.
  */
 void prework(const struct runner_ctxt *ctxt);
 void run(const struct runner_ctxt *ctxt);

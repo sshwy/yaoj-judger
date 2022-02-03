@@ -119,9 +119,14 @@ int main(int argc, char **argv, char **env) {
       .argc = parsed_argc, .argv = parse_argv, .env = env};
   struct hook_ctxt hctxt = create_hook_ctxt();
 
-  struct perform_ctxt ctxt;
+  struct perform_ctxt ctxt = {
+      .ectxt = &ectxt,
+      .pctxt = &pctxt,
+      .rctxt = &rctxt,
+      .hctxt = &hctxt,
+  };
 
-  perform(&ctxt, pctxt, rctxt, ectxt, hctxt);
+  perform(&ctxt);
 
   fprint_result(log_fp, &ctxt.result);
 

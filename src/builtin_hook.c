@@ -1,6 +1,7 @@
 #include <signal.h>
 #include <string.h>
 #include <sys/time.h>
+#include <sys/wait.h>
 #include <unistd.h>
 
 #include "builtin_hook.h"

@@ -92,7 +92,6 @@ char *policy_identifier_handler(const char *content,
 void compile_policy(struct policy_ctxt *ctxt,
                     const struct perform_ctxt *per_ctxt) {
   char *esc_content = policy_identifier_handler(ctxt->content, per_ctxt);
-
   struct sock_fprog prog;
   kafel_ctxt_t kctxt = kafel_ctxt_create();
   kafel_set_input_string(kctxt, esc_content);
