@@ -12,8 +12,6 @@
 
 #include "runner.h"
 
-void runner_hook(const struct perform_ctxt *ctxt) {}
-
 static int p1[2], p2[2]; // pipe
 
 void prework(const struct runner_ctxt *ctxt) {

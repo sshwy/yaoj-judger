@@ -101,13 +101,11 @@ cat log.local # 看看评测结果吧
 ```mermaid
 graph TD
 
-perform --> runner_hook --> register_builtin_hooks --> before_fork_hook 
+perform --> register_builtin_hooks --> before_fork_hook
 --> fork -->|parent| after_fork_hook --> new_thread_for_timer --> c_t{{child_terminate}} --> after_wait_hook --> before_return_hook
 
 fork -->|child| child_after_fork_hook --> runner_prework --> resource_limitation --> syscall_policy --> runner_run -.-> c_t
 ```
-
-
 
 ## Reference
 

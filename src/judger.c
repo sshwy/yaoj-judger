@@ -71,7 +71,6 @@ static struct perform_ctxt *ctxt;
 static pthread_t tid;
 
 void ta_before_fork(pid_t self) {
-  runner_hook(ctxt);
   register_builtin_hook(ctxt->hctxt);
   run_hook_chain(ctxt->hctxt->before_fork, ctxt);
 
