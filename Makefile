@@ -27,7 +27,7 @@ clean:
 	done
 
 clean_all: clean
-	$(MAKE) clean -C kafel
+	$(MAKE) clean -C kafel 
 
 test:
-	$(MAKE) test -C tests
+	$(MAKE) test -C tests PROJECT_ROOT=../$(PROJECT_ROOT)

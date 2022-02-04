@@ -9,7 +9,7 @@
 #include "hook.h"
 #include "judger.h"
 #include "kafel.h"
-#include "policy.h"
+#include "lib/policy.h"
 
 static struct timeval start, end;
 

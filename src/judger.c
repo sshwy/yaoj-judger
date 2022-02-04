@@ -7,65 +7,13 @@
 #include "common.h"
 #include "hook.h"
 #include "judger.h"
-#include "policy.h"
+#include "lib/policy.h"
+#include "lib/resouce_limit.h"
+#include "lib/tkill.h"
 #include "runner.h"
 #include "tackle.h"
-#include "tkill.h"
 
 FILE *log_fp;
-
-int apply_policy_child(struct sock_fprog prog) {
-  ASSERT(prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) == 0,
-         "error applying policy.\n");
-  ASSERT(prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &prog, 0, 0) == 0,
-         "error applying policy.\n");
-
-  free(prog.filter);
-  LOG_INFO("apply policy succeed.\n");
-  return 0;
-}
-
-void set_rlimit(__rlimit_resource_t type, rlim_t cur, rlim_t max) {
-  const struct rlimit rl = {.rlim_cur = cur, .rlim_max = max};
-  ASSERT(setrlimit(type, &rl) == 0, "setrlimit failed.\n");
-}
-
-void apply_resource_child(const struct rsclim_ctxt *rctxt) {
-  ASSERT(rctxt->time >= 0, "invalid cpu_time\n");
-  ASSERT(rctxt->virtual_memory >= 0, "invalid virtual_memory\n");
-  ASSERT(rctxt->actual_memory >= 0, "invalid actual_memory\n");
-  ASSERT(rctxt->output_size >= 0, "invalid output_size\n");
-  ASSERT(rctxt->stack_memory >= 0, "invalid stack_memory\n");
-
-  if (rctxt->time > 0) {
-    // upper bound
-    int time_ins = rctxt->time / 1000 + !!(rctxt->time % 1000);
-    // 实际上只限制了 CPU 的时间，可以看作一个 hard limit，真要干还是得开线程
-    set_rlimit(RLIMIT_CPU, time_ins, CPU_TIME_H_LIMIT);
-    LOG_INFO("set cpu time (RLIMIT_CPU): %ds\n", time_ins);
-  }
-
-  if (rctxt->virtual_memory > 0) {
-    // RLIMIT_AS 限制的是虚拟内存的大小，而不是实际用量。比如可以实现 CCF
-    // feature：数组开爆
-    set_rlimit(RLIMIT_AS, rctxt->virtual_memory,
-               max(rctxt->virtual_memory, AS_H_LIMIT));
-    LOG_INFO("set memory limit: %.3lf KB\n", rctxt->virtual_memory * 1.0 / KB);
-  }
-
-  if (rctxt->output_size > 0) {
-    set_rlimit(RLIMIT_FSIZE, rctxt->output_size,
-               max(rctxt->output_size, FSIZE_H_LIMIT));
-    LOG_INFO("set output limit: %.3lf KB\n", rctxt->output_size * 1.0 / KB);
-  }
-
-  if (rctxt->stack_memory > 0) {
-    set_rlimit(RLIMIT_STACK, rctxt->stack_memory,
-               max(rctxt->stack_memory, STACK_H_LIMIT));
-    LOG_INFO("set stack memory limit: %.3lf KB\n",
-             rctxt->stack_memory * 1.0 / KB);
-  }
-}
 
 static struct perform_ctxt *ctxt;
 static pthread_t tid;
@@ -82,9 +30,8 @@ void ta_child_proc(pid_t self) {
   LOG_INFO("perform child (%d)\n", self);
   // struct sock_fprog prog = compile_policy(ctxt->pctxt);
   prework(ctxt->ectxt);
-  apply_resource_child(ctxt->rctxt);
-  ASSERT(apply_policy_child(ctxt->pctxt->prog) == 0,
-         "perform: apply policy child error\n");
+  apply_resource_limit(ctxt->rctxt);
+  apply_policy(ctxt->pctxt->prog);
   fflush(log_fp);
   fclose(log_fp); // !!!important
   run(ctxt->ectxt);

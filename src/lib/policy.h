@@ -20,4 +20,6 @@ struct policy_ctxt create_policy_ctxt(char *dirname, char *policy);
 void compile_policy(struct policy_ctxt *ctxt,
                     const struct perform_ctxt *per_ctxt);
 
+void apply_policy(struct sock_fprog prog);
+
 #endif

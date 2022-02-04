@@ -1,7 +1,9 @@
 #include <linux/filter.h>
+#include <linux/seccomp.h>
 #include <regex.h>
 #include <stdio.h>
 #include <string.h>
+#include <sys/prctl.h>
 
 #include "common.h"
 #include "kafel.h"
@@ -101,4 +103,14 @@ void compile_policy(struct policy_ctxt *ctxt,
   kafel_ctxt_destroy(&kctxt);
   LOG_INFO("compile policy \"%s\" succeed.\n", ctxt->policy);
   ctxt->prog = prog;
+}
+
+void apply_policy(struct sock_fprog prog) {
+  ASSERT(prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) == 0,
+         "error applying policy.\n");
+  ASSERT(prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &prog, 0, 0) == 0,
+         "error applying policy.\n");
+
+  free(prog.filter);
+  LOG_INFO("apply policy succeed.\n");
 }
