@@ -10,16 +10,17 @@
 #include "judger.h"
 #include "kafel.h"
 #include "lib/policy.h"
+#include "lib/resouce.h"
 #include "lib/tkill.h"
 
 static struct timeval start, end;
 
-static void timer_before_fork(struct perform_ctxt *ctxt) {
+static void timer_before_fork(perform_ctxt_t ctxt) {
   LOG_INFO("get start time.\n");
   gettimeofday(&start, NULL);
 }
 
-static void timer_after_wait(struct perform_ctxt *ctxt) {
+static void timer_after_wait(perform_ctxt_t ctxt) {
   gettimeofday(&end, NULL);
   ctxt->result.real_time = (int)(end.tv_sec * 1000 + end.tv_usec / 1000 -
                                  start.tv_sec * 1000 - start.tv_usec / 1000);
@@ -27,7 +28,7 @@ static void timer_after_wait(struct perform_ctxt *ctxt) {
            ctxt->result.real_time / 1000.0);
 }
 
-static void init_result_before_fork(struct perform_ctxt *ctxt) {
+static void init_result_before_fork(perform_ctxt_t ctxt) {
   ctxt->result.code = SE;
   ctxt->result.exit_code = 0;
   ctxt->result.signal = 0;
@@ -37,7 +38,7 @@ static void init_result_before_fork(struct perform_ctxt *ctxt) {
   LOG_INFO("init ctxt before fork.\n");
 }
 
-static void analyze_before_return(struct perform_ctxt *ctxt) {
+static void analyze_after_wait(perform_ctxt_t ctxt) {
   ctxt->result.real_memory = ctxt->rusage.ru_maxrss;
 
   if (WIFSIGNALED(ctxt->status)) {
@@ -105,8 +106,9 @@ void register_builtin_hook(struct hook_ctxt *hctxt) {
 
   register_hook(hctxt, AFTER_FORK, start_killer_after_fork);
 
-  register_hook(hctxt, AFTER_WAIT, analyze_before_return);
+  register_hook(hctxt, AFTER_WAIT, analyze_after_wait);
   register_hook(hctxt, AFTER_WAIT, stop_killer_after_wait);
+  register_hook(hctxt, AFTER_WAIT, get_usage_after_wait);
   register_hook(hctxt, AFTER_WAIT, timer_after_wait);
 
   LOG_INFO("register builtin hook. (%d)\n", getpid());

@@ -22,6 +22,6 @@
  * @brief Perform a runner parameterized by `ectxt`, limited by `pctxt` and
  * `rctxt`
  */
-void perform(struct perform_ctxt *ctxt);
+void perform(perform_ctxt_t ctxt);
 
 #endif /* KAFEL_H */

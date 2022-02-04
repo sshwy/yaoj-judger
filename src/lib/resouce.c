@@ -1,4 +1,4 @@
-#include "resouce_limit.h"
+#include "resouce.h"
 
 void set_rlimit(__rlimit_resource_t type, rlim_t cur, rlim_t max) {
   const struct rlimit rl = {.rlim_cur = cur, .rlim_max = max};
@@ -40,4 +40,11 @@ void apply_resource_limit(const struct rsclim_ctxt *rctxt) {
     LOG_INFO("set stack memory limit: %.3lf KB\n",
              rctxt->stack_memory * 1.0 / KB);
   }
+}
+
+void get_usage_after_wait(perform_ctxt_t ctxt) {
+  struct rusage r2;
+  ASSERT(getrusage(RUSAGE_CHILDREN, &r2) == 0, "test failed.");
+  fprint_rusage(log_fp, &r2);
+  ctxt->rusage = r2;
 }

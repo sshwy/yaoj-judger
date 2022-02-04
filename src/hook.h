@@ -19,7 +19,7 @@ enum HOOK_TYPE {
 };
 
 struct hook_chain {
-  void (*hook)(struct perform_ctxt *ctxt);
+  void (*hook)(perform_ctxt_t ctxt);
   struct hook_chain *next;
 };
 
@@ -41,7 +41,7 @@ struct hook_ctxt {
  * @param phead
  * @param rlp
  */
-void run_hook_chain(struct hook_chain *phead, struct perform_ctxt *ctxt);
+void run_hook_chain(struct hook_chain *phead, perform_ctxt_t ctxt);
 
 /**
  * @brief Create an empty hook chain, returning its head pointer.
@@ -50,10 +50,10 @@ void run_hook_chain(struct hook_chain *phead, struct perform_ctxt *ctxt);
 struct hook_chain *create_hook_chain();
 
 struct hook_chain *pushfront_hook(struct hook_chain *phead,
-                                  void (*hook)(struct perform_ctxt *));
+                                  void (*hook)(perform_ctxt_t));
 
 void register_hook(struct hook_ctxt *ctxt, enum HOOK_TYPE type,
-                   void (*hook)(struct perform_ctxt *ctxt));
+                   void (*hook)(perform_ctxt_t ctxt));
 
 struct hook_ctxt create_hook_ctxt();
 #endif

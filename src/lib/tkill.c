@@ -44,14 +44,14 @@ void stop_timeout_killer(pthread_t tid) {
 }
 
 static pthread_t tid = 0;
-void start_killer_after_fork(struct perform_ctxt *ctxt) {
+void start_killer_after_fork(perform_ctxt_t ctxt) {
   struct tkill_ctxt tctxt = {.pid = ctxt->pchild, .time = ctxt->rctxt->time};
   if (ctxt->rctxt->time != RSC_UNLIMITED) {
     tid = start_timeout_killer(&tctxt);
   }
 }
 
-void stop_killer_after_wait(struct perform_ctxt *ctxt) {
+void stop_killer_after_wait(perform_ctxt_t ctxt) {
   if (ctxt->rctxt->time != RSC_UNLIMITED) {
     stop_timeout_killer(tid);
   }

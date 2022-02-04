@@ -126,4 +126,6 @@ struct perform_ctxt {
   struct hook_ctxt *hctxt;
 };
 
+typedef struct perform_ctxt *perform_ctxt_t;
+
 #endif

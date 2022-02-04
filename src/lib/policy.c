@@ -29,7 +29,7 @@ struct policy_ctxt create_policy_ctxt(char *dirname, char *policy) {
  * @param result
  */
 char *policy_identifier_handler(const char *content,
-                                const struct perform_ctxt *per_ctxt) {
+                                const perform_ctxt_t per_ctxt) {
 #define ALLOC_UNIT 100
   int res_size = strlen(content) + ALLOC_UNIT, res_len = 0;
   char *result = malloc(res_size * sizeof(char));
@@ -91,7 +91,7 @@ char *policy_identifier_handler(const char *content,
   return result;
 }
 
-void compile_policy_before_fork(struct perform_ctxt *per_ctxt) {
+void compile_policy_before_fork(perform_ctxt_t per_ctxt) {
   char *esc_content =
       policy_identifier_handler(per_ctxt->pctxt->content, per_ctxt);
   struct sock_fprog prog;

@@ -3,7 +3,7 @@
 #include "common.h"
 #include "hook.h"
 
-void run_hook_chain(struct hook_chain *phead, struct perform_ctxt *ctxt) {
+void run_hook_chain(struct hook_chain *phead, perform_ctxt_t ctxt) {
   while (phead != NULL) {
     phead->hook(ctxt);
     phead = phead->next;
@@ -13,7 +13,7 @@ struct hook_chain *create_hook_chain() {
   return NULL;
 }
 struct hook_chain *pushfront_hook(struct hook_chain *phead,
-                                  void (*hook)(struct perform_ctxt *)) {
+                                  void (*hook)(perform_ctxt_t)) {
   struct hook_chain *phook = malloc(sizeof(struct hook_chain));
   phook->hook = hook;
   phook->next = phead;
@@ -29,7 +29,7 @@ struct hook_ctxt create_hook_ctxt() {
 }
 
 void register_hook(struct hook_ctxt *ctxt, enum HOOK_TYPE type,
-                   void (*hook)(struct perform_ctxt *)) {
+                   void (*hook)(perform_ctxt_t)) {
 #define WORK(name) ctxt->name = pushfront_hook(ctxt->name, hook)
   switch (type) {
   case BEFORE_FORK:
