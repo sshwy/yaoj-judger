@@ -6,8 +6,12 @@
 #include "common.h"
 #include "tackle.h"
 
+static const char msg[] = "ready to run";
+
 void tackle(tackle_ctxt_t ctxt) {
   const pid_t parent_pid = getpid();
+  int p_run[2];
+  ASSERT(pipe(p_run) == 0, "pipe failed");
 
   ctxt->before_fork(parent_pid);
 
@@ -16,9 +20,16 @@ void tackle(tackle_ctxt_t ctxt) {
 
   if (child_pid == 0) {
     const pid_t real_child_pid = getpid();
-    ctxt->child_proc(real_child_pid);
+    ctxt->child_prework(real_child_pid);
+
+    write(p_run[1], msg, sizeof(msg));
+
+    ctxt->child_run(real_child_pid);
     exit(1); // child process doesn't terminate
   }
+
+  char receive[50];
+  read(p_run[0], receive, sizeof(msg)); // wait until ready to child_run
 
   ctxt->after_fork(parent_pid, child_pid);
 

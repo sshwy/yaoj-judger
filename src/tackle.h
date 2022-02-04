@@ -8,8 +8,10 @@
 struct tackle_ctxt {
   // (parent) stuffs before forking child process
   void (*before_fork)(pid_t self);
+  // (child) expensive stuffs of child process
+  void (*child_prework)(pid_t self);
   // (child) stuffs of child process
-  void (*child_proc)(pid_t self);
+  void (*child_run)(pid_t self);
   // (parent) stuffs running immediately after forking child process
   void (*after_fork)(pid_t self, pid_t child);
   // (parent) stuffs after child process terminated.

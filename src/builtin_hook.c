@@ -12,9 +12,11 @@
 
 static struct timeval start, end;
 
-static void timer_before_fork(perform_ctxt_t ctxt) {
-  LOG_INFO("get start time.\n");
+static void timer_after_fork(perform_ctxt_t ctxt) {
+  // actually immediately after receiving "ready to run"
+  LOG_INFO("get start time again.\n");
   gettimeofday(&start, NULL);
+  // LOG_INFO("%ld.%06ld\n", start.tv_sec, start.tv_usec);
 }
 
 static void timer_after_wait(perform_ctxt_t ctxt) {
@@ -97,11 +99,11 @@ static void analyze_after_wait(perform_ctxt_t ctxt) {
 
 void register_builtin_hook(struct hook_ctxt *hctxt) {
   // timer_before_fork should be the lastone to invoke
-  register_hook(hctxt, BEFORE_FORK, timer_before_fork);
   register_hook(hctxt, BEFORE_FORK, init_result_before_fork);
   register_hook(hctxt, BEFORE_FORK, compile_policy_before_fork);
 
   register_hook(hctxt, AFTER_FORK, start_killer_after_fork);
+  register_hook(hctxt, AFTER_FORK, timer_after_fork);
 
   register_hook(hctxt, AFTER_WAIT, analyze_after_wait);
   register_hook(hctxt, AFTER_WAIT, stop_killer_after_wait);

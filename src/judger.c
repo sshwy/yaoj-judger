@@ -14,9 +14,14 @@ static void ta_before_fork(pid_t self) {
   fflush(log_fp); // avoid multi logging
 }
 
-static void ta_child_proc(pid_t self) {
+static void ta_child_prework(pid_t self) {
   ctxt->pchild = self;
-  child_proc(ctxt);
+  child_prework(ctxt);
+}
+
+static void ta_child_run(pid_t self) {
+  ctxt->pchild = self;
+  child_run(ctxt);
 }
 
 static void ta_after_fork(pid_t self, pid_t child_pid) {
@@ -35,7 +40,8 @@ void perform(perform_ctxt_t _ctxt) {
   ctxt = _ctxt;
   struct tackle_ctxt tactxt = {
       .before_fork = ta_before_fork,
-      .child_proc = ta_child_proc,
+      .child_prework = ta_child_prework,
+      .child_run = ta_child_run,
       .after_fork = ta_after_fork,
       .after_wait = ta_after_wait,
   };
