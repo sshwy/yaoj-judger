@@ -11,16 +11,13 @@
 #ifndef YAOJUDGER_H
 #define YAOJUDGER_H
 
-#include <linux/filter.h>
-
 #include "common.h"
 #include "hook.h"
 #include "lib/policy.h"
 #include "runner.h"
 
 /**
- * @brief Perform a runner parameterized by `ectxt`, limited by `pctxt` and
- * `rctxt`
+ * @brief It's actually a hooklized tackle.
  */
 void perform(perform_ctxt_t ctxt);
 

@@ -19,6 +19,6 @@ printlog:
 
 clean:
 	$(RM) test.local && \
-	$(MAKE) clean -C std_io TESTER=../$(TESTER)
+	$(MAKE) clean -C std_io TESTER=../$(TESTER) -s
 
 force: ;

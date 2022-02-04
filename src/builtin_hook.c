@@ -1,13 +1,10 @@
 #include <signal.h>
-#include <string.h>
 #include <sys/time.h>
-#include <sys/wait.h>
 #include <unistd.h>
 
 #include "builtin_hook.h"
 #include "common.h"
 #include "hook.h"
-#include "judger.h"
 #include "kafel.h"
 #include "lib/policy.h"
 #include "lib/resouce.h"

@@ -18,14 +18,17 @@ enum HOOK_TYPE {
   AFTER_WAIT,
 };
 
+/**
+ * @brief Link list storing hook functions. Note that it's a typical FILO list
+ * so the ealier you register a hook, the later it will be invoked.
+ */
 struct hook_chain {
-  void (*hook)(perform_ctxt_t ctxt);
+  void (*hook)(perform_ctxt_t);
   struct hook_chain *next;
 };
 
 /**
  * @brief Context for custom hooks
- *
  */
 struct hook_ctxt {
   // invoked before forking the child process
