@@ -16,7 +16,6 @@ enum HOOK_TYPE {
   BEFORE_FORK,
   AFTER_FORK,
   AFTER_WAIT,
-  BEFORE_RETURN,
 };
 
 struct hook_chain {
@@ -35,8 +34,6 @@ struct hook_ctxt {
   struct hook_chain *after_fork;
   // invoked right after child process's termination
   struct hook_chain *after_wait;
-  // invoked before judger(perform) return
-  struct hook_chain *before_return;
 };
 
 /**

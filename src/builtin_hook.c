@@ -10,6 +10,7 @@
 #include "judger.h"
 #include "kafel.h"
 #include "lib/policy.h"
+#include "lib/tkill.h"
 
 static struct timeval start, end;
 
@@ -64,7 +65,7 @@ static void analyze_before_return(struct perform_ctxt *ctxt) {
     case SIGXFSZ:
       ctxt->result.code = OLE;
       break;
-    case SIGKILL:
+    case SIGKILL: // often killed by tkiller
       if (ctxt->rctxt->time != RSC_UNLIMITED &&
           ctxt->result.real_time > ctxt->rctxt->time)
         ctxt->result.code = TLE;
@@ -102,8 +103,11 @@ void register_builtin_hook(struct hook_ctxt *hctxt) {
   register_hook(hctxt, BEFORE_FORK, init_result_before_fork);
   register_hook(hctxt, BEFORE_FORK, compile_policy_before_fork);
 
+  register_hook(hctxt, AFTER_FORK, start_killer_after_fork);
+
+  register_hook(hctxt, AFTER_WAIT, analyze_before_return);
+  register_hook(hctxt, AFTER_WAIT, stop_killer_after_wait);
   register_hook(hctxt, AFTER_WAIT, timer_after_wait);
-  register_hook(hctxt, BEFORE_RETURN, analyze_before_return);
 
   LOG_INFO("register builtin hook. (%d)\n", getpid());
 }

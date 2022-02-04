@@ -5,7 +5,7 @@
 int main() {
   int a, b;
   scanf("%d%d", &a, &b);
-  sleep(1);
+  sleep(5);
   printf("%d %d\n", a + b, getpid());
   return 0;
 }

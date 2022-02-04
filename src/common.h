@@ -113,6 +113,8 @@ struct rsclim_ctxt {
  * @brief Context of perform.
  */
 struct perform_ctxt {
+  pid_t pself, pchild;
+
   int status; // child prcess status
   struct result result;
   struct rusage rusage;

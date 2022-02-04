@@ -24,7 +24,6 @@ struct hook_ctxt create_hook_ctxt() {
       .after_fork = create_hook_chain(),
       .before_fork = create_hook_chain(),
       .after_wait = create_hook_chain(),
-      .before_return = create_hook_chain(),
   };
   return ctxt;
 }
@@ -41,9 +40,6 @@ void register_hook(struct hook_ctxt *ctxt, enum HOOK_TYPE type,
     break;
   case AFTER_WAIT:
     WORK(after_wait);
-    break;
-  case BEFORE_RETURN:
-    WORK(before_return);
     break;
   default:
     ASSERT(0, "unknown hook type (%d)", type);
