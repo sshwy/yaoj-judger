@@ -100,6 +100,7 @@ void register_builtin_hook(struct hook_ctxt *hctxt) {
   // timer_before_fork should be the lastone to invoke
   register_hook(hctxt, BEFORE_FORK, timer_before_fork);
   register_hook(hctxt, BEFORE_FORK, init_result_before_fork);
+  register_hook(hctxt, BEFORE_FORK, compile_policy_before_fork);
 
   register_hook(hctxt, AFTER_WAIT, timer_after_wait);
   register_hook(hctxt, BEFORE_RETURN, analyze_before_return);

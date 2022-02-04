@@ -5,6 +5,8 @@
 
 #include "common.h"
 
+FILE *log_fp;
+
 int max(int a, int b) { return a > b ? a : b; }
 
 char *path_join(const char *first, char seperator, const char *second) {

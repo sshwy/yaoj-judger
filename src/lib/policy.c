@@ -91,18 +91,18 @@ char *policy_identifier_handler(const char *content,
   return result;
 }
 
-void compile_policy(struct policy_ctxt *ctxt,
-                    const struct perform_ctxt *per_ctxt) {
-  char *esc_content = policy_identifier_handler(ctxt->content, per_ctxt);
+void compile_policy_before_fork(struct perform_ctxt *per_ctxt) {
+  char *esc_content =
+      policy_identifier_handler(per_ctxt->pctxt->content, per_ctxt);
   struct sock_fprog prog;
   kafel_ctxt_t kctxt = kafel_ctxt_create();
   kafel_set_input_string(kctxt, esc_content);
-  kafel_add_include_search_path(kctxt, ctxt->dirname);
+  kafel_add_include_search_path(kctxt, per_ctxt->pctxt->dirname);
   ASSERT(kafel_compile(kctxt, &prog) == 0, "policy compilation failed: %s",
          kafel_error_msg(kctxt));
   kafel_ctxt_destroy(&kctxt);
-  LOG_INFO("compile policy \"%s\" succeed.\n", ctxt->policy);
-  ctxt->prog = prog;
+  LOG_INFO("compile policy \"%s\" succeed.\n", per_ctxt->pctxt->policy);
+  per_ctxt->pctxt->prog = prog;
 }
 
 void apply_policy(struct sock_fprog prog) {

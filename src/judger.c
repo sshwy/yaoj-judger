@@ -7,13 +7,10 @@
 #include "common.h"
 #include "hook.h"
 #include "judger.h"
-#include "lib/policy.h"
 #include "lib/resouce_limit.h"
 #include "lib/tkill.h"
 #include "runner.h"
 #include "tackle.h"
-
-FILE *log_fp;
 
 static struct perform_ctxt *ctxt;
 static pthread_t tid;
@@ -21,9 +18,6 @@ static pthread_t tid;
 void ta_before_fork(pid_t self) {
   register_builtin_hook(ctxt->hctxt);
   run_hook_chain(ctxt->hctxt->before_fork, ctxt);
-
-  compile_policy(ctxt->pctxt, ctxt);
-
   fflush(log_fp); // avoid multi logging
 }
 void ta_child_proc(pid_t self) {
