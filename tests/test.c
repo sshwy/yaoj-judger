@@ -4,7 +4,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "../src/judger.h"
+#include "judger.h"
 
 struct rsclim_ctxt rctxt = {
     .time = 1500,

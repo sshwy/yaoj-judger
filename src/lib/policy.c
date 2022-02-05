@@ -105,7 +105,7 @@ void compile_policy_before_fork(perform_ctxt_t per_ctxt) {
   per_ctxt->pctxt->prog = prog;
 }
 
-void apply_policy(struct sock_fprog prog) {
+void apply_policy_prog(struct sock_fprog prog) {
   ASSERT(prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) == 0,
          "error applying policy.\n");
   ASSERT(prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &prog, 0, 0) == 0,
@@ -113,4 +113,7 @@ void apply_policy(struct sock_fprog prog) {
 
   free(prog.filter);
   LOG_INFO("apply policy succeed.\n");
+}
+void apply_policy(perform_ctxt_t per_ctxt) {
+  apply_policy_prog(per_ctxt->pctxt->prog);
 }

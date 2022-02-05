@@ -27,7 +27,7 @@ struct runner_ctxt {
  *
  * @param ctxt
  */
-void prework(const struct runner_ctxt *ctxt);
-void run(const struct runner_ctxt *ctxt);
+void runner_prework(const struct runner_ctxt *ctxt);
+void runner_run(const struct runner_ctxt *ctxt);
 
 #endif

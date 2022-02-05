@@ -6,7 +6,7 @@
 #include "common.h"
 #include "tackle.h"
 
-static const char msg[] = "ready to run";
+const char tk_ready[6] = "ready";
 
 void tackle(tackle_ctxt_t ctxt) {
   const pid_t parent_pid = getpid();
@@ -22,14 +22,15 @@ void tackle(tackle_ctxt_t ctxt) {
     const pid_t real_child_pid = getpid();
     ctxt->child_prework(real_child_pid);
 
-    write(p_run[1], msg, sizeof(msg));
+    write(p_run[1], tk_ready, sizeof(tk_ready));
 
     ctxt->child_run(real_child_pid);
     exit(1); // child process doesn't terminate
   }
 
-  char receive[50];
-  read(p_run[0], receive, sizeof(msg)); // wait until ready to child_run
+  char receive[6];
+  // wait until ready to child_run
+  read(p_run[0], receive, sizeof(tk_ready));
 
   ctxt->after_fork(parent_pid, child_pid);
 

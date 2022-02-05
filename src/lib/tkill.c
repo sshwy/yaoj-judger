@@ -1,5 +1,6 @@
 #include "tkill.h"
 #include "common.h"
+#include "lib/resouce.h"
 
 void *timeout_killer(void *_tkill_ctxt) {
   struct tkill_ctxt *ctxt = _tkill_ctxt;

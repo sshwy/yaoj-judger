@@ -28,4 +28,6 @@ typedef struct tackle_ctxt *tackle_ctxt_t;
  */
 void tackle(tackle_ctxt_t ctxt);
 
+extern const char tk_ready[6];
+
 #endif

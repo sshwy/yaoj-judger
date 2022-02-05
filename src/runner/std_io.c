@@ -20,7 +20,7 @@
 #include "runner.h"
 // std_io: exec input_file output_file error_file
 
-void prework(const struct runner_ctxt *ctxt) {
+void runner_prework(const struct runner_ctxt *ctxt) {
   ASSERT(ctxt->argc == 4, "invalid arguments (argc=%d expect 4)\n", ctxt->argc);
 
   for (int i = 0; i < 4; i++) {
@@ -49,6 +49,6 @@ void prework(const struct runner_ctxt *ctxt) {
   }
 }
 
-void run(const struct runner_ctxt *ctxt) {
+void runner_run(const struct runner_ctxt *ctxt) {
   execl(ctxt->argv[0], "main", (char *)NULL);
 }

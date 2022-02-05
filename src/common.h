@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/resource.h>
+#include <sys/types.h>
 
 #define RED(s) "\033[31m" #s "\033[0m"
 #define GREEN(s) "\033[32m" #s "\033[0m"
@@ -96,18 +97,6 @@ int max(int a, int b);
  * fp must be opened with at least read access.
  */
 char *ftos(FILE *fp);
-
-/**
- * @brief Resource limitation context.
- *
- */
-struct rsclim_ctxt {
-  int time;           // in milliseconds. 0 for unlimited
-  int virtual_memory; // in bytes, for RLIMIT_AS. 0 for unlimited
-  int actual_memory;  // in bytes, compared with ru_maxrss. 0 for unlimited
-  int stack_memory;   // in bptes. 0 for unlimited
-  int output_size;    // in bytes. 0 for unlimited
-};
 
 /**
  * @brief Context of perform.

@@ -5,7 +5,7 @@ void set_rlimit(__rlimit_resource_t type, rlim_t cur, rlim_t max) {
   ASSERT(setrlimit(type, &rl) == 0, "setrlimit failed.\n");
 }
 
-void apply_resource_limit(const struct rsclim_ctxt *rctxt) {
+void apply_resource_limit_rsc(struct rsclim_ctxt *rctxt) {
   ASSERT(rctxt->time >= 0, "invalid cpu_time\n");
   ASSERT(rctxt->virtual_memory >= 0, "invalid virtual_memory\n");
   ASSERT(rctxt->actual_memory >= 0, "invalid actual_memory\n");
@@ -47,4 +47,8 @@ void get_usage_after_wait(perform_ctxt_t ctxt) {
   ASSERT(getrusage(RUSAGE_CHILDREN, &r2) == 0, "test failed.");
   fprint_rusage(log_fp, &r2);
   ctxt->rusage = r2;
+}
+
+void apply_resource_limit(perform_ctxt_t ctxt) {
+  apply_resource_limit_rsc(ctxt->rctxt);
 }
