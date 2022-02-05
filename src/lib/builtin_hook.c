@@ -1,4 +1,5 @@
 #include <signal.h>
+#include <string.h>
 #include <sys/time.h>
 #include <unistd.h>
 
@@ -9,8 +10,18 @@
 #include "lib/policy.h"
 #include "lib/resouce.h"
 #include "lib/tkill.h"
+#include "runner.h"
 
 static struct timeval start, end;
+
+static void check_runner_duplicate_before_fork(perform_ctxt_t ctxt) {
+  for (int i = 0; i < 4; i++) {
+    for (int j = i + 1; j < 4; j++) {
+      ASSERT(strcmp(ctxt->ectxt->argv[i], ctxt->ectxt->argv[j]) != 0,
+             "duplicated files! (i=%d, j=%d", i, j);
+    }
+  }
+}
 
 static void timer_after_fork(perform_ctxt_t ctxt) {
   // actually immediately after receiving "ready to run"
@@ -101,6 +112,7 @@ void register_builtin_hook(struct hook_ctxt *hctxt) {
   // timer_before_fork should be the lastone to invoke
   register_hook(hctxt, BEFORE_FORK, init_result_before_fork);
   register_hook(hctxt, BEFORE_FORK, compile_policy_before_fork);
+  register_hook(hctxt, BEFORE_FORK, check_runner_duplicate_before_fork);
 
   register_hook(hctxt, AFTER_FORK, start_killer_after_fork);
   register_hook(hctxt, AFTER_FORK, timer_after_fork);

@@ -49,9 +49,6 @@ int parse_opt(int key, char *arg, struct argp_state *state) {
     ++parsed_argc;
     break;
   case ARGP_KEY_END:
-    if (parsed_argc != 4) {
-      argp_error(state, "argc = %d != 4", parsed_argc);
-    }
     if (result_code == -1) {
       argp_error(state, "result_code didn't specified.");
     }

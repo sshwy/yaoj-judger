@@ -6,7 +6,8 @@ V_MEM=30
 A_MEM=30
 S_MEM=30
 OUTPUT=64
-R_CODE=$(DSC)
+R_CODE=$(OK)
+IO=file
 
 .PHONY=run_tester compile
 

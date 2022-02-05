@@ -10,7 +10,7 @@ test.local: force
 		-I$(PROJECT_ROOT)src -I$(PROJECT_ROOT)kafel/include
 
 test: compile
-	$(MAKE) test -C std_io TESTER=../$(TESTER)
+	$(MAKE) test -C traditional TESTER=../$(TESTER)
 
 printlog:
 	@echo "======[log]==============="; \
@@ -19,6 +19,6 @@ printlog:
 
 clean:
 	$(RM) test.local && \
-	$(MAKE) clean -C std_io TESTER=../$(TESTER) -s
+	$(MAKE) clean -C traditional TESTER=../$(TESTER) -s
 
 force: ;

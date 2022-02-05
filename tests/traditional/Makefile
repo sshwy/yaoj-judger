@@ -1,9 +1,9 @@
-SUBDIRS=01_DSC 02_OK 03_TLE 04_V_MLE 05_A_MLE 06_S_MLE 07_OLE 08_DSC
+SUBDIRS=01_DSC 02_OK 03_TLE 04_V_MLE 05_A_MLE 06_S_MLE 07_OLE 08_DSC 09_FILEIO_OK
 .PHONY=$(SUBDIRS)
 
 test:
 	for dir in $(SUBDIRS); do \
-		echo -e "\033[34mtesting std_io/$$dir\033[0m" && \
+		echo -e "\033[34mtesting traditional/$$dir\033[0m" && \
 		$(MAKE) test -C $$dir TESTER=../$(TESTER); \
 	done 
 

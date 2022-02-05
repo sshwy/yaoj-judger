@@ -1,11 +1,10 @@
 CFLAGS+=-fPIC -fvisibility=hidden -O2 -Wall -Wextra -Wno-unused-parameter \
 	-I$(PROJECT_ROOT)src -I$(PROJECT_ROOT)kafel/include
 COMMON_TARGET=\
-	builtin_hook.o\
-	child_proc/traditional.o\
+	lib/builtin_hook.o\
 	common.o\
 	hook.o\
-	judger.o\
+	judger/traditional.o\
 	lib/policy.o\
 	lib/resouce.o\
 	lib/tkill.o\
@@ -24,11 +23,10 @@ clean:
 	$(RM) $(COMMON_TARGET) $(RUNNER_TARGET) $(addprefix $(PROJECT_ROOT),$(ARCHIVE_LIBRARY))
 
 # https://www.gnu.org/software/make/manual/make.html#Implicit-Rules
-builtin_hook.o: common.h hook.h builtin_hook.h lib/policy.h lib/resouce.h lib/tkill.h
-child_proc/traditional.o: common.h runner.h child_proc.h lib/policy.h lib/resouce.h
+lib/builtin_hook.o: common.h hook.h lib/builtin_hook.h lib/policy.h lib/resouce.h lib/tkill.h
 common.o: common.h
 hook.o: common.h hook.h
-judger.o: common.h judger.h
+judger/traditional.o: common.h judger.h
 lib/policy.o: common.h lib/policy.h runner.h
 lib/resouce.o: common.h lib/resouce.h
 lib/tkill.o: common.h lib/tkill.h

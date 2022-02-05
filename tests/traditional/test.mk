@@ -5,7 +5,7 @@ test: compile
 		--virtualmem=$(V_MEM) \
 		--actualmem=$(A_MEM) \
 		--stackmem=$(S_MEM) \
-		main.local main.in main.out main.err
+		main.local main.in main.out main.err $(IO)
 
 compile:
 	$(CC) main.c -o main.local
