@@ -10,7 +10,7 @@ void *timeout_killer(void *_tkill_ctxt) {
   // On success, pthread_detach() returns 0; on error, it returns an error
   // number. pthread_self: 获得线程自身的ID
   if (pthread_detach(pthread_self()) != 0) {
-    kill(pid, SIGKILL);
+    killpg(pid, SIGKILL);
     return NULL;
   }
 
@@ -19,10 +19,10 @@ void *timeout_killer(void *_tkill_ctxt) {
   // usleep can't be used, for time args must < 1000ms
   // this may sleep longer that expected, but we will have a check at the end
   if (sleep((unsigned int)((time + 1000) / 1000)) != 0) {
-    kill(pid, SIGKILL);
+    killpg(pid, SIGKILL);
     return NULL;
   }
-  if (kill(pid, SIGKILL) != 0) {
+  if (killpg(pid, SIGKILL) != 0) {
     return NULL;
   }
   return NULL;
@@ -31,7 +31,8 @@ void *timeout_killer(void *_tkill_ctxt) {
 pthread_t start_timeout_killer(struct tkill_ctxt *tctxtp) {
   pthread_t tid = 0;
   if (pthread_create(&tid, NULL, timeout_killer, (void *)(tctxtp)) != 0) {
-    kill(tctxtp->pid, SIGKILL);
+    // make sure pgid has set for child
+    killpg(tctxtp->pid, SIGKILL);
     ASSERT(0, "pthread_create failed\n");
   }
   return tid;

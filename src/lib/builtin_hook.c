@@ -1,4 +1,6 @@
+#include <fcntl.h>
 #include <signal.h>
+#include <stdio.h>
 #include <string.h>
 #include <sys/time.h>
 #include <unistd.h>
@@ -44,7 +46,8 @@ static void init_result_before_fork(perform_ctxt_t ctxt) {
   ctxt->result.signal = 0;
   ctxt->result.real_memory = 0;
   ctxt->result.real_time = 0;
-
+  // automatically close log_fp when invoke exec*
+  ASSERT(fcntl(fileno(log_fp), F_SETFD, FD_CLOEXEC) != -1, "set fd failed.\n");
   LOG_INFO("init ctxt before fork.\n");
 }
 

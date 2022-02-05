@@ -1,0 +1,4 @@
+POLICY free {
+}
+
+USE free DEFAULT ALLOW

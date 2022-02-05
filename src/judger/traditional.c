@@ -37,12 +37,8 @@ void runner_prework(const struct runner_ctxt *ctxt) {
       ERRNO_EXIT(errno, "open fd failed.\n");
     }
 
-    if (dup2(input_fd, fileno(stdin)) < 0) {
-      ERRNO_EXIT(errno, "refer stdin to input_fd failed.\n");
-    }
-    if (dup2(output_fd, fileno(stdout)) < 0) {
-      ERRNO_EXIT(errno, "refer stdout to output_fd failed.\n");
-    }
+    ASSERT(dup2(input_fd, fileno(stdin)) >= 0, "dup2 failed.\n");
+    ASSERT(dup2(output_fd, fileno(stdout)) >= 0, "dup2 failed.\n");
   } else {
     ASSERT(strcmp(ctxt->argv[4], "file") == 0, "invalid token %s",
            ctxt->argv[4]);
@@ -51,10 +47,7 @@ void runner_prework(const struct runner_ctxt *ctxt) {
   // whether is standard IO or file IO, we redirect its stderr stream.
   const int error_fd = open(ctxt->argv[3], O_WRONLY | O_TRUNC);
   ASSERT(error_fd >= 0, "open fd failed.\n");
-
-  if (dup2(error_fd, fileno(stderr)) < 0) {
-    ERRNO_EXIT(errno, "refer stdout to output_fd failed.\n");
-  }
+  ASSERT(dup2(error_fd, fileno(stderr)) >= 0, "dup2 failed.\n");
 }
 
 void runner_run(const struct runner_ctxt *ctxt) {
@@ -68,7 +61,6 @@ void child_prework(perform_ctxt_t ctxt) {
   apply_resource_limit(ctxt);
   apply_policy(ctxt);
   fflush(log_fp);
-  fclose(log_fp); // !!!important
 }
 
 void child_run(perform_ctxt_t ctxt) { runner_run(ctxt->ectxt); }
@@ -90,6 +82,8 @@ void perform(perform_ctxt_t ctxt) {
 
   if (child_pid == 0) { // child process
     ctxt->pchild = getpid();
+    // set process group ID to itself
+    ASSERT(setpgid(0, 0) == 0, "setpgid failed.\n");
     child_prework(ctxt);
     write(p_run[1], ready, sizeof(ready));
     child_run(ctxt);
@@ -107,7 +101,7 @@ void perform(perform_ctxt_t ctxt) {
 
   int status;
   if (waitpid(child_pid, &status, WUNTRACED) == -1) {
-    kill(child_pid, SIGKILL);
+    killpg(child_pid, SIGKILL);
     ERRNO_EXIT(-1, "wait failed.\n");
   }
 

@@ -6,7 +6,7 @@ compile: test.local
 
 # force
 test.local: force
-	$(CC) test.c -L../ -ljudger_std_io -lkafel -lpthread -static -o test.local \
+	$(CC) test.c -L../ -ljudger_traditional -lkafel -lpthread -static -o test.local \
 		-I$(PROJECT_ROOT)src -I$(PROJECT_ROOT)kafel/include
 
 test: compile

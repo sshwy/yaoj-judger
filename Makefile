@@ -1,12 +1,12 @@
 SUBDIRS=src policy tests
 PROJECT_ROOT?=
+CLI_CFLAG=-lkafel -lpthread -static -I$(PROJECT_ROOT)src -O2 \
+	-Wall -Wextra -Wno-missing-field-initializers -Wno-implicit-fallthrough
 
 .PHONY: $(SUBDIRS) clean kafel clean_all
 all: kafel $(SUBDIRS)
-	$(CC) main.c -o judger_std_io.local \
-		-L./ -ljudger_std_io -lkafel -lpthread -static -I$(PROJECT_ROOT)src -O2 \
-		-Wall -Wextra -Wno-missing-field-initializers -Wno-implicit-fallthrough \
-		-Wno-nonnull
+	$(CC) main.c -o judger_traditional.local -L./ -ljudger_traditional $(CLI_CFLAG); \
+	$(CC) main.c -o judger_interactive.local -L./ -ljudger_interactive $(CLI_CFLAG); \
 
 # https://www.gnu.org/software/make/manual/make.html#Overriding
 # https://www.gnu.org/software/make/manual/make.html#Multiple-Targets
