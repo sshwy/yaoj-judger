@@ -1,3 +1,4 @@
+.PHONY=test compile clean
 
 test: compile
 	touch main.out main.err && \

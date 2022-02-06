@@ -81,6 +81,10 @@ cat log.local # 看看评测结果吧
 
 - 其他 judger 的开发
 - 同时考虑到实际运行时间可能与系统状态有关，相比之下 cpu 运行时间在 ban 掉一些系统调用后算相对合理的一种衡量方式，因此需要灵活设置
+- interactor 错误处理，结果判定（？）等，例如对 executable 的资源占用查看（一般情况下不需要，因为交互题不太关注这个）
+- https://gcc.gnu.org/onlinedocs/gcc/Gcov.html
+- https://en.wikipedia.org/wiki/Gcov
+- https://about.codecov.io/blog/how-to-set-up-codecov-with-c-and-github-actions/
 
 ## Reference
 
@@ -88,6 +92,7 @@ cat log.local # 看看评测结果吧
 - [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)
 - [A list of signals and what they mean](https://www-uxsup.csx.cam.ac.uk/courses/moved.Building/signals.pdf)
 - https://opensource.qduoj.com/#/judger/how_it_works
+- https://notes.sshwy.name/Interactive-Prob-Judger/
 
 ## Thanks to
 
@@ -102,4 +107,3 @@ bfh --> fork{fork} -->|parent| afh(hook:after_fork)
 rd -.-> afh --> c_t{{child_terminate}} --> awh(hook:after_wait)
 fork -->|child| cafh(child_prework) --> rd{{ready}} --> child_run -.-> c_t
 ```
-
