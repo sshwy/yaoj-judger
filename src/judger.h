@@ -4,9 +4,7 @@
  * @brief Judger interface. This should be the entry header file, which any
  * other header file should not include.
  * @date 2022-02-01
- *
  * @copyright Copyright (c) 2022
- *
  */
 #ifndef YAOJUDGER_H
 #define YAOJUDGER_H
@@ -18,7 +16,7 @@
 #include "runner.h"
 
 /**
- * @brief It's actually a hooklized tackle.
+ * @brief Perform a judgement.
  */
 void perform(perform_ctxt_t ctxt);
 

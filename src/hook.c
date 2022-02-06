@@ -3,18 +3,15 @@
 #include "common.h"
 #include "hook.h"
 
-void run_hook_chain(struct hook_chain *phead, perform_ctxt_t ctxt) {
+void run_hook_chain(hook_chain_t phead, perform_ctxt_t ctxt) {
   while (phead != NULL) {
     phead->hook(ctxt);
     phead = phead->next;
   }
 }
-struct hook_chain *create_hook_chain() {
-  return NULL;
-}
-struct hook_chain *pushfront_hook(struct hook_chain *phead,
-                                  void (*hook)(perform_ctxt_t)) {
-  struct hook_chain *phook = malloc(sizeof(struct hook_chain));
+hook_chain_t create_hook_chain() { return NULL; }
+hook_chain_t pushfront_hook(hook_chain_t phead, void (*hook)(perform_ctxt_t)) {
+  hook_chain_t phook = malloc(sizeof(struct hook_chain));
   phook->hook = hook;
   phook->next = phead;
   return phook;
