@@ -8,8 +8,8 @@
 #include "common.h"
 
 struct tkill_ctxt {
-  pid_t pid; // monitored process id
-  int time;  // int milliseconds.
+  pid_t pid; //!< monitored process (group) id.
+  int time;  //!< int milliseconds.
 };
 
 pthread_t start_timeout_killer(struct tkill_ctxt *tctxtp);

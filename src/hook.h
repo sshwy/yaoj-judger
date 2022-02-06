@@ -12,12 +12,6 @@
 
 #include "common.h"
 
-enum HOOK_TYPE {
-  BEFORE_FORK,
-  AFTER_FORK,
-  AFTER_WAIT,
-};
-
 typedef void (*hook_func_t)(perform_ctxt_t);
 
 /**
@@ -43,9 +37,18 @@ struct hook_ctxt {
 };
 
 /**
+ * @brief See hook_ctxt.
+ */
+enum HOOK_TYPE {
+  BEFORE_FORK,
+  AFTER_FORK,
+  AFTER_WAIT,
+};
+
+/**
  * @brief Run all hooks one by one in the list with context specified.
- * @param phead
- * @param rlp
+ * @param phead Header of the hook chain.
+ * @param ctxt Provide the perform context.
  */
 void run_hook_chain(hook_chain_t phead, perform_ctxt_t ctxt);
 

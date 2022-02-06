@@ -25,6 +25,25 @@ cat log.local # 看看评测结果吧
 
 另外执行 `./judger_xxx.local --help` 可获得更多玩法。
 
+```
+$ ./judger_traditional.local --help
+Usage: judger_traditional.local [OPTION...] runner arguments...
+Command line interface of judger (for the future yaoj)
+
+      --actmem=ACTUAL_MEMORY specify the actual memory limit in MB
+  -g, --fsize=OUTPUT         specify the output limit in MB
+      --log=LOG_FILE         specify judger result file
+  -m, --memory=MEMORY        specify all three memory limits in MB
+  -p, --policy=POLICY        specify policy name
+  -P, --policydir=POLICY_DIR specify policy search directory
+  -r, --result=RESULT        specify the result code using name
+      --stkmem=STACK_MEMORY  specify the stack memory limit in MB
+  -t, --timeout=TIMEOUT      specify the time limit in milliseconds
+      --virmem=VIRTUAL_MEMORY   specify the virtual memory limit in MB
+  -?, --help                 Give this help list
+      --usage                Give a short usage message
+```
+
 对于更多使用方法，您可以去 [tests/](https://github.com/sshwy/yaoj-judger/tree/master/tests) 了解一下！
 
 ## Overview

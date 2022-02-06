@@ -20,14 +20,4 @@ struct runner_ctxt {
   char **argv, **env;
 };
 
-/**
- * @brief do some preparation (eg. arguments checking) before applying syscall
- * policy and resource limitation. It should be simple because it's counted in
- * program running time.
- *
- * @param ctxt
- */
-void runner_prework(const struct runner_ctxt *ctxt);
-void runner_run(const struct runner_ctxt *ctxt);
-
 #endif

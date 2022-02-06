@@ -32,7 +32,7 @@
 #include "lib/resouce.h"
 #include "runner.h"
 
-char ready[] = "ready";
+static char ready[] = "ready";
 
 static void interactor_prework(struct runner_ctxt *ctxt) {
   const int error_fd = open(ctxt->argv[4], O_WRONLY | O_TRUNC);

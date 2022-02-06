@@ -65,7 +65,7 @@ void child_prework(perform_ctxt_t ctxt) {
 
 void child_run(perform_ctxt_t ctxt) { runner_run(ctxt->ectxt); }
 
-char ready[] = "ready";
+static char ready[] = "ready";
 
 void perform(perform_ctxt_t ctxt) {
   ctxt->pself = getpid();
