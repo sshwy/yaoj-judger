@@ -10,6 +10,7 @@ int check(int x) {
   return x == 1;
 }
 int main() {
+  return 1; // exit in advance
   int n;
   assert(scanf("%d", &n) != EOF);
   fprintf(stderr, "a.cpp: n %d\n", n);

@@ -17,21 +17,22 @@
 #include <sys/resource.h>
 #include <sys/types.h>
 
-#define RED(s) "\033[31m" #s "\033[0m"
-#define GREEN(s) "\033[32m" #s "\033[0m"
-#define YELLOW(s) "\033[33m" #s "\033[0m"
+#define RED(s) "\033[31m" s "\033[0m"
+#define GREEN(s) "\033[32m" s "\033[0m"
+#define YELLOW(s) "\033[33m" s "\033[0m"
+#define BLUE(s) "\033[34m" s "\033[0m"
 
 extern FILE *log_fp;
 
 #define LOG_INFO(args...)                                                      \
   do {                                                                         \
-    fprintf(log_fp, GREEN(INFO) "(" __FILE__ "): ");                           \
+    fprintf(log_fp, GREEN("INFO") "(" __FILE__ ":%d): ", __LINE__);            \
     fprintf(log_fp, ##args);                                                   \
   } while (0)
 
 #define ERRNO_EXIT(signal, args...)                                            \
   do {                                                                         \
-    fprintf(log_fp, RED(ERROR) "(" __FILE__ "): ");                            \
+    fprintf(log_fp, RED("ERROR") "(" __FILE__ ":%d): ", __LINE__);             \
     fprintf(log_fp, ##args);                                                   \
     errno = signal;                                                            \
     exit(signal);                                                              \
@@ -40,7 +41,7 @@ extern FILE *log_fp;
 #define ASSERT(condition, args...)                                             \
   do {                                                                         \
     if (!(condition)) {                                                        \
-      fprintf(stderr, RED(ERROR) "(" __FILE__ "): ");                          \
+      fprintf(stderr, RED("ERROR") "(" __FILE__ "%d): ", __LINE__);            \
       fprintf(stderr, ##args);                                                 \
       exit(1);                                                                 \
     }                                                                          \

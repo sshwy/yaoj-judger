@@ -27,9 +27,8 @@ static void check_runner_duplicate_before_fork(perform_ctxt_t ctxt) {
 
 static void timer_after_fork(perform_ctxt_t ctxt) {
   // actually immediately after receiving "ready to run"
-  LOG_INFO("get start time again.\n");
+  LOG_INFO("get start time.\n");
   gettimeofday(&start, NULL);
-  // LOG_INFO("%ld.%06ld\n", start.tv_sec, start.tv_usec);
 }
 
 static void timer_after_wait(perform_ctxt_t ctxt) {

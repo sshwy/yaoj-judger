@@ -1,14 +1,14 @@
 /**
  * @file traditional.c
  * @author sshwy (jy.cat@qq.com)
- * @brief Judger for OI's traditional problem. It accepts 5 arguments (in
+ * @brief Judger for OI's traditional problem.
+ * @date 2022-02-05
+ * @copyright Copyright (c) 2022
+ *
+ * It accepts 5 arguments (in
  * runner): the executable filename, input filename, output filename,
  * filename for error output, and finally a token ("std" or "file") determining
  * whether it's standard IO or file IO.
- * @date 2022-02-05
- *
- * @copyright Copyright (c) 2022
- *
  */
 #include <fcntl.h>
 #include <signal.h>
@@ -69,6 +69,7 @@ char ready[] = "ready";
 
 void perform(perform_ctxt_t ctxt) {
   ctxt->pself = getpid();
+  ctxt->pchild = -1;
   int p_run[2];
   ASSERT(pipe(p_run) == 0, "pipe failed");
 
