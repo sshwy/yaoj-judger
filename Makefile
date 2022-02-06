@@ -3,7 +3,7 @@ PROJECT_ROOT?=
 CLI_CFLAG=-lkafel -lpthread -static -I$(PROJECT_ROOT)src -O2 \
 	-Wall -Wextra -Wno-missing-field-initializers -Wno-implicit-fallthrough
 
-.PHONY: $(SUBDIRS) clean kafel clean_all
+.PHONY: $(SUBDIRS) clean kafel clean_all docs
 all: kafel $(SUBDIRS)
 	$(CC) main.c -o judger_traditional.local -L./ -ljudger_traditional $(CLI_CFLAG); \
 	$(CC) main.c -o judger_interactive.local -L./ -ljudger_interactive $(CLI_CFLAG); \
@@ -31,3 +31,9 @@ clean_all: clean
 
 test:
 	$(MAKE) test -C tests PROJECT_ROOT=../$(PROJECT_ROOT)
+
+docs:
+	doxygen; \
+	sed -i 's/code.JavaDocCode/code.JavaDocCode{/g' docs/web/html/doxygen.css
+
+# sed is for known bugs, which will be fixed in doxgen 1.9.4

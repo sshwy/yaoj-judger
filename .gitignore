@@ -6,3 +6,4 @@ local.*
 *.o
 tests/**/*.out
 tests/**/*.err
+docs/web
