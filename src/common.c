@@ -6,6 +6,7 @@
 #include "common.h"
 
 FILE *log_fp;
+char errmsg[200];
 
 int max(int a, int b) { return a > b ? a : b; }
 

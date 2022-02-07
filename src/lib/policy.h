@@ -1,6 +1,8 @@
 #ifndef YAOJUDGE_POLICY_H
 #define YAOJUDGE_POLICY_H
 
+#include <linux/filter.h>
+
 #include "common.h"
 
 /**

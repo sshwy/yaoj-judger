@@ -24,7 +24,6 @@
 #include "lib/builtin_hook.h"
 #include "lib/policy.h"
 #include "lib/resouce.h"
-#include "runner.h"
 
 void runner_prework(const struct runner_ctxt *ctxt) {
   ASSERT(ctxt->argc == 5, "invalid arguments (argc=%d expect 5)\n", ctxt->argc);

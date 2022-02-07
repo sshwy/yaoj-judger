@@ -12,7 +12,6 @@
 #include "lib/policy.h"
 #include "lib/resouce.h"
 #include "lib/tkill.h"
-#include "runner.h"
 
 static struct timeval start, end;
 

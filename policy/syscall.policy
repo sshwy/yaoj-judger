@@ -356,3 +356,5 @@
 #define landlock_add_rule 445
 #define landlock_restrict_self 446
 #define memfd_secret 447
+#define process_mrelease 448
+#define futex_waitv 449

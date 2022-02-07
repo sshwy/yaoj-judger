@@ -30,7 +30,6 @@
 #include "lib/builtin_hook.h"
 #include "lib/policy.h"
 #include "lib/resouce.h"
-#include "runner.h"
 
 static char ready[] = "ready";
 

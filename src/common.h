@@ -11,7 +11,6 @@
 #define YAOJUDGER_COMMON_H
 
 #include <errno.h>
-#include <linux/filter.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/resource.h>
@@ -26,12 +25,16 @@
 /// wrap the string with ASCII's blue color character
 #define BLUE(s) "\033[34m" s "\033[0m"
 
+#define STRINGIFY(x) #x
+#define TOSTRING(x) STRINGIFY(x)
+#define AT __FILE__ ":" TOSTRING(__LINE__)
+
 extern FILE *log_fp;
 
 /// output formatted messages to the file determined by `log_fp`
 #define LOG_INFO(args...)                                                      \
   do {                                                                         \
-    fprintf(log_fp, GREEN("INFO") "(" __FILE__ ":%d): ", __LINE__);            \
+    fprintf(log_fp, GREEN("INFO") "(" AT "): ");                               \
     fprintf(log_fp, ##args);                                                   \
   } while (0)
 /**
@@ -42,7 +45,7 @@ extern FILE *log_fp;
  */
 #define ERRNO_EXIT(signal, args...)                                            \
   do {                                                                         \
-    fprintf(log_fp, RED("ERROR") "(" __FILE__ ":%d): ", __LINE__);             \
+    fprintf(log_fp, RED("ERROR") "(" AT ") ");                                 \
     fprintf(log_fp, ##args);                                                   \
     errno = signal;                                                            \
     exit(signal);                                                              \
@@ -56,7 +59,7 @@ extern FILE *log_fp;
 #define ASSERT(condition, args...)                                             \
   do {                                                                         \
     if (!(condition)) {                                                        \
-      fprintf(stderr, RED("ERROR") "(" __FILE__ "%d): ", __LINE__);            \
+      fprintf(stderr, RED("ERROR") "(" AT ") ");                               \
       fprintf(stderr, ##args);                                                 \
       exit(1);                                                                 \
     }                                                                          \
@@ -79,6 +82,14 @@ enum result_code {
  * @return int
  */
 enum result_code atorc(char *arg);
+
+/**
+ * @brief Context for all runners.
+ */
+struct runner_ctxt {
+  int argc;
+  char **argv, **env;
+};
 
 /**
  * @brief Describe result of a terminated process.
@@ -140,5 +151,42 @@ struct perform_ctxt {
 };
 
 typedef struct perform_ctxt *perform_ctxt_t;
+
+extern char errmsg[200];
+
+#define SET_ERROR(msg)                                                         \
+  do {                                                                         \
+    strcpy(errmsg, "(" AT "): " msg);                                          \
+  } while (0)
+
+#define SET_ERRORF(args...)                                                    \
+  do {                                                                         \
+    sprintf(errmsg, "(" AT "): " args);                                        \
+  } while (0)
+
+#define EXIT_WITHMSG()                                                         \
+  do {                                                                         \
+    fprintf(log_fp, RED("ERROR") "%s.\n", errmsg);                             \
+    fflush(log_fp);                                                            \
+    exit(1);                                                                   \
+  } while (0)
+
+/**
+ * @brief confirm if the condition is true, otherwise set error message and
+ * return 1
+ */
+#define ASSERT_R1(condition, args...)                                          \
+  do {                                                                         \
+    if (!(condition)) {                                                        \
+      SET_ERRORF(args);                                                        \
+      return 1;                                                                \
+    }                                                                          \
+  } while (0)
+
+#define OER1(condition)                                                        \
+  do {                                                                         \
+    if ((condition) == 1)                                                      \
+      return 1;                                                                \
+  } while (0)
 
 #endif
