@@ -80,6 +80,9 @@ enum result_code {
  */
 enum result_code atorc(char *arg);
 
+/**
+ * @brief Describe result of a terminated process.
+ */
 struct result {
   /// return code of the judgement (often set during perform)
   enum result_code code;
@@ -107,8 +110,6 @@ int max(int a, int b);
 
 /**
  * @brief read the whole file and return a string containing its content.
- * @param fp
- * @return char*
  *
  * fp must be opened with at least read access.
  */
@@ -124,17 +125,17 @@ struct perform_ctxt {
   /// least one fork)
   pid_t pchild;
 
-  int status; //!< child prcess status
-  struct result result;
-  struct rusage rusage;
+  int status;           //!< child process termination status
+  struct rusage rusage; //!< resource usage of child process (getrusage)
+  struct result result; //!< perform result of child process
 
-  /// a pointer at the policy context (used by builtin_hooks).
+  /// pointer at the policy context (used by builtin_hooks).
   struct policy_ctxt *pctxt;
-  /// a pointer at the resouce limitation context (used by builtin_hooks).
+  /// pointer at the resouce limitation context (used by builtin_hooks).
   struct rsclim_ctxt *rctxt;
-  /// a pointer at the runner context.
+  /// pointer at the runner context.
   struct runner_ctxt *ectxt;
-  /// a pointer at the hook context.
+  /// pointer at the hook context.
   struct hook_ctxt *hctxt;
 };
 

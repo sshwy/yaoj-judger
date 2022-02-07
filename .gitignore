@@ -7,3 +7,4 @@ local.*
 tests/**/*.out
 tests/**/*.err
 docs/web
+*.log
