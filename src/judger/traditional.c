@@ -104,15 +104,13 @@ void perform(perform_ctxt_t ctxt) {
 
   if (child_pid == 0) { // child process
     ctxt->pchild = getpid();
-    // set process group ID to itself
-    if (setpgid(0, 0)) {
+    if (setpgid(0, 0)) { // set process group ID to itself
       SET_ERRORF("setpgid failed");
-      close(p_run[1]);
+      write(p_run[1], notready, sizeof(notready));
       EXIT_WITHMSG();
     }
     if (child_prework(ctxt)) {
       write(p_run[1], notready, sizeof(notready));
-      // close(p_run[1]);
       EXIT_WITHMSG();
     }
     write(p_run[1], ready, sizeof(ready));
