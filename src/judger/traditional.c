@@ -93,6 +93,7 @@ void perform(perform_ctxt_t ctxt) {
   int p_run[2];
   ASSERT(pipe(p_run) == 0, "pipe failed");
 
+  register_hook(ctxt->hctxt, BEFORE_FORK, check_runner_duplicate_before_fork);
   register_builtin_hook(ctxt->hctxt);
   if (run_hook_chain(ctxt->hctxt->before_fork, ctxt))
     EXIT_WITHMSG();

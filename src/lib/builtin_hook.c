@@ -15,9 +15,11 @@
 
 static struct timeval start, end;
 
-static int check_runner_duplicate_before_fork(perform_ctxt_t ctxt) {
-  for (int i = 0; i < 4; i++) {
-    for (int j = i + 1; j < 4; j++) {
+// optional builtin hook
+int check_runner_duplicate_before_fork(perform_ctxt_t ctxt) {
+  const int count = ctxt->ectxt->argc;
+  for (int i = 0; i < count; i++) {
+    for (int j = i + 1; j < count; j++) {
       if (strcmp(ctxt->ectxt->argv[i], ctxt->ectxt->argv[j]) == 0) {
         SET_ERRORF("duplicated files! (i=%d, j=%d", i, j);
         return 1;
@@ -127,7 +129,6 @@ void register_builtin_hook(hook_ctxt_t hctxt) {
   // timer_before_fork should be the lastone to invoke
   register_hook(hctxt, BEFORE_FORK, init_result_before_fork);
   register_hook(hctxt, BEFORE_FORK, compile_policy_before_fork);
-  register_hook(hctxt, BEFORE_FORK, check_runner_duplicate_before_fork);
 
   register_hook(hctxt, AFTER_FORK, start_killer_after_fork);
   register_hook(hctxt, AFTER_FORK, timer_after_fork);
