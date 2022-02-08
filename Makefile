@@ -7,6 +7,7 @@ CLI_CFLAG=-lkafel -lpthread -static -I$(PROJECT_ROOT)src -O2 \
 all: kafel $(SUBDIRS)
 	$(CC) main.c -o judger_traditional.local -L./ -ljudger_traditional $(CLI_CFLAG); \
 	$(CC) main.c -o judger_interactive.local -L./ -ljudger_interactive $(CLI_CFLAG); \
+	$(CC) main.c -o judger_general.local -L./ -ljudger_general $(CLI_CFLAG); \
 
 # https://www.gnu.org/software/make/manual/make.html#Overriding
 # https://www.gnu.org/software/make/manual/make.html#Multiple-Targets

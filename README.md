@@ -15,6 +15,10 @@ make                     # 生成 judger_xxx.local 以及一些链接库
 cd tests/traditional/01_DSC   # 测试一下
 gcc main.c -o main.local # 编译测试用的代码
 touch main.out main.err  # 创建测试代码的 stdout, stderr 对应的文件
+
+# 除了使用 `-` 和 `--` 指定的参数，其余参数依次是可执行文件、读入文件、输出文件、错误输出文件、IO类型（std 或者 file）
+# 注意所有文件都要存在（main.out，main.err 至少需要创建空白的文件）
+# interactive 用法类似，详见 src/judger/interactive.c 的注释
 ../../../judger_traditional.local main.local main.in main.out main.err std \
   -r DSC \
   -P ../../../policy \
@@ -98,10 +102,9 @@ Command line interface of judger (for the future yaoj)
 
 ## Todo
 
-- 其他 judger 的开发
+- 其他 judger 的开发（general）
 - 同时考虑到实际运行时间可能与系统状态有关，相比之下 cpu 运行时间在 ban 掉一些系统调用后算相对合理的一种衡量方式，因此需要灵活设置
-- interactor 错误处理，结果判定（？）等，例如对 executable 的资源占用查看（一般情况下不需要，因为交互题不太关注这个）
-- 错误处理！由于 child_proc 直接 exit 会导致 pipe 一直阻塞 parent 进程，使得整个程序不退出，因此需要引入错误码的处理
+- 更好的 API 暴露方式：现在是把 struct 都暴露出来了，最好可以只暴露函数。
 
 ## Reference
 

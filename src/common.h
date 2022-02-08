@@ -78,8 +78,9 @@ enum result_code atorc(char *arg);
  * @brief Context for all runners.
  */
 struct runner_ctxt {
-  int argc;
-  char **argv, **env;
+  int argc;    //!< number of arguments
+  char **argv; //!< argument list end with (char *)NULL
+  char **env;  //!< environment var list end with (char *)NULL
 };
 
 /**

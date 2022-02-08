@@ -61,7 +61,6 @@ void fprint_result(FILE *fp, struct result *pres) {
 }
 
 void fprint_rusage(FILE *fp, struct rusage *rsp) {
-  // 事实上这两个都不靠谱，对 sleep 都不起作用
   fprintf(fp, "ru_utime: %ld %ld\n", rsp->ru_utime.tv_sec,
           rsp->ru_utime.tv_usec);
   fprintf(fp, "ru_stime: %ld %ld\n", rsp->ru_stime.tv_sec,
