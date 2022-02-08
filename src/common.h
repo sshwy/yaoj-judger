@@ -43,20 +43,6 @@ void set_logfile(const char *filename);
 // write(log_fd, log_buf, sizeof(char) * strlen(log_buf));
 
 /**
- * @brief throw an error and then exit.
- *
- * This will also set errno and output error message to the file determined by
- * `log_fp`
- */
-#define ERRNO_EXIT(signal, args...)                                            \
-  do {                                                                         \
-    fprintf(log_fp, RED("ERROR") "(" AT ") ");                                 \
-    fprintf(log_fp, ##args);                                                   \
-    errno = signal;                                                            \
-    exit(signal);                                                              \
-  } while (0)
-
-/**
  * @brief confirm if the condition is true, otherwise exit with code 1.
  *
  * It will directly output error message to stderr.
@@ -158,15 +144,12 @@ struct perform_ctxt {
 typedef struct perform_ctxt *perform_ctxt_t;
 
 extern char errmsg[200];
-
-#define SET_ERROR(msg)                                                         \
-  do {                                                                         \
-    strcpy(errmsg, "(" AT "): " msg);                                          \
-  } while (0)
+extern int error_flag;
 
 #define SET_ERRORF(args...)                                                    \
   do {                                                                         \
     sprintf(errmsg, "(" AT "): " args);                                        \
+    error_flag = 1;                                                            \
   } while (0)
 
 #define EXIT_WITHMSG()                                                         \
@@ -174,24 +157,6 @@ extern char errmsg[200];
     fprintf(log_fp, RED("ERROR") "%s.\n", errmsg);                             \
     fflush(log_fp);                                                            \
     exit(1);                                                                   \
-  } while (0)
-
-/**
- * @brief confirm if the condition is true, otherwise set error message and
- * return 1
- */
-#define ASSERT_R1(condition, args...)                                          \
-  do {                                                                         \
-    if (!(condition)) {                                                        \
-      SET_ERRORF(args);                                                        \
-      return 1;                                                                \
-    }                                                                          \
-  } while (0)
-
-#define OER1(condition)                                                        \
-  do {                                                                         \
-    if ((condition) == 1)                                                      \
-      return 1;                                                                \
   } while (0)
 
 #endif

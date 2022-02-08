@@ -17,6 +17,7 @@ void set_logfile(const char *filename) {
 }
 
 char errmsg[200];
+int error_flag = 0;
 
 int max(int a, int b) { return a > b ? a : b; }
 
