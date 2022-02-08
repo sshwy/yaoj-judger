@@ -36,7 +36,7 @@ char *policy_identifier_handler(const char *content,
 
   // use regular expression for pattern replacement
   regex_t regex;
-  char *re = "%[0-9][0-9]*s";
+  char re[] = "%[0-9][0-9]*s";
   ASSERT(regcomp(&regex, re, REG_NEWLINE) == 0, "regex compile failed.");
 
   const char *s = content;
@@ -90,29 +90,34 @@ char *policy_identifier_handler(const char *content,
   return result;
 }
 
-void compile_policy_before_fork(perform_ctxt_t per_ctxt) {
+int compile_policy_before_fork(perform_ctxt_t per_ctxt) {
   char *esc_content =
       policy_identifier_handler(per_ctxt->pctxt->content, per_ctxt);
   struct sock_fprog prog;
   kafel_ctxt_t kctxt = kafel_ctxt_create();
   kafel_set_input_string(kctxt, esc_content);
   kafel_add_include_search_path(kctxt, per_ctxt->pctxt->dirname);
-  ASSERT(kafel_compile(kctxt, &prog) == 0, "policy compilation failed: %s",
-         kafel_error_msg(kctxt));
+  if (kafel_compile(kctxt, &prog)) {
+    SET_ERRORF("policy compilation failed: %s", kafel_error_msg(kctxt));
+    return 1;
+  }
   kafel_ctxt_destroy(&kctxt);
   LOG_INFO("compile policy \"%s\" succeed.\n", per_ctxt->pctxt->policy);
   per_ctxt->pctxt->prog = prog;
+  return 0;
 }
 
-void apply_policy_prog(struct sock_fprog prog) {
-  ASSERT(prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) == 0,
-         "error applying policy.\n");
-  ASSERT(prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &prog, 0, 0) == 0,
-         "error applying policy.\n");
-
+int apply_policy_prog(struct sock_fprog prog) {
+  if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) ||
+      prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &prog, 0, 0)) {
+    SET_ERRORF("error applying policy");
+    return 1;
+  }
   free(prog.filter);
   LOG_INFO("apply policy succeed.\n");
+  return 0;
 }
-void apply_policy(perform_ctxt_t per_ctxt) {
-  apply_policy_prog(per_ctxt->pctxt->prog);
+
+int apply_policy(perform_ctxt_t per_ctxt) {
+  return apply_policy_prog(per_ctxt->pctxt->prog);
 }

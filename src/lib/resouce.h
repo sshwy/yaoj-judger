@@ -14,8 +14,11 @@ struct rsclim_ctxt {
   int output_size;    //!< in bytes. 0 for unlimited.
 };
 
-void apply_resource_limit(perform_ctxt_t ctxt);
+/**
+ * @return 0 on success, 1 otherwise
+ */
+int apply_resource_limit(perform_ctxt_t ctxt);
 
-void get_usage_after_wait(perform_ctxt_t ctxt);
+int get_usage_after_wait(perform_ctxt_t ctxt);
 
 #endif

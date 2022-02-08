@@ -27,10 +27,14 @@ struct policy_ctxt {
    */
   struct sock_fprog prog;
 };
+
 struct policy_ctxt create_policy_ctxt(char *dirname, char *policy);
 
-void compile_policy_before_fork(perform_ctxt_t per_ctxt);
+int compile_policy_before_fork(perform_ctxt_t per_ctxt);
 
-void apply_policy(perform_ctxt_t per_ctxt);
+/**
+ * @return 0 on success, 1 otherwise
+ */
+int apply_policy(perform_ctxt_t per_ctxt);
 
 #endif

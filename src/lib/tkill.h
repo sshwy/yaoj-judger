@@ -12,7 +12,7 @@ struct tkill_ctxt {
   int time;  //!< int milliseconds.
 };
 
-void start_killer_after_fork(perform_ctxt_t ctxt);
-void stop_killer_after_wait(perform_ctxt_t ctxt);
+int start_killer_after_fork(perform_ctxt_t ctxt);
+int stop_killer_after_wait(perform_ctxt_t ctxt);
 
 #endif

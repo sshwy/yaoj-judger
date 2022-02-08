@@ -3,6 +3,6 @@
 
 #include "hook.h"
 
-void register_builtin_hook(struct hook_ctxt *hctxt);
+void register_builtin_hook(hook_ctxt_t hctxt);
 
 #endif

@@ -2,7 +2,7 @@
 #include "common.h"
 #include "lib/resouce.h"
 
-void *timeout_killer(void *_tkill_ctxt) {
+void *timeout_killer(void *_tkill_ctxt) { // return void specified!
   struct tkill_ctxt *ctxt = _tkill_ctxt;
   // this is a new thread, kill the process if timeout
   pid_t pid = ctxt->pid;
@@ -28,33 +28,41 @@ void *timeout_killer(void *_tkill_ctxt) {
   return NULL;
 }
 
-pthread_t start_timeout_killer(struct tkill_ctxt *tctxtp) {
-  pthread_t tid = 0;
-  if (pthread_create(&tid, NULL, timeout_killer, (void *)(tctxtp)) != 0) {
+int start_timeout_killer(struct tkill_ctxt *tctxtp, pthread_t *tidp) {
+  *tidp = 0;
+  if (pthread_create(tidp, NULL, timeout_killer, (void *)(tctxtp)) != 0) {
     // make sure pgid has set for child
     killpg(tctxtp->pid, SIGKILL);
-    ASSERT(0, "pthread_create failed\n");
+    SET_ERRORF("pthread_create failed");
+    return 1;
   }
-  return tid;
+  return 0;
 }
 
-void stop_timeout_killer(pthread_t tid) {
+int stop_timeout_killer(pthread_t tid) {
   int signal;
   if ((signal = pthread_cancel(tid) != 0)) {
-    // LOG_INFO("pthread_cancel: return %d\n", signal);
+    return signal; // let others handle exception
   };
+  return 0;
 }
 
 static pthread_t tid = 0;
-void start_killer_after_fork(perform_ctxt_t ctxt) {
-  struct tkill_ctxt tctxt = {.pid = ctxt->pchild, .time = ctxt->rctxt->time};
+
+int start_killer_after_fork(perform_ctxt_t ctxt) {
+  struct tkill_ctxt tctxt = {
+      .pid = ctxt->pchild,
+      .time = ctxt->rctxt->time,
+  };
   if (ctxt->rctxt->time != RSC_UNLIMITED) {
-    tid = start_timeout_killer(&tctxt);
+    return start_timeout_killer(&tctxt, &tid); // let others handle exception
   }
+  return 0;
 }
 
-void stop_killer_after_wait(perform_ctxt_t ctxt) {
+int stop_killer_after_wait(perform_ctxt_t ctxt) {
   if (ctxt->rctxt->time != RSC_UNLIMITED) {
-    stop_timeout_killer(tid);
+    return stop_timeout_killer(tid); // lohe
   }
+  return 0;
 }

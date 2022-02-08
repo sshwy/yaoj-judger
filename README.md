@@ -101,6 +101,7 @@ Command line interface of judger (for the future yaoj)
 - 其他 judger 的开发
 - 同时考虑到实际运行时间可能与系统状态有关，相比之下 cpu 运行时间在 ban 掉一些系统调用后算相对合理的一种衡量方式，因此需要灵活设置
 - interactor 错误处理，结果判定（？）等，例如对 executable 的资源占用查看（一般情况下不需要，因为交互题不太关注这个）
+- 错误处理！由于 child_proc 直接 exit 会导致 pipe 一直阻塞 parent 进程，使得整个程序不退出，因此需要引入错误码的处理
 
 ## Reference
 

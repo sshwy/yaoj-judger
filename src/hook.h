@@ -12,7 +12,11 @@
 
 #include "common.h"
 
-typedef void (*hook_func_t)(perform_ctxt_t);
+/**
+ * @brief Hook function definition
+ * @return 0 on success, 1 otherwise
+ */
+typedef int (*hook_func_t)(perform_ctxt_t);
 
 /**
  * @brief Link list storing hook functions. Note that it's a typical FILO list
@@ -22,6 +26,7 @@ struct hook_chain {
   hook_func_t hook;
   struct hook_chain *next;
 };
+
 typedef struct hook_chain *hook_chain_t;
 
 /**
@@ -36,6 +41,8 @@ struct hook_ctxt {
   hook_chain_t after_wait;
 };
 
+typedef struct hook_ctxt *hook_ctxt_t;
+
 /**
  * @brief See hook_ctxt.
  */
@@ -49,19 +56,18 @@ enum HOOK_TYPE {
  * @brief Run all hooks one by one in the list with context specified.
  * @param phead Header of the hook chain.
  * @param ctxt Provide the perform context.
+ * @return 0 on success, 1 otherwise
  */
-void run_hook_chain(hook_chain_t phead, perform_ctxt_t ctxt);
+int run_hook_chain(hook_chain_t phead, perform_ctxt_t ctxt);
 
 /**
  * @brief Create an empty hook chain, returning its head pointer.
- * @return struct hook_chain*
  */
 hook_chain_t create_hook_chain();
 
 hook_chain_t pushfront_hook(hook_chain_t phead, hook_func_t hook);
 
-void register_hook(struct hook_ctxt *ctxt, enum HOOK_TYPE type,
-                   hook_func_t hook);
+void register_hook(hook_ctxt_t ctxt, enum HOOK_TYPE type, hook_func_t hook);
 
 struct hook_ctxt create_hook_ctxt();
 #endif

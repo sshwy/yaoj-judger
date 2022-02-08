@@ -15,41 +15,50 @@
 
 static struct timeval start, end;
 
-static void check_runner_duplicate_before_fork(perform_ctxt_t ctxt) {
+static int check_runner_duplicate_before_fork(perform_ctxt_t ctxt) {
   for (int i = 0; i < 4; i++) {
     for (int j = i + 1; j < 4; j++) {
-      ASSERT(strcmp(ctxt->ectxt->argv[i], ctxt->ectxt->argv[j]) != 0,
-             "duplicated files! (i=%d, j=%d", i, j);
+      if (strcmp(ctxt->ectxt->argv[i], ctxt->ectxt->argv[j]) == 0) {
+        SET_ERRORF("duplicated files! (i=%d, j=%d", i, j);
+        return 1;
+      }
     }
   }
+  return 0;
 }
 
-static void timer_after_fork(perform_ctxt_t ctxt) {
+static int timer_after_fork(perform_ctxt_t ctxt) {
   // actually immediately after receiving "ready to run"
   LOG_INFO("get start time.\n");
   gettimeofday(&start, NULL);
+  return 0;
 }
 
-static void timer_after_wait(perform_ctxt_t ctxt) {
+static int timer_after_wait(perform_ctxt_t ctxt) {
   gettimeofday(&end, NULL);
   ctxt->result.real_time = (int)(end.tv_sec * 1000 + end.tv_usec / 1000 -
                                  start.tv_sec * 1000 - start.tv_usec / 1000);
   LOG_INFO("get end time, real time: %.3lfs\n",
            ctxt->result.real_time / 1000.0);
+  return 0;
 }
 
-static void init_result_before_fork(perform_ctxt_t ctxt) {
+static int init_result_before_fork(perform_ctxt_t ctxt) {
   ctxt->result.code = SE;
   ctxt->result.exit_code = 0;
   ctxt->result.signal = 0;
   ctxt->result.real_memory = 0;
   ctxt->result.real_time = 0;
   // automatically close log_fp when invoke exec*
-  ASSERT(fcntl(fileno(log_fp), F_SETFD, FD_CLOEXEC) != -1, "set fd failed.\n");
+  if (fcntl(fileno(log_fp), F_SETFD, FD_CLOEXEC) == -1) {
+    SET_ERRORF("set fd failed");
+    return 1;
+  }
   LOG_INFO("init ctxt before fork.\n");
+  return 0;
 }
 
-static void analyze_after_wait(perform_ctxt_t ctxt) {
+static int analyze_after_wait(perform_ctxt_t ctxt) {
   ctxt->result.real_memory = ctxt->rusage.ru_maxrss;
 
   if (WIFSIGNALED(ctxt->status)) {
@@ -89,7 +98,10 @@ static void analyze_after_wait(perform_ctxt_t ctxt) {
     }
 
   } else {
-    ASSERT(WIFEXITED(ctxt->status), "assertion failed.\n");
+    if (WIFEXITED(ctxt->status) == 0) {
+      SET_ERRORF("assertion failed");
+      return 1;
+    }
     LOG_INFO("child process exited with code %d.\n", WEXITSTATUS(ctxt->status));
 
     ctxt->result.exit_code = WEXITSTATUS(ctxt->status);
@@ -107,9 +119,10 @@ static void analyze_after_wait(perform_ctxt_t ctxt) {
     }
   }
   LOG_INFO("analyzed result.\n");
+  return 0;
 }
 
-void register_builtin_hook(struct hook_ctxt *hctxt) {
+void register_builtin_hook(hook_ctxt_t hctxt) {
   // timer_before_fork should be the lastone to invoke
   register_hook(hctxt, BEFORE_FORK, init_result_before_fork);
   register_hook(hctxt, BEFORE_FORK, compile_policy_before_fork);

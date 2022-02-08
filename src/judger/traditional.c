@@ -25,55 +25,77 @@
 #include "lib/policy.h"
 #include "lib/resouce.h"
 
-void runner_prework(const struct runner_ctxt *ctxt) {
-  ASSERT(ctxt->argc == 5, "invalid arguments (argc=%d expect 5)\n", ctxt->argc);
+int runner_prework(const struct runner_ctxt *ctxt) {
+  if (ctxt->argc != 5) {
+    SET_ERRORF("invalid arguments (argc=%d expect 5)\n", ctxt->argc);
+    return 1;
+  }
 
   if (strcmp(ctxt->argv[4], "std") == 0) {
     const int input_fd = open(ctxt->argv[1], O_RDONLY),
               output_fd = open(ctxt->argv[2], O_WRONLY | O_TRUNC);
 
     if (input_fd < 0 || output_fd < 0) {
-      ERRNO_EXIT(errno, "open fd failed.\n");
+      SET_ERRORF("open \"%s\" or \"%s\" failed", ctxt->argv[1], ctxt->argv[2]);
+      return 1;
     }
 
-    ASSERT(dup2(input_fd, fileno(stdin)) >= 0, "dup2 failed.\n");
-    ASSERT(dup2(output_fd, fileno(stdout)) >= 0, "dup2 failed.\n");
+    if (dup2(input_fd, fileno(stdin)) < 0 ||
+        dup2(output_fd, fileno(stdout)) < 0) {
+      SET_ERRORF("dup2 failed");
+      return 1;
+    }
   } else {
-    ASSERT(strcmp(ctxt->argv[4], "file") == 0, "invalid token %s",
-           ctxt->argv[4]);
+    if (strcmp(ctxt->argv[4], "file") != 0) {
+      SET_ERRORF("invalid token %s", ctxt->argv[4]);
+      return 1;
+    }
   }
 
   // whether is standard IO or file IO, we redirect its stderr stream.
   const int error_fd = open(ctxt->argv[3], O_WRONLY | O_TRUNC);
-  ASSERT(error_fd >= 0, "open fd failed.\n");
-  ASSERT(dup2(error_fd, fileno(stderr)) >= 0, "dup2 failed.\n");
+  if (error_fd < 0) {
+    SET_ERRORF("open fd failed");
+    return 1;
+  }
+  if (dup2(error_fd, fileno(stderr)) < 0) {
+    SET_ERRORF("dup2 failed");
+    return 1;
+  }
+  return 0;
 }
 
 void runner_run(const struct runner_ctxt *ctxt) {
   execl(ctxt->argv[0], "main", (char *)NULL);
 }
 
-void child_prework(perform_ctxt_t ctxt) {
+int child_prework(perform_ctxt_t ctxt) {
   LOG_INFO("perform child (%d)\n", ctxt->pchild);
   // sleep(1); // simulate heavy work
-  runner_prework(ctxt->ectxt);
-  apply_resource_limit(ctxt);
-  apply_policy(ctxt);
+  if (runner_prework(ctxt->ectxt))
+    return 1;
+  if (apply_resource_limit(ctxt))
+    return 1;
+  if (apply_policy(ctxt))
+    return 1;
   fflush(log_fp);
+  return 0;
 }
 
 void child_run(perform_ctxt_t ctxt) { runner_run(ctxt->ectxt); }
 
-static char ready[] = "ready";
-
 void perform(perform_ctxt_t ctxt) {
+  const char ready[] = "ready";
+  const char notready[] = "not";
+
   ctxt->pself = getpid();
   ctxt->pchild = -1;
   int p_run[2];
   ASSERT(pipe(p_run) == 0, "pipe failed");
 
   register_builtin_hook(ctxt->hctxt);
-  run_hook_chain(ctxt->hctxt->before_fork, ctxt);
+  if (run_hook_chain(ctxt->hctxt->before_fork, ctxt))
+    EXIT_WITHMSG();
   fflush(log_fp); // avoid multi logging
 
   // fork child process
@@ -83,8 +105,16 @@ void perform(perform_ctxt_t ctxt) {
   if (child_pid == 0) { // child process
     ctxt->pchild = getpid();
     // set process group ID to itself
-    ASSERT(setpgid(0, 0) == 0, "setpgid failed.\n");
-    child_prework(ctxt);
+    if (setpgid(0, 0)) {
+      SET_ERRORF("setpgid failed");
+      close(p_run[1]);
+      EXIT_WITHMSG();
+    }
+    if (child_prework(ctxt)) {
+      write(p_run[1], notready, sizeof(notready));
+      // close(p_run[1]);
+      EXIT_WITHMSG();
+    }
     write(p_run[1], ready, sizeof(ready));
     child_run(ctxt);
     exit(1); // child process doesn't terminate
@@ -94,18 +124,25 @@ void perform(perform_ctxt_t ctxt) {
 
   // wait until child send "ready"
   char receive[6];
-  read(p_run[0], receive, sizeof(ready));
+  if (read(p_run[0], receive, sizeof(ready)) != sizeof(ready)) {
+    SET_ERRORF("child process not ready");
+    EXIT_WITHMSG();
+  }
 
   LOG_INFO("parent (%d) child (%d)\n", ctxt->pself, ctxt->pchild);
-  run_hook_chain(ctxt->hctxt->after_fork, ctxt);
+  if (run_hook_chain(ctxt->hctxt->after_fork, ctxt))
+    EXIT_WITHMSG();
 
   int status;
   if (waitpid(child_pid, &status, WUNTRACED) == -1) {
     killpg(child_pid, SIGKILL);
-    ERRNO_EXIT(-1, "wait failed.\n");
+    SET_ERRORF("wait failed");
+    EXIT_WITHMSG();
   }
 
   ctxt->status = status;
-  run_hook_chain(ctxt->hctxt->after_wait, ctxt);
+  if (run_hook_chain(ctxt->hctxt->after_wait, ctxt)) {
+    EXIT_WITHMSG();
+  }
   LOG_INFO("judge finished.\n");
 }
