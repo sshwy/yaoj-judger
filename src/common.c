@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/resource.h>
 
 #include "common.h"
 
@@ -50,12 +49,15 @@ void fprint_result(FILE *fp, struct result *pres) {
       [ECE] = "Exit Code Exception",
   };
   fprintf(fp,
-          "result: \033[33m\"%s\"\033[0m real_time=%.3lfs real_memory=%.3lfMB "
+          "result: \033[33m\"%s\"\033[0m "
+          "real_time=%.3lfs "
+          "cpu_time=%.3lfs "
+          "real_memory=%.3lfMB "
           "code=%d signal=%d "
           "exit_code=%d\n",
           code_name[pres->code], pres->real_time / 1000.0,
-          pres->real_memory / 1000.0, pres->code, pres->signal,
-          pres->exit_code);
+          pres->cpu_time / 1000.0, pres->real_memory / 1000.0, pres->code,
+          pres->signal, pres->exit_code);
 }
 
 void fprint_rusage(FILE *fp, struct rusage *rsp) {
@@ -94,4 +96,8 @@ enum result_code atorc(char *arg) {
   }
   ASSERT(0, "\"%s\" doesn't match any result code name.\n", arg);
   return 0;
+}
+
+int to_millisecond(struct timeval tv) {
+  return (int)(tv.tv_sec * 1000 + tv.tv_usec / 1000);
 }

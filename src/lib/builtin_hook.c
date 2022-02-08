@@ -36,8 +36,7 @@ static int timer_after_fork(perform_ctxt_t ctxt) {
 
 static int timer_after_wait(perform_ctxt_t ctxt) {
   gettimeofday(&end, NULL);
-  ctxt->result.real_time = (int)(end.tv_sec * 1000 + end.tv_usec / 1000 -
-                                 start.tv_sec * 1000 - start.tv_usec / 1000);
+  ctxt->result.real_time = to_millisecond(end) - to_millisecond(start);
   LOG_INFO("get end time, real time: %.3lfs", ctxt->result.real_time / 1000.0);
   return 0;
 }

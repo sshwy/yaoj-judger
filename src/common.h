@@ -91,6 +91,7 @@ struct result {
   int signal;      //!< terminate signal raised by child process
   int exit_code;   //!< exit code of child process
   int real_time;   //!< in milliseconds.
+  int cpu_time;    //!< in milliseconds.
   int real_memory; //!< in kb.
 };
 void fprint_result(FILE *fp, struct result *resp);
@@ -158,5 +159,7 @@ extern int error_flag;
     fflush(log_fp);                                                            \
     exit(1);                                                                   \
   } while (0)
+
+int to_millisecond(struct timeval tv);
 
 #endif
