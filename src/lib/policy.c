@@ -27,8 +27,8 @@ struct policy_ctxt create_policy_ctxt(char *dirname, char *policy) {
  * @param per_ctxt
  * @param result
  */
-char *policy_identifier_handler(const char *content,
-                                const perform_ctxt_t per_ctxt) {
+int policy_identifier_handler(const char *content,
+                              const perform_ctxt_t per_ctxt, char **res) {
 #define ALLOC_UNIT 100
   int res_size = strlen(content) + ALLOC_UNIT, res_len = 0;
   char *result = malloc(res_size * sizeof(char));
@@ -37,7 +37,10 @@ char *policy_identifier_handler(const char *content,
   // use regular expression for pattern replacement
   regex_t regex;
   char re[] = "%[0-9][0-9]*s";
-  ASSERT(regcomp(&regex, re, REG_NEWLINE) == 0, "regex compile failed.");
+  if (regcomp(&regex, re, REG_NEWLINE)) {
+    SET_ERRORF("regex compile failed");
+    return 1;
+  }
 
   const char *s = content;
   regmatch_t pmatch[1];
@@ -57,7 +60,10 @@ char *policy_identifier_handler(const char *content,
       strncpy(num_str, content + offset + 1, len - 2);
       num_str[len - 1] = 0;
       num = atoi(num_str);
-      ASSERT(0 <= num && num < per_ctxt->ectxt->argc, "invalid num (%d)", num);
+      if (!(0 <= num && num < per_ctxt->ectxt->argc)) {
+        SET_ERRORF("invalid num (%d)", num);
+        return 1;
+      }
       sprintf(address, "%p", per_ctxt->ectxt->argv[num]);
     } else {
       offset = strlen(content);
@@ -72,7 +78,10 @@ char *policy_identifier_handler(const char *content,
     }
     if (resize_flag) {
       result = realloc(result, res_size * sizeof(char));
-      ASSERT(result != NULL, "realloc error\n");
+      if (result == NULL) {
+        SET_ERRORF("realloc error");
+        return 1;
+      }
     }
 
     // update result
@@ -87,12 +96,15 @@ char *policy_identifier_handler(const char *content,
 
     s += pmatch[0].rm_eo;
   }
-  return result;
+  *res = result;
+  return 0;
 }
 
 int compile_policy_before_fork(perform_ctxt_t per_ctxt) {
-  char *esc_content =
-      policy_identifier_handler(per_ctxt->pctxt->content, per_ctxt);
+  char *esc_content;
+  if (policy_identifier_handler(per_ctxt->pctxt->content, per_ctxt,
+                                &esc_content))
+    return 1;
   struct sock_fprog prog;
   kafel_ctxt_t kctxt = kafel_ctxt_create();
   kafel_set_input_string(kctxt, esc_content);
@@ -102,7 +114,7 @@ int compile_policy_before_fork(perform_ctxt_t per_ctxt) {
     return 1;
   }
   kafel_ctxt_destroy(&kctxt);
-  LOG_INFO("compile policy \"%s\" succeed.\n", per_ctxt->pctxt->policy);
+  LOG_INFO("compile policy \"%s\" succeed", per_ctxt->pctxt->policy);
   per_ctxt->pctxt->prog = prog;
   return 0;
 }
@@ -114,7 +126,7 @@ int apply_policy_prog(struct sock_fprog prog) {
     return 1;
   }
   free(prog.filter);
-  LOG_INFO("apply policy succeed.\n");
+  LOG_INFO("apply policy succeed");
   return 0;
 }
 

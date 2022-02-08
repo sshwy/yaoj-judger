@@ -81,10 +81,7 @@ int main(int argc, char **argv, char **env) {
   parse_argv[parsed_argc] = NULL;
   // for (int i = 0; i < parsed_argc; i++) printf(": %s\n", parse_argv[i]);
 
-  log_fp = fopen(".log.local", "w");
-  if (log_fp == NULL) {
-    ERRNO_EXIT(-1, "log_fp == NULL");
-  }
+  set_logfile(".log.local");
 
   // please replace the first argument with yours <yaoj-judger>/policy (absolue
   // path is recommended)

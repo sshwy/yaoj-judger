@@ -70,7 +70,7 @@ void runner_run(const struct runner_ctxt *ctxt) {
 }
 
 int child_prework(perform_ctxt_t ctxt) {
-  LOG_INFO("perform child (%d)\n", ctxt->pchild);
+  LOG_INFO("perform child (%d)", ctxt->pchild);
   // sleep(1); // simulate heavy work
   if (runner_prework(ctxt->ectxt))
     return 1;
@@ -129,7 +129,7 @@ void perform(perform_ctxt_t ctxt) {
     EXIT_WITHMSG();
   }
 
-  LOG_INFO("parent (%d) child (%d)\n", ctxt->pself, ctxt->pchild);
+  LOG_INFO("parent (%d) child (%d)", ctxt->pself, ctxt->pchild);
   if (run_hook_chain(ctxt->hctxt->after_fork, ctxt))
     EXIT_WITHMSG();
 

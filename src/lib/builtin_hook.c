@@ -38,8 +38,7 @@ static int timer_after_wait(perform_ctxt_t ctxt) {
   gettimeofday(&end, NULL);
   ctxt->result.real_time = (int)(end.tv_sec * 1000 + end.tv_usec / 1000 -
                                  start.tv_sec * 1000 - start.tv_usec / 1000);
-  LOG_INFO("get end time, real time: %.3lfs\n",
-           ctxt->result.real_time / 1000.0);
+  LOG_INFO("get end time, real time: %.3lfs", ctxt->result.real_time / 1000.0);
   return 0;
 }
 
@@ -54,7 +53,7 @@ static int init_result_before_fork(perform_ctxt_t ctxt) {
     SET_ERRORF("set fd failed");
     return 1;
   }
-  LOG_INFO("init ctxt before fork.\n");
+  LOG_INFO("init ctxt before fork");
   return 0;
 }
 
@@ -62,8 +61,7 @@ static int analyze_after_wait(perform_ctxt_t ctxt) {
   ctxt->result.real_memory = ctxt->rusage.ru_maxrss;
 
   if (WIFSIGNALED(ctxt->status)) {
-    LOG_INFO("child process terminated by signal %d.\n",
-             WTERMSIG(ctxt->status));
+    LOG_INFO("child process terminated by signal %d", WTERMSIG(ctxt->status));
 
     ctxt->result.signal = WTERMSIG(ctxt->status);
 
@@ -102,7 +100,7 @@ static int analyze_after_wait(perform_ctxt_t ctxt) {
       SET_ERRORF("assertion failed");
       return 1;
     }
-    LOG_INFO("child process exited with code %d.\n", WEXITSTATUS(ctxt->status));
+    LOG_INFO("child process exited with code %d", WEXITSTATUS(ctxt->status));
 
     ctxt->result.exit_code = WEXITSTATUS(ctxt->status);
     if (WEXITSTATUS(ctxt->status) == 0) {
@@ -118,7 +116,7 @@ static int analyze_after_wait(perform_ctxt_t ctxt) {
       ctxt->result.code = ECE;
     }
   }
-  LOG_INFO("analyzed result.\n");
+  LOG_INFO("analyzed result");
   return 0;
 }
 
@@ -136,5 +134,5 @@ void register_builtin_hook(hook_ctxt_t hctxt) {
   register_hook(hctxt, AFTER_WAIT, get_usage_after_wait);
   register_hook(hctxt, AFTER_WAIT, timer_after_wait);
 
-  LOG_INFO("register builtin hook. (%d)\n", getpid());
+  LOG_INFO("register builtin hook (%d)", getpid());
 }

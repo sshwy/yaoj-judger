@@ -30,13 +30,18 @@
 #define AT __FILE__ ":" TOSTRING(__LINE__)
 
 extern FILE *log_fp;
+extern int log_fd;
+extern char log_buf[1000];
+
+void set_logfile(const char *filename);
 
 /// output formatted messages to the file determined by `log_fp`
-#define LOG_INFO(args...)                                                      \
+#define LOG_INFO(fmt, args...)                                                 \
   do {                                                                         \
-    fprintf(log_fp, GREEN("INFO") "(" AT "): ");                               \
-    fprintf(log_fp, ##args);                                                   \
+    fprintf(log_fp, GREEN("INFO") "(" AT "): " fmt ".\n", ##args);             \
   } while (0)
+// write(log_fd, log_buf, sizeof(char) * strlen(log_buf));
+
 /**
  * @brief throw an error and then exit.
  *

@@ -48,8 +48,7 @@ int parse_opt(int key, char *arg, struct argp_state *state) {
     rctxt.stack_memory = atoi(arg) * MB;
     break;
   case 774:
-    log_fp = fopen(arg, "w");
-    ASSERT(log_fp != NULL, "invalid log file\n");
+    set_logfile(arg);
   case 'g':
     rctxt.output_size = atoi(arg) * MB;
     break;
@@ -81,8 +80,6 @@ int parse_opt(int key, char *arg, struct argp_state *state) {
 }
 
 int main(int argc, char **argv, char **env) {
-  log_fp = NULL;
-
   struct argp_option options[] = {
       {"timeout", 't', "TIMEOUT", 0, "specify the time limit in milliseconds"},
       {"memory", 'm', "MEMORY", 0, "specify all three memory limits in MB"},
@@ -109,9 +106,6 @@ int main(int argc, char **argv, char **env) {
 
   parse_argv[parsed_argc] = NULL;
   // for (int i = 0; i < parsed_argc; i++) printf(": %s\n", parse_argv[i]);
-
-  // log_fp = fopen(".log.local", "w");
-  ASSERT(log_fp != NULL, "log_fp == NULL");
 
   struct policy_ctxt pctxt = create_policy_ctxt(policy_dir, policy);
 

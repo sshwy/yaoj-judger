@@ -1,11 +1,21 @@
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/resource.h>
 
 #include "common.h"
 
-FILE *log_fp;
+FILE *log_fp = NULL;
+int log_fd = -1;
+char log_buf[1000];
+
+void set_logfile(const char *filename) {
+  log_fp = fopen(filename, "w");
+  ASSERT(log_fp != NULL, "invalid log file\n");
+  log_fd = fileno(log_fp);
+}
+
 char errmsg[200];
 
 int max(int a, int b) { return a > b ? a : b; }
