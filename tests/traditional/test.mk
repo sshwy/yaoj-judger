@@ -9,7 +9,7 @@ test: compile
 		main.local main.in main.out main.err $(IO)
 
 compile:
-	$(CC) main.c -o main.local
+	$(CC) main.c -o main.local $(EXTRA_FLAG)
 
 clean:
 	$(RM) main.local .log.local main.out main.err
