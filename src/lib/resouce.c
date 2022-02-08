@@ -75,6 +75,7 @@ int get_usage_after_wait(perform_ctxt_t ctxt) {
   }
   // fprint_rusage(log_fp, &r2);
   ctxt->rusage = r2;
+  LOG_INFO("get rusage succeed");
   return 0;
 }
 

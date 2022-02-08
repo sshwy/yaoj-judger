@@ -62,7 +62,10 @@ int start_killer_after_fork(perform_ctxt_t ctxt) {
 
 int stop_killer_after_wait(perform_ctxt_t ctxt) {
   if (ctxt->rctxt->time != RSC_UNLIMITED) {
-    return stop_timeout_killer(tid); // lohe
+    if (stop_timeout_killer(tid)) {
+      LOG_INFO("[ignored] stop timeout killer failed");
+      return 0;
+    }
   }
   return 0;
 }
