@@ -2,9 +2,17 @@
 
 （大概）是新一代 OJ 评测模块！
 
-虽然没啥新 feature……
+基于 [kafel](https://github.com/google/kafel) 的一个沙箱模块，支持资源用度报告。主要用于 OI/ACM 的代码评测。
 
-不过代码是手撸的，很新！
+项目核心：在限制条件下执行某一程序（可能带参数）并得到相应的运行结果分析。
+
+## Features
+
+- 使用 C 语言编写，直接调用系统 API
+- 模块化架构，易于扩展，目前已支持：传统题、交互题、任意命令的执行
+- 使用 [kafel](https://github.com/google/kafel) 配置更易读的 syscall 限制策略，并添加扩展语法以实现在运行时动态加载策略
+- rlimit + rusage + pthread 全面限制/监控进程的资源使用
+- 可以实现大家梦寐以求（？）的 CCF 数组开爆的功能（即数组超过空间限制直接 MLE）
 
 ## Getting Start
 
@@ -49,12 +57,6 @@ Command line interface of judger (for the future yaoj)
 ```
 
 对于更多使用方法，您可以去 [tests/](https://github.com/sshwy/yaoj-judger/tree/master/tests) 了解一下！
-
-## Overview
-
-基于 [kafel](https://github.com/google/kafel) 的一个沙箱模块。主要用于 OI/ACM 的代码评测。
-
-本项目只关注核心：在限制条件下执行某一程序（参数）并得到相应的运行结果分析。
 
 ## Design
 
@@ -102,9 +104,10 @@ Command line interface of judger (for the future yaoj)
 
 ## Todo
 
-- 其他 judger 的开发（general）
-- 同时考虑到实际运行时间可能与系统状态有关，相比之下 cpu 运行时间在 ban 掉一些系统调用后算相对合理的一种衡量方式，因此需要灵活设置
-- 更好的 API 暴露方式：现在是把 struct 都暴露出来了，最好可以只暴露函数。
+- cpu time 与 real time 分开限制：同时考虑到实际运行时间可能与系统状态有关，相比之下 cpu 运行时间在 ban 掉一些系统调用后算相对合理的一种衡量方式，因此需要灵活设置
+- 更好的 API 暴露方式：现在是把 struct 都暴露出来了，最好可以只暴露函数，方便处理一些
+- 更优秀的 cli：目前的 cli 还是过于难读，而且没有自动补全，敲起来很废脑子，可以考虑读取配置文件运行，或者简单交互式 cli
+- 国际化：English readme
 
 ## Reference
 
