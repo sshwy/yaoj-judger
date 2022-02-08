@@ -38,7 +38,7 @@ int apply_resource_limit_rsc(struct rsclim_ctxt *rctxt) {
     // 实际上只限制了 CPU 的时间，可以看作一个 hard limit，真要干还是得开线程
     if (set_rlimit(RLIMIT_CPU, time_ins, CPU_TIME_H_LIMIT))
       return 1;
-    LOG_INFO("set cpu time (RLIMIT_CPU): %ds\n", time_ins);
+    LOG_INFO("set cpu time (RLIMIT_CPU): %ds", time_ins);
   }
 
   if (rctxt->virtual_memory > 0) {
@@ -47,21 +47,21 @@ int apply_resource_limit_rsc(struct rsclim_ctxt *rctxt) {
     if (set_rlimit(RLIMIT_AS, rctxt->virtual_memory,
                    max(rctxt->virtual_memory, AS_H_LIMIT)))
       return 1;
-    LOG_INFO("set memory limit: %.3lf KB\n", rctxt->virtual_memory * 1.0 / KB);
+    LOG_INFO("set memory limit: %.3lf KB", rctxt->virtual_memory * 1.0 / KB);
   }
 
   if (rctxt->output_size > 0) {
     if (set_rlimit(RLIMIT_FSIZE, rctxt->output_size,
                    max(rctxt->output_size, FSIZE_H_LIMIT)))
       return 1;
-    LOG_INFO("set output limit: %.3lf KB\n", rctxt->output_size * 1.0 / KB);
+    LOG_INFO("set output limit: %.3lf KB", rctxt->output_size * 1.0 / KB);
   }
 
   if (rctxt->stack_memory > 0) {
     if (set_rlimit(RLIMIT_STACK, rctxt->stack_memory,
                    max(rctxt->stack_memory, STACK_H_LIMIT)))
       return 1;
-    LOG_INFO("set stack memory limit: %.3lf KB\n",
+    LOG_INFO("set stack memory limit: %.3lf KB",
              rctxt->stack_memory * 1.0 / KB);
   }
   return 0;

@@ -29,7 +29,7 @@ static int check_runner_duplicate_before_fork(perform_ctxt_t ctxt) {
 
 static int timer_after_fork(perform_ctxt_t ctxt) {
   // actually immediately after receiving "ready to run"
-  LOG_INFO("get start time.\n");
+  LOG_INFO("get start time");
   gettimeofday(&start, NULL);
   return 0;
 }
@@ -90,6 +90,10 @@ static int analyze_after_wait(perform_ctxt_t ctxt) {
         ctxt->result.code = TLE;
       else
         ctxt->result.code = SE; // someone unknown killed it
+      break;
+    // https://stackoverflow.com/questions/3413166/when-does-a-process-get-sigabrt-signal-6
+    case SIGABRT:
+      ctxt->result.code = RE;
       break;
     default:
       ctxt->result.code = OK;

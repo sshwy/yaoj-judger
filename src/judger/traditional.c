@@ -144,5 +144,5 @@ void perform(perform_ctxt_t ctxt) {
   if (run_hook_chain(ctxt->hctxt->after_wait, ctxt)) {
     EXIT_WITHMSG();
   }
-  LOG_INFO("judge finished.\n");
+  LOG_INFO("judge finished.");
 }
