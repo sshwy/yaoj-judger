@@ -44,6 +44,7 @@ int parse_opt(int key, char *arg, struct argp_state *state) {
   case 774:
     log_flag = 1;
     log_set(arg);
+    break;
   case 'g':
     perform_set_limit(cctxt, OUT, atoi(arg) * MB);
     break;
