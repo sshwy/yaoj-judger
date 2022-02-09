@@ -62,6 +62,8 @@ Command line interface of judger (for the future yaoj)
 
 对于更多使用方法，您可以去 [tests/](https://github.com/sshwy/yaoj-judger/tree/master/tests) 了解一下！
 
+目前有一个坑点，如果你在尝试链接库文件来自己写 main，那么在编译时 `-lkafel -lpthread -ljudger_xxx` 的顺序会影响编译结果（[Why does the order in which libraries are linked sometimes cause errors in GCC?](https://stackoverflow.com/questions/45135/why-does-the-order-in-which-libraries-are-linked-sometimes-cause-errors-in-gcc)）。解决方法就是穷举……一般来说 `-ljudger_xxx` 放最前面就可以。
+
 ## Design
 
 早期思路来源于 [QingdaoU/Judger](https://github.com/QingdaoU/Judger)，在此鸣谢。在此基础上引入 kafel 以更友好的方式配置系统调用规则，并重新整理了执行逻辑。
