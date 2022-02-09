@@ -17,6 +17,10 @@
 
 #include <sys/resource.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define KB (1024)
 #define MB (1024 * KB)
 
@@ -108,5 +112,9 @@ int perform_set_limit(perform_ctxt_t ctxt, int type, int lim);
 void log_set(const char *filename);
 void log_print_result(result_t pres);
 void log_close();
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* YAOJUDGER_H */

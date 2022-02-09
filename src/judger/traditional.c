@@ -27,7 +27,7 @@
 
 int runner_prework(const struct runner_ctxt *ctxt) {
   if (ctxt->argc != 5) {
-    SET_ERRORF("invalid arguments (argc=%d expect 5)\n", ctxt->argc);
+    SET_ERRORF("invalid arguments (argc=%d expect 5)", ctxt->argc);
     return 1;
   }
 
@@ -143,5 +143,5 @@ void perform(perform_ctxt_t ctxt) {
   if (run_hook_chain(ctxt->hctxt->after_wait, ctxt)) {
     EXIT_WITHMSG();
   }
-  LOG_INFO("judge finished.");
+  LOG_INFO("judge finished");
 }
