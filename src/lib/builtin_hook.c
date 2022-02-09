@@ -87,8 +87,8 @@ static int analyze_after_wait(perform_ctxt_t ctxt) {
       ctxt->result.code = OLE;
       break;
     case SIGKILL: // often killed by tkiller
-      if (ctxt->rctxt->time != RSC_UNLIMITED &&
-          ctxt->result.real_time > ctxt->rctxt->time)
+      if (ctxt->rctxt->real_time != RSC_UNLIMITED &&
+          ctxt->result.real_time > ctxt->rctxt->real_time)
         ctxt->result.code = TLE;
       else
         ctxt->result.code = SE; // someone unknown killed it
@@ -113,8 +113,11 @@ static int analyze_after_wait(perform_ctxt_t ctxt) {
       if (ctxt->rctxt->actual_memory != RSC_UNLIMITED &&
           ctxt->result.real_memory * KB > ctxt->rctxt->actual_memory)
         ctxt->result.code = MLE;
-      else if (ctxt->rctxt->time != RSC_UNLIMITED &&
-               ctxt->result.real_time > ctxt->rctxt->time)
+      else if (ctxt->rctxt->real_time != RSC_UNLIMITED &&
+               ctxt->result.real_time > ctxt->rctxt->real_time)
+        ctxt->result.code = TLE;
+      else if (ctxt->rctxt->cpu_time != RSC_UNLIMITED &&
+               ctxt->result.cpu_time > ctxt->rctxt->cpu_time)
         ctxt->result.code = TLE;
       else
         ctxt->result.code = OK;

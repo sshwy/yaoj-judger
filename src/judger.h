@@ -26,6 +26,8 @@ extern "C" {
 
 enum rsclim_type {
   REAL_TIME,
+  CPU_TIME,
+  TIME,    //!< set both time limitations
   VIR_MEM, //!< shortcut for VIRTUAL_MEMORY
   VIRTUAL_MEMORY,
   ACT_MEM, //!< shortcut for ACTUAL_MEMORY

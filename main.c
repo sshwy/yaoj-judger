@@ -27,7 +27,7 @@ int log_flag = 0;
 int parse_opt(int key, char *arg, struct argp_state *state) {
   switch (key) {
   case 't':
-    perform_set_limit(cctxt, REAL_TIME, atoi(arg));
+    perform_set_limit(cctxt, TIME, atoi(arg));
     break;
   case 'm':
     perform_set_limit(cctxt, MEM, atoi(arg) * MB);
@@ -44,6 +44,12 @@ int parse_opt(int key, char *arg, struct argp_state *state) {
   case 774:
     log_flag = 1;
     log_set(arg);
+    break;
+  case 775:
+    perform_set_limit(cctxt, REAL_TIME, atoi(arg));
+    break;
+  case 776:
+    perform_set_limit(cctxt, CPU_TIME, atoi(arg));
     break;
   case 'g':
     perform_set_limit(cctxt, OUT, atoi(arg) * MB);
@@ -79,7 +85,11 @@ int main(int argc, char **argv, char **env) {
   cctxt = perform_ctxt_create();
 
   struct argp_option options[] = {
-      {"timeout", 't', "TIMEOUT", 0, "specify the time limit in milliseconds"},
+      {"timeout", 't', "TIMEOUT", 0,
+       "specify both time limits in milliseconds"},
+      {"realtime", 775, "REAL_TIME", 0,
+       "specify the runtime limit in milliseconds"},
+      {"cputime", 776, "CPU_TIME", 0, "specify the cpu limit in milliseconds"},
       {"memory", 'm', "MEMORY", 0, "specify all three memory limits in MB"},
       {"virmem", 771, "VIRTUAL_MEMORY", 0,
        "specify the virtual memory limit in MB"},

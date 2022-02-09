@@ -58,16 +58,16 @@ static pthread_t tid = 0;
 int start_killer_after_fork(perform_ctxt_t ctxt) {
   struct tkill_ctxt tctxt = {
       .pid = ctxt->pchild,
-      .time = ctxt->rctxt->time,
+      .time = ctxt->rctxt->real_time,
   };
-  if (ctxt->rctxt->time != RSC_UNLIMITED) {
+  if (ctxt->rctxt->real_time != RSC_UNLIMITED) {
     return start_timeout_killer(&tctxt, &tid); // let others handle exception
   }
   return 0;
 }
 
 int stop_killer_after_wait(perform_ctxt_t ctxt) {
-  if (ctxt->rctxt->time != RSC_UNLIMITED) {
+  if (ctxt->rctxt->real_time != RSC_UNLIMITED) {
     if (stop_timeout_killer(tid)) {
       LOG_INFO("[ignored] stop timeout killer failed");
       return 0;

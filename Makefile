@@ -1,7 +1,7 @@
 SUBDIRS=src policy tests
 PROJECT_ROOT?=
 CLI_CFLAG=-lkafel -lpthread -static -I$(PROJECT_ROOT)src -O2 \
-	-Wall -Wextra -Wno-missing-field-initializers -Wno-implicit-fallthrough
+	-Wall -Wextra -Wno-missing-field-initializers
 
 .PHONY: $(SUBDIRS) clean kafel clean_all docs
 all: kafel $(SUBDIRS)

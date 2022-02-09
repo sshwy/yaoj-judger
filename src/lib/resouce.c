@@ -25,7 +25,7 @@ int upperbound(double x) {
 }
 
 int apply_resource_limit_rsc(struct rsclim_ctxt *rctxt) {
-  if (rctxt->time < 0) {
+  if (rctxt->cpu_time < 0) {
     SET_ERRORF("invalid time");
     return 1;
   }
@@ -46,8 +46,8 @@ int apply_resource_limit_rsc(struct rsclim_ctxt *rctxt) {
     return 1;
   }
 
-  if (rctxt->time > 0) {
-    int time_ins = upperbound(rctxt->time / 1000.0);
+  if (rctxt->cpu_time > 0) {
+    int time_ins = upperbound(rctxt->cpu_time / 1000.0);
     // limit cpu running time
     if (set_rlimit(RLIMIT_CPU, time_ins, CPU_TIME_H_LIMIT))
       return 1;

@@ -110,7 +110,6 @@ Command line interface of judger (for the future yaoj)
 
 ## Todo
 
-- cpu time 与 real time 分开限制：同时考虑到实际运行时间可能与系统状态有关，相比之下 cpu 运行时间在 ban 掉一些系统调用后算相对合理的一种衡量方式，因此需要灵活设置
 - 更优秀的 cli：目前的 cli 还是过于难读，而且没有自动补全，敲起来很废脑子，可以考虑读取配置文件运行，或者简单交互式 cli
 - 国际化：English readme
 

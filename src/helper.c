@@ -6,9 +6,10 @@
 static rsclim_ctxt_t rsclim_ctxt_create() {
   rsclim_ctxt_t ctxt = malloc(sizeof(struct rsclim_ctxt));
   ctxt->actual_memory = 0;
+  ctxt->cpu_time = 0;
   ctxt->output_size = 0;
+  ctxt->real_time = 0;
   ctxt->stack_memory = 0;
-  ctxt->time = 0;
   ctxt->virtual_memory = 0;
   return ctxt;
 }
@@ -67,7 +68,14 @@ int perform_set_limit(perform_ctxt_t ctxt, int type, int lim) {
   rsclim_ctxt_t rctxt = ctxt->rctxt;
   switch (type) {
   case REAL_TIME:
-    rctxt->time = lim;
+    rctxt->real_time = lim;
+    break;
+  case CPU_TIME:
+    rctxt->cpu_time = lim;
+    break;
+  case TIME:
+    rctxt->real_time = lim;
+    rctxt->cpu_time = lim;
     break;
   case VIR_MEM:
   case VIRTUAL_MEMORY:
