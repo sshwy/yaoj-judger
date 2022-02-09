@@ -3,15 +3,22 @@
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+const char command[] = "ausyscall --dump";
+
 int main(int argc, char **argv) {
   if (argc != 2) {
     printf("Usage: %s [output_file]\n", argv[0]);
     return EXIT_FAILURE;
   }
 
-  FILE *flistp = popen("ausyscall --dump", "r");
+  FILE *flistp = popen(command, "r");
   FILE *foutp = fopen(argv[1], "w");
 
+  if (flistp == NULL) {
+    printf("Error while running ausyscall");
+    return EXIT_FAILURE;
+  }
   if (foutp == NULL) {
     printf("Error while open output file (errno: %d)", errno);
     return EXIT_FAILURE;
@@ -28,8 +35,11 @@ int main(int argc, char **argv) {
       fprintf(stderr, "%s: [ignore] %s", argv[0], line);
     }
   }
+  if (pclose(flistp)) { // this will also close the stream
+    printf("Error while running \033[33m\"%s\"\033[0m\n", command);
+    return EXIT_FAILURE;
+  }
 
   fclose(foutp);
-  fclose(flistp);
   return 0;
 }
