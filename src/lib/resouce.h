@@ -13,12 +13,16 @@ struct rsclim_ctxt {
   int stack_memory;   //!< in bptes. 0 for unlimited.
   int output_size;    //!< in bytes. 0 for unlimited.
 };
+typedef struct rsclim_ctxt *rsclim_ctxt_t;
 
 /**
  * @return 0 on success, 1 otherwise
  */
 int apply_resource_limit(perform_ctxt_t ctxt);
 
+/**
+ * @return 0 on success, 1 otherwise
+ */
 int get_usage_after_wait(perform_ctxt_t ctxt);
 
 #endif

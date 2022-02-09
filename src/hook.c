@@ -20,14 +20,6 @@ hook_chain_t pushfront_hook(hook_chain_t phead, hook_func_t hook) {
   phook->next = phead;
   return phook;
 }
-struct hook_ctxt create_hook_ctxt() {
-  struct hook_ctxt ctxt = {
-      .after_fork = create_hook_chain(),
-      .before_fork = create_hook_chain(),
-      .after_wait = create_hook_chain(),
-  };
-  return ctxt;
-}
 
 void register_hook(hook_ctxt_t ctxt, enum HOOK_TYPE type, hook_func_t hook) {
 #define WORK(name) ctxt->name = pushfront_hook(ctxt->name, hook)

@@ -2,6 +2,11 @@
 #include "common.h"
 #include "lib/resouce.h"
 
+struct tkill_ctxt {
+  pid_t pid; //!< monitored process (group) id.
+  int time;  //!< int milliseconds.
+};
+
 void *timeout_killer(void *_tkill_ctxt) { // return void specified!
   struct tkill_ctxt *ctxt = _tkill_ctxt;
   // this is a new thread, kill the process if timeout

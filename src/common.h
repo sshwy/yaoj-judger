@@ -82,6 +82,7 @@ struct runner_ctxt {
   char **argv; //!< argument list end with (char *)NULL
   char **env;  //!< environment var list end with (char *)NULL
 };
+typedef struct runner_ctxt *runner_ctxt_t;
 
 /**
  * @brief Describe result of a terminated process.

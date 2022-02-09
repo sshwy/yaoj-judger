@@ -68,6 +68,4 @@ hook_chain_t create_hook_chain();
 hook_chain_t pushfront_hook(hook_chain_t phead, hook_func_t hook);
 
 void register_hook(hook_ctxt_t ctxt, enum HOOK_TYPE type, hook_func_t hook);
-
-struct hook_ctxt create_hook_ctxt();
 #endif
