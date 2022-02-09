@@ -1,13 +1,26 @@
 #include "resouce.h"
 
 int set_rlimit(__rlimit_resource_t type, rlim_t cur, rlim_t max) {
-  const struct rlimit rl = {.rlim_cur = cur, .rlim_max = max};
+  if (max < cur)
+    max = cur;
+  const struct rlimit rl = {
+      .rlim_cur = cur,
+      .rlim_max = max,
+  };
   if (setrlimit(type, &rl)) {
     SET_ERRORF("setrlimit failed (type = %d, cur = %d, max = %d)", type,
                (int)cur, (int)max);
     return 1;
   }
   return 0;
+}
+
+int upperbound(double x) {
+  int ix = x;
+  if (x > ix)
+    return ix + 1;
+  else
+    return ix;
 }
 
 int apply_resource_limit_rsc(struct rsclim_ctxt *rctxt) {
@@ -33,9 +46,8 @@ int apply_resource_limit_rsc(struct rsclim_ctxt *rctxt) {
   }
 
   if (rctxt->time > 0) {
-    // upper bound
-    int time_ins = rctxt->time / 1000 + !!(rctxt->time % 1000);
-    // 实际上只限制了 CPU 的时间，可以看作一个 hard limit，真要干还是得开线程
+    int time_ins = upperbound(rctxt->time / 1000.0);
+    // limit cpu running time
     if (set_rlimit(RLIMIT_CPU, time_ins, CPU_TIME_H_LIMIT))
       return 1;
     LOG_INFO("set cpu time (RLIMIT_CPU): %ds", time_ins);
@@ -44,25 +56,21 @@ int apply_resource_limit_rsc(struct rsclim_ctxt *rctxt) {
   if (rctxt->virtual_memory > 0) {
     // RLIMIT_AS 限制的是虚拟内存的大小，而不是实际用量。比如可以实现 CCF
     // feature：数组开爆
-    if (set_rlimit(RLIMIT_AS, rctxt->virtual_memory,
-                   max(rctxt->virtual_memory, AS_H_LIMIT)))
+    if (set_rlimit(RLIMIT_AS, rctxt->virtual_memory, AS_H_LIMIT))
       return 1;
-    LOG_INFO("set memory limit: %.3lf KB", rctxt->virtual_memory * 1.0 / KB);
+    LOG_INFO("set memory limit: %.3lfMB", rctxt->virtual_memory * 1.0 / MB);
   }
 
   if (rctxt->output_size > 0) {
-    if (set_rlimit(RLIMIT_FSIZE, rctxt->output_size,
-                   max(rctxt->output_size, FSIZE_H_LIMIT)))
+    if (set_rlimit(RLIMIT_FSIZE, rctxt->output_size, FSIZE_H_LIMIT))
       return 1;
-    LOG_INFO("set output limit: %.3lf KB", rctxt->output_size * 1.0 / KB);
+    LOG_INFO("set output limit: %.3lfMB", rctxt->output_size * 1.0 / MB);
   }
 
   if (rctxt->stack_memory > 0) {
-    if (set_rlimit(RLIMIT_STACK, rctxt->stack_memory,
-                   max(rctxt->stack_memory, STACK_H_LIMIT)))
+    if (set_rlimit(RLIMIT_STACK, rctxt->stack_memory, STACK_H_LIMIT))
       return 1;
-    LOG_INFO("set stack memory limit: %.3lf KB",
-             rctxt->stack_memory * 1.0 / KB);
+    LOG_INFO("set stack memory limit: %.3lfMB", rctxt->stack_memory * 1.0 / MB);
   }
   return 0;
 }
@@ -70,7 +78,7 @@ int apply_resource_limit_rsc(struct rsclim_ctxt *rctxt) {
 int get_usage_after_wait(perform_ctxt_t ctxt) {
   struct rusage r2;
   if (getrusage(RUSAGE_CHILDREN, &r2)) {
-    SET_ERRORF("test failed");
+    SET_ERRORF("get child's rusage failed");
     return 1;
   }
   // fprint_rusage(log_fp, &r2);
