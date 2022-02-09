@@ -15,13 +15,7 @@
 
 #include "judger.h"
 
-struct rsclim_ctxt rctxt = {
-    .time = 1500,
-    .virtual_memory = 30 * MB,
-    .actual_memory = 3 * MB,
-    .stack_memory = 2 * MB,
-    .output_size = 1 * KB,
-};
+perform_ctxt_t cctxt;
 
 char *parse_argv[500], _parsed_argv[500][500];
 char policy[500];
@@ -32,25 +26,24 @@ int result_code = -1;
 int parse_opt(int key, char *arg, struct argp_state *state) {
   switch (key) {
   case 't':
-    rctxt.time = atoi(arg);
+    perform_set_limit(cctxt, REAL_TIME, atoi(arg));
     break;
   case 'm':
-    rctxt.actual_memory = rctxt.stack_memory = rctxt.virtual_memory =
-        atoi(arg) * MB;
+    perform_set_limit(cctxt, MEM, atoi(arg) * MB);
     break;
   case 771:
-    rctxt.virtual_memory = atoi(arg) * MB;
+    perform_set_limit(cctxt, VIR_MEM, atoi(arg) * MB);
     break;
   case 772:
-    rctxt.actual_memory = atoi(arg) * MB;
+    perform_set_limit(cctxt, ACT_MEM, atoi(arg) * MB);
     break;
   case 773:
-    rctxt.stack_memory = atoi(arg) * MB;
+    perform_set_limit(cctxt, STK_MEM, atoi(arg) * MB);
     break;
   case 774:
     set_logfile(arg);
   case 'g':
-    rctxt.output_size = atoi(arg) * MB;
+    perform_set_limit(cctxt, OUT, atoi(arg) * MB);
     break;
   case 'r':
     result_code = atorc(arg);
@@ -80,6 +73,8 @@ int parse_opt(int key, char *arg, struct argp_state *state) {
 }
 
 int main(int argc, char **argv, char **env) {
+  cctxt = perform_ctxt_create();
+
   struct argp_option options[] = {
       {"timeout", 't', "TIMEOUT", 0, "specify the time limit in milliseconds"},
       {"memory", 'm', "MEMORY", 0, "specify all three memory limits in MB"},
@@ -107,25 +102,15 @@ int main(int argc, char **argv, char **env) {
   parse_argv[parsed_argc] = NULL;
   // for (int i = 0; i < parsed_argc; i++) printf(": %s\n", parse_argv[i]);
 
-  struct policy_ctxt pctxt = create_policy_ctxt(policy_dir, policy);
+  perform_set_policy(cctxt, policy_dir, policy); // cctxt->pctxt = &pctxt;
+  perform_set_runner(cctxt, parsed_argc, parse_argv, env);
 
-  struct runner_ctxt ectxt = {
-      .argc = parsed_argc, .argv = parse_argv, .env = env};
-  struct hook_ctxt hctxt = create_hook_ctxt();
+  perform(cctxt);
 
-  struct perform_ctxt ctxt = {
-      .ectxt = &ectxt,
-      .pctxt = &pctxt,
-      .rctxt = &rctxt,
-      .hctxt = &hctxt,
-  };
+  fprint_result(log_fp, &cctxt->result);
 
-  perform(&ctxt);
-
-  fprint_result(log_fp, &ctxt.result);
-
-  ASSERT((int)ctxt.result.code == result_code,
-         "test failed (result=%d, expect=%d)\n", (int)ctxt.result.code,
+  ASSERT((int)cctxt->result.code == result_code,
+         "test failed (result=%d, expect=%d)\n", (int)cctxt->result.code,
          result_code);
   fclose(log_fp);
   return 0;

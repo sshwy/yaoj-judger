@@ -2,6 +2,7 @@ CFLAGS+=-fPIC -fvisibility=hidden -O2 -Wall -Wextra -Wno-unused-parameter \
 	-I$(PROJECT_ROOT)src -I$(PROJECT_ROOT)kafel/include
 COMMON_TARGET=\
 	common.o\
+	helper.o\
 	hook.o\
 	lib/builtin_hook.o\
 	lib/policy.o\
@@ -37,3 +38,4 @@ lib/policy.o: common.h lib/policy.h
 lib/resouce.o: common.h lib/resouce.h
 lib/tkill.o: common.h lib/tkill.h
 tackle.o: common.h tackle.h
+helper.o: common.h judger.h 

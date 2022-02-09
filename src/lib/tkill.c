@@ -1,5 +1,6 @@
 #include "tkill.h"
 #include "common.h"
+#include "judger.h"
 #include "lib/resouce.h"
 
 struct tkill_ctxt {

@@ -8,6 +8,7 @@
 #include "builtin_hook.h"
 #include "common.h"
 #include "hook.h"
+#include "judger.h"
 #include "kafel.h"
 #include "lib/policy.h"
 #include "lib/resouce.h"

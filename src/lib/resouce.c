@@ -1,4 +1,5 @@
 #include "resouce.h"
+#include "judger.h"
 
 int set_rlimit(__rlimit_resource_t type, rlim_t cur, rlim_t max) {
   if (max < cur)

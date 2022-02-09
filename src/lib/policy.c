@@ -6,6 +6,7 @@
 #include <sys/prctl.h>
 
 #include "common.h"
+#include "judger.h"
 #include "kafel.h"
 #include "policy.h"
 
@@ -18,6 +19,14 @@ struct policy_ctxt create_policy_ctxt(char *dirname, char *policy) {
       .content = ftos(fopen(filename, "r")),
   };
   return ctxt;
+}
+int policy_set(policy_ctxt_t ctxt, char *dirname, char *policy) {
+  const char *filename =
+      path_join(path_join(dirname, '/', policy), '.', "policy");
+  ctxt->content = ftos(fopen(filename, "r"));
+  ctxt->dirname = dirname; // seem dangerous
+  ctxt->policy = policy;   // seem dangerous
+  return 0;
 }
 
 /**

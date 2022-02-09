@@ -18,6 +18,10 @@
 
 如何上手？现在还在 prototype 阶段，还没写文档，~~麻烦您阅读源码……~~
 
+在构建项目之前请确保您的 Linux 系统安装有 `make`、`flex`（the fast lexical analyser generator） 和 `ausyscall`（a program that allows mapping syscall names and numbers） 命令。
+
+接下在项目根目录执行：
+
 ```bash
 make                     # 生成 judger_xxx.local 以及一些链接库
 cd tests/traditional/01_DSC   # 测试一下

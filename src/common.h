@@ -120,32 +120,6 @@ int max(int a, int b);
  */
 char *ftos(FILE *fp);
 
-/**
- * @brief Context of perform.
- */
-struct perform_ctxt {
-  /// pid of the current process
-  pid_t pself;
-  /// pid of the forked child (It's often assumed that the `perform` will do at
-  /// least one fork)
-  pid_t pchild;
-
-  int status;           //!< child process termination status
-  struct rusage rusage; //!< resource usage of child process (getrusage)
-  struct result result; //!< perform result of child process
-
-  /// pointer at the policy context (used by builtin_hooks).
-  struct policy_ctxt *pctxt;
-  /// pointer at the resouce limitation context (used by builtin_hooks).
-  struct rsclim_ctxt *rctxt;
-  /// pointer at the runner context.
-  struct runner_ctxt *ectxt;
-  /// pointer at the hook context.
-  struct hook_ctxt *hctxt;
-};
-
-typedef struct perform_ctxt *perform_ctxt_t;
-
 extern char errmsg[200];
 extern int error_flag;
 
@@ -163,5 +137,7 @@ extern int error_flag;
   } while (0)
 
 int to_millisecond(struct timeval tv);
+
+typedef struct perform_ctxt *perform_ctxt_t;
 
 #endif
