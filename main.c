@@ -22,6 +22,7 @@ char policy[500];
 char policy_dir[500];
 int parsed_argc = 0;
 int result_code = -1;
+int log_flag = 0;
 
 int parse_opt(int key, char *arg, struct argp_state *state) {
   switch (key) {
@@ -41,7 +42,8 @@ int parse_opt(int key, char *arg, struct argp_state *state) {
     perform_set_limit(cctxt, STK_MEM, atoi(arg) * MB);
     break;
   case 774:
-    set_logfile(arg);
+    log_flag = 1;
+    log_set(arg);
   case 'g':
     perform_set_limit(cctxt, OUT, atoi(arg) * MB);
     break;
@@ -64,7 +66,7 @@ int parse_opt(int key, char *arg, struct argp_state *state) {
     if (result_code == -1) {
       argp_error(state, "result_code didn't specified.");
     }
-    if (log_fp == NULL) {
+    if (log_flag == 0) {
       argp_error(state, "log file didn't specified.");
     }
     break;
@@ -107,11 +109,12 @@ int main(int argc, char **argv, char **env) {
 
   perform(cctxt);
 
-  fprint_result(log_fp, &cctxt->result);
+  log_print_result(&cctxt->result);
 
-  ASSERT((int)cctxt->result.code == result_code,
-         "test failed (result=%d, expect=%d)\n", (int)cctxt->result.code,
-         result_code);
-  fclose(log_fp);
+  if ((int)cctxt->result.code != result_code) {
+    fprintf(stderr, "test failed (result=%d, expect=%d)\n",
+            (int)cctxt->result.code, result_code);
+  }
+  log_close();
   return 0;
 }

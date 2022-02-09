@@ -4,12 +4,13 @@
 #include <string.h>
 
 #include "common.h"
+#include "judger.h"
 
 FILE *log_fp = NULL;
 int log_fd = -1;
 char log_buf[1000];
 
-void set_logfile(const char *filename) {
+void log_set(const char *filename) {
   log_fp = fopen(filename, "w");
   ASSERT(log_fp != NULL, "invalid log file\n");
   log_fd = fileno(log_fp);
@@ -59,6 +60,9 @@ void fprint_result(FILE *fp, struct result *pres) {
           pres->cpu_time / 1000.0, pres->real_memory / 1000.0, pres->code,
           pres->signal, pres->exit_code);
 }
+
+void log_print_result(struct result *pres) { fprint_result(log_fp, pres); }
+void log_close() { fclose(log_fp); }
 
 void fprint_rusage(FILE *fp, struct rusage *rsp) {
   fprintf(fp, "ru_utime: %ld %ld\n", rsp->ru_utime.tv_sec,

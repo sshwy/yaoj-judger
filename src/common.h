@@ -33,8 +33,6 @@ extern FILE *log_fp;
 extern int log_fd;
 extern char log_buf[1000];
 
-void set_logfile(const char *filename);
-
 /// output formatted messages to the file determined by `log_fp`
 #define LOG_INFO(fmt, args...)                                                 \
   do {                                                                         \
@@ -56,24 +54,6 @@ void set_logfile(const char *filename);
     }                                                                          \
   } while (0)
 
-enum result_code {
-  OK = 0, //!< all correct
-  RE,     //!< runtime error
-  MLE,    //!< memory limit exceed
-  TLE,    //!< time limit exceed
-  OLE,    //!< output limit exceed
-  SE,     //!< system error
-  DSC,    //!< dangerous system call
-  ECE,    //!< exit code exception
-};
-
-/**
- * @brief transform string code name (uppercase) to corresponding code.
- * @param arg
- * @return int
- */
-enum result_code atorc(char *arg);
-
 /**
  * @brief Context for all runners.
  */
@@ -82,24 +62,11 @@ struct runner_ctxt {
   char **argv; //!< argument list end with (char *)NULL
   char **env;  //!< environment var list end with (char *)NULL
 };
+
 typedef struct runner_ctxt *runner_ctxt_t;
+typedef struct result *result_t;
 
-/**
- * @brief Describe result of a terminated process.
- */
-struct result {
-  /// return code of the judgement (often set during perform)
-  enum result_code code;
-  int signal;      //!< terminate signal raised by child process
-  int exit_code;   //!< exit code of child process
-  int real_time;   //!< in milliseconds.
-  int cpu_time;    //!< in milliseconds.
-  int real_memory; //!< in kb.
-};
-void fprint_result(FILE *fp, struct result *resp);
-
-#define KB (1024)
-#define MB (1024 * KB)
+void fprint_result(FILE *fp, result_t resp);
 
 #define CPU_TIME_H_LIMIT 300 //!< 5 minutes
 #define FSIZE_H_LIMIT (64 * MB)

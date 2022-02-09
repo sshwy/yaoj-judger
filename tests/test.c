@@ -76,7 +76,7 @@ int main(int argc, char **argv, char **env) {
   parse_argv[parsed_argc] = NULL;
   // for (int i = 0; i < parsed_argc; i++) printf(": %s\n", parse_argv[i]);
 
-  set_logfile(".log.local");
+  log_set(".log.local");
 
   // please replace the first argument with yours <yaoj-judger>/policy (absolue
   // path is recommended)
@@ -86,11 +86,12 @@ int main(int argc, char **argv, char **env) {
 
   perform(cctxt);
 
-  fprint_result(log_fp, &cctxt->result);
+  log_print_result(&cctxt->result);
 
-  fclose(log_fp);
-  ASSERT(cctxt->result.code == result_code,
-         "test failed (result=%d, expect=%d)\n", cctxt->result.code,
-         result_code);
+  log_close();
+  if ((int)cctxt->result.code != result_code) {
+    fprintf(stderr, "test failed (result=%d, expect=%d)\n",
+            (int)cctxt->result.code, result_code);
+  }
   return 0;
 }
