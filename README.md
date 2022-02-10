@@ -47,14 +47,16 @@ Usage: judger_traditional.local [OPTION...] runner arguments...
 Command line interface of judger (for the future yaoj)
 
       --actmem=ACTUAL_MEMORY specify the actual memory limit in MB
+      --cputime=CPU_TIME     specify the cpu limit in milliseconds
   -g, --fsize=OUTPUT         specify the output limit in MB
       --log=LOG_FILE         specify judger result file
   -m, --memory=MEMORY        specify all three memory limits in MB
   -p, --policy=POLICY        specify policy name
   -P, --policydir=POLICY_DIR specify policy search directory
+      --realtime=REAL_TIME   specify the runtime limit in milliseconds
   -r, --result=RESULT        specify the result code using name
       --stkmem=STACK_MEMORY  specify the stack memory limit in MB
-  -t, --timeout=TIMEOUT      specify the time limit in milliseconds
+  -t, --timeout=TIMEOUT      specify both time limits in milliseconds
       --virmem=VIRTUAL_MEMORY   specify the virtual memory limit in MB
   -?, --help                 Give this help list
       --usage                Give a short usage message
