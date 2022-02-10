@@ -5,10 +5,9 @@
  * @date 2022-02-05
  * @copyright Copyright (c) 2022
  *
- * It accepts 5 arguments (in
- * runner): the executable filename, input filename, output filename,
- * filename for error output, and finally a token ("std" or "file") determining
- * whether it's standard IO or file IO.
+ * It accepts 5 arguments (in runner): the executable filename, input filename,
+ * output filename, filename for error output, and finally a token ("std" or
+ * "file") determining whether it's standard IO or file IO.
  */
 #include <fcntl.h>
 #include <signal.h>

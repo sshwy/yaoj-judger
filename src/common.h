@@ -54,39 +54,6 @@ extern char log_buf[1000];
     }                                                                          \
   } while (0)
 
-/**
- * @brief Context for all runners.
- */
-struct runner_ctxt {
-  int argc;    //!< number of arguments
-  char **argv; //!< argument list end with (char *)NULL
-  char **env;  //!< environment var list end with (char *)NULL
-};
-
-typedef struct runner_ctxt *runner_ctxt_t;
-typedef struct result *result_t;
-
-void fprint_result(FILE *fp, result_t resp);
-
-#define CPU_TIME_H_LIMIT 300 //!< 5 minutes
-#define FSIZE_H_LIMIT (64 * MB)
-#define STACK_H_LIMIT (64 * MB)
-#define AS_H_LIMIT (512 * MB)
-#define RSC_UNLIMITED 0
-
-void fprint_rusage(FILE *fp, struct rusage *rsp);
-
-char *path_join(const char *first, char seperator, const char *second);
-
-int max(int a, int b);
-
-/**
- * @brief read the whole file and return a string containing its content.
- *
- * fp must be opened with at least read access.
- */
-char *ftos(FILE *fp);
-
 extern char errmsg[200];
 extern int error_flag;
 
@@ -103,8 +70,49 @@ extern int error_flag;
     exit(1);                                                                   \
   } while (0)
 
-int to_millisecond(struct timeval tv);
+#define CPU_TIME_H_LIMIT 300 //!< 5 minutes
+#define FSIZE_H_LIMIT (64 * MB)
+#define STACK_H_LIMIT (64 * MB)
+#define AS_H_LIMIT (512 * MB)
+#define RSC_UNLIMITED 0
 
+/**
+ * @brief Context for all runners.
+ */
+struct runner_ctxt {
+  int argc;    //!< number of arguments
+  char **argv; //!< argument list end with (char *)NULL
+  char **env;  //!< environment var list end with (char *)NULL
+};
+
+typedef struct runner_ctxt *runner_ctxt_t;
+typedef struct result *result_t;
 typedef struct perform_ctxt *perform_ctxt_t;
+
+int max(int a, int b);
+
+void fprint_result(FILE *fp, result_t resp);
+
+void fprint_rusage(FILE *fp, struct rusage *rsp);
+
+/**
+ * @brief Concat two string with `seperator` inserted at the middle of them.
+ *
+ * Note that if the last character of `first` equals to `seperator`, then it
+ * will not be inserted.
+ */
+char *path_join(const char *first, char seperator, const char *second);
+
+/**
+ * @brief read the whole file and return a string containing its content.
+ *
+ * fp must be opened with at least read access.
+ */
+char *ftos(FILE *fp);
+
+/**
+ * @brief calculate millisecond value of `timeval`
+ */
+int to_millisecond(struct timeval tv);
 
 #endif

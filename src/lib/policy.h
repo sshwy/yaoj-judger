@@ -30,8 +30,6 @@ struct policy_ctxt {
 
 typedef struct policy_ctxt *policy_ctxt_t;
 
-struct policy_ctxt create_policy_ctxt(char *dirname, char *policy);
-
 int policy_set(policy_ctxt_t ctxt, char *dirname, char *policy);
 
 int compile_policy_before_fork(perform_ctxt_t per_ctxt);

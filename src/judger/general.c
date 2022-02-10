@@ -54,10 +54,8 @@ void perform(perform_ctxt_t ctxt) {
   ASSERT(pipe(p_run) == 0, "pipe failed");
 
   register_builtin_hook(ctxt->hctxt);
-  printf("gg2\n");
   if (run_hook_chain(ctxt->hctxt->before_fork, ctxt))
     EXIT_WITHMSG();
-  printf("gg3\n");
   fflush(log_fp); // avoid multi logging
 
   // fork child process
