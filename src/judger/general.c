@@ -24,7 +24,7 @@
 #include "judger.h"
 #include "lib/builtin_hook.h"
 #include "lib/policy.h"
-#include "lib/resouce.h"
+#include "lib/resource.h"
 
 void runner_run(struct runner_ctxt *ctxt) {
   execve(ctxt->argv[0], ctxt->argv + 1, ctxt->env);

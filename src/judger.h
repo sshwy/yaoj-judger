@@ -91,7 +91,7 @@ struct perform_ctxt {
   // these member are not considered to be exposed
   /// pointer at the policy context (used by builtin_hooks).
   struct policy_ctxt *pctxt;
-  /// pointer at the resouce limitation context (used by builtin_hooks).
+  /// pointer at the resource limitation context (used by builtin_hooks).
   struct rsclim_ctxt *rctxt;
   /// pointer at the runner context.
   struct runner_ctxt *ectxt;

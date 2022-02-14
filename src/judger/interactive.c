@@ -28,7 +28,7 @@
 #include "judger.h"
 #include "lib/builtin_hook.h"
 #include "lib/policy.h"
-#include "lib/resouce.h"
+#include "lib/resource.h"
 
 static int interactor_prework(struct runner_ctxt *ctxt) {
   const int error_fd = open(ctxt->argv[4], O_WRONLY | O_TRUNC);
