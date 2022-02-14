@@ -1,12 +1,16 @@
 .PHONY=test compile clean
 
 test: compile
+	$(RM) main.out main.err && \
 	touch main.out main.err && \
-	$(TESTER) -r $(R_CODE) -t $(TIME) -g $(OUTPUT) \
-		--virtualmem=$(V_MEM) \
-		--actualmem=$(A_MEM) \
-		--stackmem=$(S_MEM) \
-		main.local main.in main.out main.err $(IO)
+	$(TESTER) main.local main.in main.out main.err $(IO) \
+		-r $(R_CODE) --log=.log.local \
+		-P /home/sshwy/桌面/yaoj-judger/policy -p c_std_io_coverage \
+		-t $(TIME) \
+		-g $(OUTPUT) \
+		--virmem=$(V_MEM) \
+		--actmem=$(A_MEM) \
+		--stkmem=$(S_MEM) \
 
 compile:
 	$(CC) main.c -o main.local $(EXTRA_FLAG)
