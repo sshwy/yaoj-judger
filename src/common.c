@@ -1,3 +1,5 @@
+#define _GNU_SOURCE
+
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,7 +18,7 @@ void log_set(const char *filename) {
   log_fd = fileno(log_fp);
 }
 
-char errmsg[200];
+char errmsg[1000];
 int error_flag = 0;
 
 int max(int a, int b) { return a > b ? a : b; }
