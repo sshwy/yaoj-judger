@@ -21,10 +21,6 @@ int policy_set(policy_ctxt_t ctxt, char *dirname, char *policy) {
 
 /**
  * @brief replace identifier in content.
- *
- * @param content
- * @param per_ctxt
- * @param result
  */
 int policy_identifier_handler(const char *content,
                               const perform_ctxt_t per_ctxt, char **res) {

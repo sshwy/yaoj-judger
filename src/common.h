@@ -40,6 +40,11 @@ extern char log_buf[1000];
   } while (0)
 // write(log_fd, log_buf, sizeof(char) * strlen(log_buf));
 
+#define LOG_DEBUG(fmt, args...)                                                \
+  do {                                                                         \
+    fprintf(log_fp, BLUE("DEBUG") "(" AT "): " fmt ".\n", ##args);             \
+  } while (0)
+
 /**
  * @brief confirm if the condition is true, otherwise exit with code 1.
  *
@@ -54,7 +59,7 @@ extern char log_buf[1000];
     }                                                                          \
   } while (0)
 
-extern char errmsg[200];
+extern char errmsg[1000];
 extern int error_flag;
 
 #define SET_ERRORF(args...)                                                    \

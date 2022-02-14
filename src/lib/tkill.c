@@ -1,7 +1,11 @@
-#include "tkill.h"
+#define _GNU_SOURCE
+
+#include <signal.h>
+
 #include "common.h"
 #include "judger.h"
 #include "lib/resouce.h"
+#include "tkill.h"
 
 struct tkill_ctxt {
   pid_t pid; //!< monitored process (group) id.

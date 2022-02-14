@@ -9,6 +9,8 @@
  * output filename, filename for error output, and finally a token ("std" or
  * "file") determining whether it's standard IO or file IO.
  */
+#define _GNU_SOURCE // https://www.gnu.org/software/libc/manual/html_node/Feature-Test-Macros.html
+
 #include <fcntl.h>
 #include <signal.h>
 #include <stdio.h>
@@ -115,7 +117,7 @@ void perform(perform_ctxt_t ctxt) {
     }
     write(p_run[1], ready, sizeof(ready));
     child_run(ctxt);
-    exit(1); // child process doesn't terminate
+    exit(2); // child process doesn't terminate
   }
   // parent process
   ctxt->pchild = child_pid;

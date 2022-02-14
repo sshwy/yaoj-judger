@@ -1,8 +1,11 @@
+#define _GNU_SOURCE
+
 #include <fcntl.h>
 #include <signal.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/time.h>
+#include <sys/wait.h>
 #include <unistd.h>
 
 #include "builtin_hook.h"
@@ -63,7 +66,8 @@ static int analyze_after_wait(perform_ctxt_t ctxt) {
   ctxt->result.real_memory = ctxt->rusage.ru_maxrss;
 
   if (WIFSIGNALED(ctxt->status)) {
-    LOG_INFO("child process terminated by signal %d", WTERMSIG(ctxt->status));
+    LOG_INFO("child process terminated by signal %d (%s)",
+             WTERMSIG(ctxt->status), strsignal(WTERMSIG(ctxt->status)));
 
     ctxt->result.signal = WTERMSIG(ctxt->status);
 
