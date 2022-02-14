@@ -14,7 +14,7 @@
 #include "judger.h"
 #include "kafel.h"
 #include "lib/policy.h"
-#include "lib/resouce.h"
+#include "lib/resource.h"
 #include "lib/tkill.h"
 
 static struct timeval start, end;

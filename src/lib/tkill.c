@@ -4,7 +4,7 @@
 
 #include "common.h"
 #include "judger.h"
-#include "lib/resouce.h"
+#include "lib/resource.h"
 #include "tkill.h"
 
 struct tkill_ctxt {

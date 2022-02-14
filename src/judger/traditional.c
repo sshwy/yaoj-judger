@@ -24,7 +24,7 @@
 #include "judger.h"
 #include "lib/builtin_hook.h"
 #include "lib/policy.h"
-#include "lib/resouce.h"
+#include "lib/resource.h"
 
 int runner_prework(const struct runner_ctxt *ctxt) {
   if (ctxt->argc != 5) {

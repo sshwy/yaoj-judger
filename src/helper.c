@@ -1,7 +1,7 @@
 #include "hook.h"
 #include "judger.h"
 #include "lib/policy.h"
-#include "lib/resouce.h"
+#include "lib/resource.h"
 
 static rsclim_ctxt_t rsclim_ctxt_create() {
   rsclim_ctxt_t ctxt = malloc(sizeof(struct rsclim_ctxt));
