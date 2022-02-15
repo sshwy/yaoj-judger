@@ -34,4 +34,20 @@ echo -e "test failure #4"
   --log=.log.local \
   -t 1000 -m 128
 
+echo -e "test failure #5"
+../../../judger_traditional.local main.local main.in main.out m.err std\
+  -r OK \
+  -P ../../../policy \
+  -p free \
+  --log=.log.local \
+  -t 1000 -m 128
+
+echo -e "test failure #6"
+../../../judger_traditional.local main.local main.in main.out main.err std\
+  -r OK \
+  -P ../../../policy \
+  -p free \
+  --log=.log.local \
+  -t 1000 -m -128
+
 exit 0
