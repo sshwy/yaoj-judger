@@ -66,6 +66,35 @@ Command line interface of judger (for the future yaoj)
 
 目前有一个坑点，如果你在尝试链接库文件来自己写 main，那么在编译时 `-lkafel -lpthread -ljudger_xxx` 的顺序会影响编译结果（[Why does the order in which libraries are linked sometimes cause errors in GCC?](https://stackoverflow.com/questions/45135/why-does-the-order-in-which-libraries-are-linked-sometimes-cause-errors-in-gcc)）。解决方法就是穷举……一般来说 `-ljudger_xxx` 放最前面就可以。
 
+## Development
+
+首先你需要有 clang。
+
+code coverage（需要 gcovr）：
+
+```
+make clean
+make coverage GCOVR=true
+```
+
+可以在 local.cov 文件夹下查看代码覆盖情况。
+
+文档生成（需要 doxygen）：
+
+```
+make docs
+```
+
+可以在 docs/web 里查看文档。
+
+测试：
+
+```
+make test
+```
+
+会执行所有的测试。
+
 ## Design
 
 早期思路来源于 [QingdaoU/Judger](https://github.com/QingdaoU/Judger)，在此鸣谢。在此基础上引入 kafel 以更友好的方式配置系统调用规则，并重新整理了执行逻辑。
