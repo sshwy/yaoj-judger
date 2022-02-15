@@ -13,7 +13,12 @@
 int policy_set(policy_ctxt_t ctxt, char *dirname, char *policy) {
   const char *filename =
       path_join(path_join(dirname, '/', policy), '.', "policy");
-  ctxt->content = ftos(fopen(filename, "r"));
+  FILE *fp = fopen(filename, "r");
+  if (fp == NULL) {
+    SET_ERRORF("invalid fp");
+    return 1;
+  }
+  ctxt->content = ftos(fp);
   ctxt->dirname = dirname; // seem dangerous
   ctxt->policy = policy;   // seem dangerous
   return 0;

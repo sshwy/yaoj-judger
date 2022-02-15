@@ -78,7 +78,6 @@ void fprint_rusage(FILE *fp, struct rusage *rsp) {
 }
 
 char *ftos(FILE *fp) {
-  ASSERT(fp != NULL, "ftos: invalid fp\n");
   fseek(fp, 0, SEEK_END);
   size_t size = ftell(fp);
   fseek(fp, 0, SEEK_SET); // rewind(fp);

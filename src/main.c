@@ -115,16 +115,20 @@ int main(int argc, char **argv, char **env) {
   parse_argv[parsed_argc] = NULL;
   // for (int i = 0; i < parsed_argc; i++) printf(": %s\n", parse_argv[i]);
 
-  perform_set_policy(cctxt, policy_dir, policy); // cctxt->pctxt = &pctxt;
-  perform_set_runner(cctxt, parsed_argc, parse_argv, env);
+  if (perform_set_policy(cctxt, policy_dir, policy)) {
+    cctxt->result.code = SE;
+  } else {
+    perform_set_runner(cctxt, parsed_argc, parse_argv, env);
 
-  perform(cctxt);
+    perform(cctxt);
 
-  log_print_result(&cctxt->result);
+    log_print_result(&cctxt->result);
+  }
 
   if ((int)cctxt->result.code != result_code) {
     fprintf(stderr, "test failed (result=%d, expect=%d)\n",
             (int)cctxt->result.code, result_code);
+    return 1;
   }
   log_close();
   return 0;

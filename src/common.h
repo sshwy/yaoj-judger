@@ -62,16 +62,21 @@ extern char log_buf[1000];
 extern char errmsg[1000];
 extern int error_flag;
 
+#define LOG_ERRMSG()                                                           \
+  do {                                                                         \
+    fprintf(log_fp, RED("ERROR") "%s.\n", errmsg);                             \
+    fflush(log_fp);                                                            \
+  } while (0)
+
 #define SET_ERRORF(args...)                                                    \
   do {                                                                         \
     sprintf(errmsg, "(" AT "): " args);                                        \
     error_flag = 1;                                                            \
+    LOG_ERRMSG();                                                              \
   } while (0)
 
 #define EXIT_WITHMSG()                                                         \
   do {                                                                         \
-    fprintf(log_fp, RED("ERROR") "%s.\n", errmsg);                             \
-    fflush(log_fp);                                                            \
     exit(1);                                                                   \
   } while (0)
 
@@ -111,7 +116,7 @@ char *path_join(const char *first, char seperator, const char *second);
 /**
  * @brief read the whole file and return a string containing its content.
  *
- * fp must be opened with at least read access.
+ * `fp` must be valid and opened with at least read access.
  */
 char *ftos(FILE *fp);
 

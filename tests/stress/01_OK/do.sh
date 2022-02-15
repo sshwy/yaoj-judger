@@ -15,7 +15,7 @@ echo "judging..."
   --memory=128 \
   --timeout=5000
 
-cat .log.local
+# cat .log.local
 # echo -e "\033[32m[main.out]\033[0m"
 # cat interactor.out
 # echo -e "\033[32m[interactor.err]\033[0m"

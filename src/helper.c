@@ -48,11 +48,7 @@ perform_ctxt_t perform_ctxt_create() {
 }
 
 int perform_set_policy(perform_ctxt_t ctxt, char *dirname, char *policy) {
-  if (policy_set(ctxt->pctxt, dirname, policy)) {
-    SET_ERRORF("set policy failed");
-    return 1;
-  }
-  return 0;
+  return policy_set(ctxt->pctxt, dirname, policy);
 }
 
 static void runner_set(runner_ctxt_t ctxt, int argc, char **argv, char **env) {
