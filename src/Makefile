@@ -41,8 +41,14 @@ clean:
 	$(RM) $(TARGET) $(ARCHIVE_LIBRARY) $(GCOV_FILES)  
 
 cov:
+ifeq (true,$(GCOVR)) # if enable gcovr
+	$(GCOV) -abcfu $(GCDA_FILES) && \
+	gcovr -r . -k -g --gcov-ignore-parse-errors --html --html-details -o $(PROJECT_ROOT)/local.cov/coverage.html && \
+	mv *.c.gcov $(PROJECT_ROOT)local.cov
+else # production mode
 	$(GCOV) -abcfu $(GCDA_FILES) && \
 	mv *.c.gcov $(PROJECT_ROOT)local.cov
+endif
 
 # build corresponding static library and cli executable for each judger
 $(JUDGER_NAME): $(TARGET)

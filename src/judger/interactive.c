@@ -33,7 +33,7 @@
 static int interactor_prework(struct runner_ctxt *ctxt) {
   const int error_fd = open(ctxt->argv[4], O_WRONLY | O_TRUNC);
   if (error_fd < 0) {
-    SET_ERRORF("open fd failed");
+    SET_ERRORF("open fd (%s) failed", ctxt->argv[4]);
     return 1;
   }
   if (dup2(error_fd, fileno(stderr)) < 0) {
@@ -50,7 +50,7 @@ static void run_interactor(struct runner_ctxt *ctxt) {
 static int executable_prework(struct runner_ctxt *ctxt) {
   const int error_fd = open(ctxt->argv[5], O_WRONLY | O_TRUNC);
   if (error_fd < 0) {
-    SET_ERRORF("open fd failed");
+    SET_ERRORF("open fd (%s) failed", ctxt->argv[5]);
     return 1;
   }
   if (dup2(error_fd, fileno(stderr)) < 0) {
@@ -124,8 +124,8 @@ void perform(perform_ctxt_t ctxt) {
         write(i_run[1], notready, sizeof(notready));
         EXIT_WITHMSG();
       }
-      executable_prework(ctxt->ectxt);
-      if (apply_resource_limit(ctxt) || apply_policy(ctxt)) {
+      if (executable_prework(ctxt->ectxt) || apply_resource_limit(ctxt) ||
+          apply_policy(ctxt)) {
         write(i_run[1], notready, sizeof(notready));
         EXIT_WITHMSG();
       }
@@ -175,8 +175,9 @@ void perform(perform_ctxt_t ctxt) {
   }
 
   LOG_INFO("parent (%d) child (%d)", ctxt->pself, ctxt->pchild);
-  if (run_hook_chain(ctxt->hctxt->after_fork, ctxt))
+  if (run_hook_chain(ctxt->hctxt->after_fork, ctxt)) {
     EXIT_WITHMSG();
+  }
 
   int status;
   if (waitpid(child_pid, &status, WUNTRACED) == -1) {
@@ -186,7 +187,8 @@ void perform(perform_ctxt_t ctxt) {
   }
 
   ctxt->status = status;
-  if (run_hook_chain(ctxt->hctxt->after_wait, ctxt))
+  if (run_hook_chain(ctxt->hctxt->after_wait, ctxt)) {
     EXIT_WITHMSG();
+  }
   LOG_INFO("judge finished");
 }
