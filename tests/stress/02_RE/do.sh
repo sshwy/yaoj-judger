@@ -11,7 +11,7 @@ echo "judging..."
   -r RE \
   --log=.log.local \
   -P ../../../policy \
-  -p c_std_io_coverage \
+  -p free \
   --memory=30 \
   --timeout=5000
 
