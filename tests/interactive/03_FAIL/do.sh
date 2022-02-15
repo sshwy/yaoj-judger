@@ -61,4 +61,24 @@ echo -e "Test interactive failure #6"
   -p free \
   -t 1000
 
+echo -e "Test interactive failure #7"
+../../../judger_interactive.local main.local interactor.local \
+  interactor.in interactor.out interactor.err main.err \
+  -r OK \
+  --log=.log.local \
+  -P ../../../policy \
+  -p free \
+  -t 1000 \
+  --actmem=-1
+
+echo -e "Test interactive failure #8"
+../../../judger_interactive.local main.local interactor.local \
+  interactor.in interactor.out interactor.err main.err \
+  -r OK \
+  --log=.log.local \
+  -P ../../../policy \
+  -p free \
+  -t 1000 \
+  --stkmem=-1
+
 exit 0
