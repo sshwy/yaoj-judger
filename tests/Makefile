@@ -12,5 +12,5 @@ $(SUBDIRS): force
 force: ;
 
 clean:
-	$(RM) test.local && \
+	$(RM) test.local
 	$(MAKE) clean -C traditional TESTER=../$(TESTER) PROJECT_ROOT=../$(PROJECT_ROOT) -s
