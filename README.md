@@ -1,5 +1,7 @@
 # Judger of Yao OJ
 
+[![codecov](https://codecov.io/gh/sshwy/yaoj-judger/branch/master/graph/badge.svg?token=J2YFL24TOH)](https://codecov.io/gh/sshwy/yaoj-judger)
+
 （大概）是新一代 OJ 评测模块！
 
 基于 [kafel](https://github.com/google/kafel) 的一个沙箱模块，支持资源用度报告。主要用于 OI/ACM 的代码评测。
@@ -118,7 +120,13 @@ make test
 
 一个典型的 judger 应该具有以下过程：
 
-![](https://mermaid.ink/img/pako:eNpVkEtuwzAMRK8icJUAcQ-gRVfpCdqlAIOx6FqILRksDSOVffdS_iy6GYjSzDyBGZrkCSx8M46d-bq7GGKQS5GAffilq6mqd_Nou0uX0tM-qE1Mtcrz6qJeb89lzEXWMi4jMkVZDJ4pbIX4DLE31ZuG8Ag3teTcdKH3tbqGEFFo3YoMzv8KZgyiBaVn42yhxTSFsxeMTHOhbGn2OTOhfx1tu4WnuPOVCzcYFInB6wqyi8Y4kI4GcmD16KnFqRcHLq5qnUavX_vwQRKDbbH_oRvgJOnzFRuwwhOdpntA3ehwuNY_z5Z8xg)
+```mermaid
+graph TD
+init(initialize) --> bfh(hook:before_fork)
+bfh --> fork{fork} -->|parent| afh(hook:after_fork)
+rd -.-> afh --> c_t{{child_terminate}} --> awh(hook:after_wait)
+fork -->|child| cafh(child_prework) --> rd{{ready}} --> child_run -.-> c_t
+```
 
 除了 child 的部分需要一些逻辑实现，其他部分都可以用 hook 的形式挂载到框架上。原理在于，父进程不会与子进程有通讯，它只需要明确：
 
@@ -155,13 +163,3 @@ make test
 ## Thanks to
 
 [QingdaoU/Judger](https://github.com/QingdaoU/Judger): [SATA LICENSE](https://github.com/QingdaoU/Judger/raw/newnew/LICENSE)
-
-## Appendix
-
-```mermaid
-graph TD
-init(initialize) --> bfh(hook:before_fork)
-bfh --> fork{fork} -->|parent| afh(hook:after_fork)
-rd -.-> afh --> c_t{{child_terminate}} --> awh(hook:after_wait)
-fork -->|child| cafh(child_prework) --> rd{{ready}} --> child_run -.-> c_t
-```
