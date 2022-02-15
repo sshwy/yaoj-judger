@@ -31,4 +31,11 @@ echo -e "test failure #4"
   -p free \
   -g -128
 
+echo -e "test failure #5"
+../../../judger_general.local $(which ls) ls . \
+  -r OKK \
+  --log=.log.local \
+  -P ../../../policy \
+  -p free
+
 exit 0

@@ -103,7 +103,7 @@ int max(int a, int b);
 
 void fprint_result(FILE *fp, result_t resp);
 
-void fprint_rusage(FILE *fp, struct rusage *rsp);
+// void fprint_rusage(FILE *fp, struct rusage *rsp);
 
 /**
  * @brief Concat two string with `seperator` inserted at the middle of them.
