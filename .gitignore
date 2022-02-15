@@ -8,3 +8,8 @@ tests/**/*.out
 tests/**/*.err
 docs/web
 *.log
+*.gcno
+*.gcda
+*.gcov
+*.profraw
+*.profdata

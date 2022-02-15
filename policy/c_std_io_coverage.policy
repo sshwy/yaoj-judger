@@ -1,0 +1,19 @@
+#include "syscall.policy"
+#include "general.policy"
+
+POLICY c_std_with_file_io {
+  USE basic_allow,
+  ALLOW {
+    dup3,
+    execve(path, argv, envp) {
+      path == %0s
+    },
+    rt_sigprocmask,
+    getpid,
+    gettid,
+    fcntl,
+    tgkill
+  }
+}
+
+USE c_std_with_file_io DEFAULT KILL

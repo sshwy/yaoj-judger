@@ -1,0 +1,24 @@
+name: Codecov
+on: [push, pull_request]
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch
+        uses: actions/checkout@master
+      - name: Install neccessary commands
+        run: |
+          sudo apt-get install -y auditd flex make
+      - name: Install LLVM and Clang
+        uses: KyleMayes/install-llvm-action@v1
+        with:
+          version: "13"
+      - name: Test coverage
+        run: |
+          make clean
+          make coverage
+      - name: Codecov upload
+        run: |
+          curl -Os https://uploader.codecov.io/latest/linux/codecov
+          chmod +x codecov
+          ./codecov -X gcov -s local.cov -t ${{ secrets.CODECOV_TOKEN }}

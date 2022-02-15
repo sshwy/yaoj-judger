@@ -5,7 +5,7 @@ test: compile
 	touch main.out main.err && \
 	$(TESTER) main.local main.in main.out main.err $(IO) \
 		-r $(R_CODE) --log=.log.local \
-		-P /home/sshwy/桌面/yaoj-judger/policy -p c_std_io_coverage \
+		-P $(PROJECT_ROOT)policy -p c_std_io_coverage \
 		-t $(TIME) \
 		-g $(OUTPUT) \
 		--virmem=$(V_MEM) \

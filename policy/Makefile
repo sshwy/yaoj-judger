@@ -1,3 +1,4 @@
+CC=clang
 .PHONY: clean force
 # do it for each run
 # write all available system call definition into syscall.policy

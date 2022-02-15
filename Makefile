@@ -1,13 +1,11 @@
-SUBDIRS=src policy tests
+CC=clang
+SUBDIRS=src policy
 PROJECT_ROOT?=
 CLI_CFLAG=-lkafel -lpthread -static -I$(PROJECT_ROOT)src -O2 \
 	-Wall -Wextra -Wno-missing-field-initializers
 
 .PHONY: $(SUBDIRS) clean kafel clean_all docs
 all: kafel $(SUBDIRS)
-	$(CC) main.c -o judger_traditional.local -L./ -ljudger_traditional $(CLI_CFLAG); \
-	$(CC) main.c -o judger_interactive.local -L./ -ljudger_interactive $(CLI_CFLAG); \
-	$(CC) main.c -o judger_general.local -L./ -ljudger_general $(CLI_CFLAG); \
 
 # https://www.gnu.org/software/make/manual/make.html#Overriding
 # https://www.gnu.org/software/make/manual/make.html#Multiple-Targets
@@ -18,11 +16,12 @@ $(SUBDIRS):
 
 # kafel: build kafel/libkafel.a & kafel/libkafel.so
 kafel:
-	$(MAKE) -C kafel; \
+	$(MAKE) -C kafel && \
 	cp kafel/lib* ./
 
 clean:
-	$(RM) libkafel.* *.local; \
+	$(RM) libkafel.* *.local *.gcno *.gcda *.gcov && \
+	$(RM) -r local.cov && \
 	for dir in $(SUBDIRS); do \
 		$(MAKE) clean -C $$dir PROJECT_ROOT=../$(PROJECT_ROOT); \
 	done
@@ -32,6 +31,12 @@ clean_all: clean
 
 test:
 	$(MAKE) test -C tests PROJECT_ROOT=../$(PROJECT_ROOT)
+
+coverage: kafel policy
+	$(MAKE) all -C src PROJECT_ROOT=../$(PROJECT_ROOT) MODE=coverage && \
+	$(MAKE) test && \
+	mkdir -p local.cov && \
+	$(MAKE) cov -C src PROJECT_ROOT=../$(PROJECT_ROOT)
 
 docs:
 	doxygen; \
