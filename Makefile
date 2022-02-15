@@ -32,6 +32,7 @@ clean_all: clean
 test:
 	$(MAKE) test -C tests PROJECT_ROOT=../$(PROJECT_ROOT)
 
+# generate gcov files in local.cov dir
 coverage: kafel policy
 	$(MAKE) all -C src PROJECT_ROOT=../$(PROJECT_ROOT) MODE=coverage && \
 	$(MAKE) test && \

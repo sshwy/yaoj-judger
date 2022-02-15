@@ -21,4 +21,4 @@ jobs:
         run: |
           curl -Os https://uploader.codecov.io/latest/linux/codecov
           chmod +x codecov
-          ./codecov -X gcov -X fix -s local.cov -t ${{ secrets.CODECOV_TOKEN }}
+          ./codecov -X gcov -s local.cov -t ${{ secrets.CODECOV_TOKEN }} -v
