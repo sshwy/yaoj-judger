@@ -21,8 +21,6 @@ void log_set(const char *filename) {
 char errmsg[1000];
 int error_flag = 0;
 
-int max(int a, int b) { return a > b ? a : b; }
-
 char *path_join(const char *first, char seperator, const char *second) {
   size_t flen = strlen(first);
   size_t slen = strlen(second);
@@ -66,16 +64,16 @@ void fprint_result(FILE *fp, struct result *pres) {
 void log_print_result(struct result *pres) { fprint_result(log_fp, pres); }
 void log_close() { fclose(log_fp); }
 
-void fprint_rusage(FILE *fp, struct rusage *rsp) {
-  fprintf(fp, "ru_utime: %ld %ld\n", rsp->ru_utime.tv_sec,
-          rsp->ru_utime.tv_usec);
-  fprintf(fp, "ru_stime: %ld %ld\n", rsp->ru_stime.tv_sec,
-          rsp->ru_stime.tv_usec);
-#define PRINT(prop, unit) fprintf(fp, #prop ": %ld " unit "\n", rsp->prop)
-  PRINT(ru_maxrss, "kb"); // ru_maxrss 统计的是实际使用的内存量
-  // PRINT(ru_ixrss, "kb-s");
-  // PRINT(ru_idrss, "kb-s");
-}
+// void fprint_rusage(FILE *fp, struct rusage *rsp) {
+//   fprintf(fp, "ru_utime: %ld %ld\n", rsp->ru_utime.tv_sec,
+//           rsp->ru_utime.tv_usec);
+//   fprintf(fp, "ru_stime: %ld %ld\n", rsp->ru_stime.tv_sec,
+//           rsp->ru_stime.tv_usec);
+// #define PRINT(prop, unit) fprintf(fp, #prop ": %ld " unit "\n", rsp->prop)
+//   PRINT(ru_maxrss, "kb"); // ru_maxrss 统计的是实际使用的内存量
+//   PRINT(ru_ixrss, "kb-s");
+//   PRINT(ru_idrss, "kb-s");
+// }
 
 char *ftos(FILE *fp) {
   fseek(fp, 0, SEEK_END);
@@ -98,8 +96,8 @@ enum result_code atorc(char *arg) {
     if (strcmp(arg, result_code_name[i]) == 0)
       return i;
   }
-  ASSERT(0, "\"%s\" doesn't match any result code name.\n", arg);
-  return 0;
+  fprintf(stderr, "\"%s\" doesn't match any result code name.\n", arg);
+  exit(1);
 }
 
 int to_millisecond(struct timeval tv) {
