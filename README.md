@@ -20,7 +20,7 @@
 
 如何上手？现在还在 prototype 阶段，还没写文档，~~麻烦您阅读源码……~~
 
-在构建项目之前请确保您的 Linux 系统安装有 `make`、`flex`（the fast lexical analyser generator） 和 `ausyscall`（a program that allows mapping syscall names and numbers） 命令。
+在构建项目之前请确保您的 Linux 系统安装有 `make`、`flex`（the fast lexical analyser generator） 、 `ausyscall`（a program that allows mapping syscall names and numbers） 和 clang 系列命令。
 
 接下在项目根目录执行：
 
@@ -30,7 +30,8 @@ cd tests/traditional/01_DSC   # 测试一下
 gcc main.c -o main.local # 编译测试用的代码
 touch main.out main.err  # 创建测试代码的 stdout, stderr 对应的文件
 
-# 除了使用 `-` 和 `--` 指定的参数，其余参数依次是可执行文件、读入文件、输出文件、错误输出文件、IO类型（std 或者 file）
+# 除了使用 `-` 和 `--` 指定的参数，其余参数依次是：
+# 可执行文件、读入文件、输出文件、错误输出文件、IO类型（std 或者 file）
 # 注意所有文件都要存在（main.out，main.err 至少需要创建空白的文件）
 # interactive 用法类似，详见 src/judger/interactive.c 的注释
 ../../../judger_traditional.local main.local main.in main.out main.err std \
@@ -114,7 +115,7 @@ make test
 - 交互型（interaction）: exec + interactor + input_file(both) + output_file(interactor) + error_file(both)
 - 通用型（代码编译、执行一段命令、testlib）（general）: execve() + input_file + output_file + error_file
 
-### hooks
+### Hooks
 
 为了处理资源限制和系统安全限制，我们引入 hooks 框架（其实也可以理解为一个 event 模式），一定程度上规范了程序的评测过程。简单来说所有对当前进程施加的影响都可以封装为一个模块来调用。而把模块挂载（register）到它该执行的阶段就是 hook。
 
@@ -137,7 +138,7 @@ fork -->|child| cafh(child_prework) --> rd{{ready}} --> child_run -.-> c_t
 
 对于第二个任务，使用 wait 和 getrusage 即可。前者需要逻辑方面的实现，而后者也可以封装为 hook。
 
-### policy
+### Policy
 
 对于系统安全方面的限制，可以想到 seccomp，以及其 bpf 等。本项目采用更加人性化的方式：kafel 规则。它可读且易于扩展。
 

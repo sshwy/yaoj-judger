@@ -1,3 +1,12 @@
+/**
+ * @file tkill.h
+ * @author sshwy (jy.cat@qq.com)
+ * @brief Hooks to open a new thread for timeout killer.
+ * @date 2022-02-15
+ *
+ * @copyright (c) 2022
+ *
+ */
 #ifndef YAOJUDGE_TIMEOUT_KILL_H
 #define YAOJUDGE_TIMEOUT_KILL_H
 

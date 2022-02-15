@@ -26,15 +26,15 @@
 #include "lib/policy.h"
 #include "lib/resource.h"
 
-void runner_run(struct runner_ctxt *ctxt) {
+static void runner_run(struct runner_ctxt *ctxt) {
   execve(ctxt->argv[0], ctxt->argv + 1, ctxt->env);
 }
-void child_run(perform_ctxt_t ctxt) { runner_run(ctxt->ectxt); }
+static void child_run(perform_ctxt_t ctxt) { runner_run(ctxt->ectxt); }
 
 /**
  * @return 0 on success, 1 otherwise
  */
-int child_prework(perform_ctxt_t ctxt) {
+static int child_prework(perform_ctxt_t ctxt) {
   LOG_INFO("perform child (%d)", ctxt->pchild);
   if (apply_resource_limit(ctxt))
     return 1;

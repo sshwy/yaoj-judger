@@ -1,10 +1,11 @@
+SHELL=/bin/sh
 CC=clang
 SUBDIRS=src policy
 PROJECT_ROOT?=
 CLI_CFLAG=-lkafel -lpthread -static -I$(PROJECT_ROOT)src -O2 \
 	-Wall -Wextra -Wno-missing-field-initializers
 
-.PHONY: $(SUBDIRS) clean kafel clean_all docs
+.PHONY: $(SUBDIRS) clean kafel clean_all docs check
 all: kafel $(SUBDIRS)
 
 # https://www.gnu.org/software/make/manual/make.html#Overriding
@@ -28,6 +29,8 @@ clean:
 
 clean_all: clean
 	$(MAKE) clean -C kafel 
+
+check: test
 
 test:
 	$(MAKE) test -C tests PROJECT_ROOT=../$(PROJECT_ROOT)

@@ -1,3 +1,4 @@
+SHELL=/bin/sh
 CC=clang
 .PHONY: clean force
 # do it for each run

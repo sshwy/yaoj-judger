@@ -26,7 +26,7 @@
 #include "lib/policy.h"
 #include "lib/resource.h"
 
-int runner_prework(const struct runner_ctxt *ctxt) {
+static int runner_prework(const struct runner_ctxt *ctxt) {
   if (ctxt->argc != 5) {
     SET_ERRORF("invalid arguments (argc=%d expect 5)", ctxt->argc);
     return 1;
@@ -66,11 +66,11 @@ int runner_prework(const struct runner_ctxt *ctxt) {
   return 0;
 }
 
-void runner_run(const struct runner_ctxt *ctxt) {
+static void runner_run(const struct runner_ctxt *ctxt) {
   execl(ctxt->argv[0], "main", (char *)NULL);
 }
 
-int child_prework(perform_ctxt_t ctxt) {
+static int child_prework(perform_ctxt_t ctxt) {
   LOG_INFO("perform child (%d)", ctxt->pchild);
   // sleep(1); // simulate heavy work
   if (runner_prework(ctxt->ectxt))
@@ -83,7 +83,7 @@ int child_prework(perform_ctxt_t ctxt) {
   return 0;
 }
 
-void child_run(perform_ctxt_t ctxt) { runner_run(ctxt->ectxt); }
+static void child_run(perform_ctxt_t ctxt) { runner_run(ctxt->ectxt); }
 
 void perform(perform_ctxt_t ctxt) {
   const char ready[] = "ready";

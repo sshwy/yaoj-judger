@@ -1,3 +1,4 @@
+SHELL=/bin/sh
 TESTER=$(PROJECT_ROOT)judger_traditional.local
 SUBDIRS=traditional interactive general fail stress
 .PHONY: all test clean force

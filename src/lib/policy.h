@@ -1,3 +1,12 @@
+/**
+ * @file policy.h
+ * @author sshwy (jy.cat@qq.com)
+ * @brief Kafel policy compilation, enhancement and hooks.
+ * @date 2022-02-15
+ *
+ * @copyright (c) 2022
+ *
+ */
 #ifndef YAOJUDGE_POLICY_H
 #define YAOJUDGE_POLICY_H
 
@@ -32,11 +41,12 @@ typedef struct policy_ctxt *policy_ctxt_t;
 
 int policy_set(policy_ctxt_t ctxt, char *dirname, char *policy);
 
-int compile_policy_before_fork(perform_ctxt_t per_ctxt);
+int compile_policy_before_fork(perform_ctxt_t ctxt);
 
 /**
+ * @brief apply policy set in `ctxt` to current process
  * @return 0 on success, 1 otherwise
  */
-int apply_policy(perform_ctxt_t per_ctxt);
+int apply_policy(perform_ctxt_t ctxt);
 
 #endif

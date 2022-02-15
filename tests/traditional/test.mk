@@ -1,3 +1,4 @@
+SHELL=/bin/sh
 .PHONY=test compile clean
 
 test: compile
