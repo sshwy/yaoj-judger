@@ -1,10 +1,14 @@
 TESTER=$(PROJECT_ROOT)judger_traditional.local
-.PHONY: all test clean
+SUBDIRS=traditional interactive general
+.PHONY: all test clean force
 all:
 
-test:
-	$(MAKE) test -C traditional TESTER=../$(TESTER) PROJECT_ROOT=../$(PROJECT_ROOT) && \
-	$(MAKE) test -C interactive TESTER=../$(TESTER) PROJECT_ROOT=../$(PROJECT_ROOT)
+test: $(SUBDIRS)
+
+$(SUBDIRS): force
+	$(MAKE) test -C $@ TESTER=../$(TESTER) PROJECT_ROOT=../$(PROJECT_ROOT)
+
+force: ;
 
 clean:
 	$(RM) test.local && \
