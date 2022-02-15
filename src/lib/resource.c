@@ -26,23 +26,23 @@ int upperbound(double x) {
 
 int apply_resource_limit_rsc(struct rsclim_ctxt *rctxt) {
   if (rctxt->cpu_time < 0) {
-    SET_ERRORF("invalid time");
+    SET_ERRORF("invalid time: %d", rctxt->cpu_time);
     return 1;
   }
   if (rctxt->virtual_memory < 0) {
-    SET_ERRORF("invalid virtual_memory");
+    SET_ERRORF("invalid virtual_memory: %d", rctxt->virtual_memory);
     return 1;
   }
   if (rctxt->actual_memory < 0) {
-    SET_ERRORF("invalid actual_memory");
+    SET_ERRORF("invalid actual_memory: %d", rctxt->actual_memory);
     return 1;
   }
   if (rctxt->stack_memory < 0) {
-    SET_ERRORF("invalid stack_memory");
+    SET_ERRORF("invalid stack_memory: %d", rctxt->stack_memory);
     return 1;
   }
   if (rctxt->output_size < 0) {
-    SET_ERRORF("invalid output_size");
+    SET_ERRORF("invalid output_size: %d", rctxt->output_size);
     return 1;
   }
 
