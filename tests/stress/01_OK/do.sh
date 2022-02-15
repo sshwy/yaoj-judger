@@ -3,7 +3,7 @@
 rm -f main.out main.err
 
 echo "compiling source..."
-g++ main.cpp -o main.local -O2
+clang++ main.cpp -o main.local -O2
 touch main.out main.err
 
 echo "judging..."

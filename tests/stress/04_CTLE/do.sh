@@ -3,17 +3,18 @@
 rm -f main.out main.err
 
 echo "compiling source..."
-clang++ main.cpp -o main.local -O2
+clang main.c -o main.local -O2
 touch main.out main.err
 
 echo "judging..."
 ../../../judger_traditional.local main.local main.in main.out main.err std \
-  -r RE \
+  -r TLE \
   --log=.log.local \
   -P ../../../policy \
-  -p c_std_io_coverage \
+  -p free \
   --memory=30 \
-  --timeout=5000
+  --realtime=6000 \
+  --cputime=1500
 
 # cat .log.local
 # echo -e "\033[32m[main.out]\033[0m"
