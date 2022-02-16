@@ -50,4 +50,12 @@ echo -e "test failure #6"
   --log=.log.local \
   -t 1000 -m -128
 
+echo -e "test failure #7"
+../../../judger_traditional.local main.local main.in main.err main.err std\
+  -r OK \
+  -P ../../../policy \
+  -p free \
+  --log=.log.local \
+  -t 1000
+
 exit 0
