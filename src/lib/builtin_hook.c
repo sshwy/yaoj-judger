@@ -94,22 +94,14 @@ static int analyze_after_wait(perform_ctxt_t ctxt) {
       if (ctxt->rctxt->real_time != RSC_UNLIMITED &&
           ctxt->result.real_time > ctxt->rctxt->real_time)
         ctxt->result.code = TLE;
-      else
-        ctxt->result.code = SE; // someone unknown killed it
       break;
     // https://stackoverflow.com/questions/3413166/when-does-a-process-get-sigabrt-signal-6
     case SIGABRT:
       ctxt->result.code = RE;
       break;
-    default:
-      ctxt->result.code = OK;
     }
 
-  } else {
-    if (WIFEXITED(ctxt->status) == 0) {
-      SET_ERRORF("assertion failed");
-      return 1;
-    }
+  } else if (WIFEXITED(ctxt->status)) {
     LOG_INFO("child process exited with code %d", WEXITSTATUS(ctxt->status));
 
     ctxt->result.exit_code = WEXITSTATUS(ctxt->status);
