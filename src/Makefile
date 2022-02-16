@@ -44,7 +44,8 @@ clean:
 cov:
 ifeq (true,$(GCOVR)) # if enable gcovr
 	$(GCOV) -abcfu $(GCDA_FILES)
-	gcovr -r . -k -g --gcov-ignore-parse-errors --html --html-details -o $(PROJECT_ROOT)/local.cov/coverage.html
+	gcovr -r . -k -g --gcov-ignore-parse-errors --html --html-details -s\
+		-o $(PROJECT_ROOT)/local.cov/coverage.html
 	mv *.c.gcov $(PROJECT_ROOT)local.cov
 else # production mode
 	$(GCOV) -abcfu $(GCDA_FILES)
