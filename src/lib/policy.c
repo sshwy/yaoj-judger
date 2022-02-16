@@ -29,9 +29,8 @@ int policy_set(policy_ctxt_t ctxt, char *dirname, char *policy) {
  */
 int policy_identifier_handler(const char *content,
                               const perform_ctxt_t per_ctxt, char **res) {
-#define ALLOC_UNIT 100
-  int res_size = strlen(content) + ALLOC_UNIT, res_len = 0;
-  char *result = malloc(res_size * sizeof(char));
+  int res_len = 1;
+  char *result = malloc(res_len * sizeof(char));
   *result = '\0';
 
   // use regular expression for pattern replacement
@@ -49,7 +48,7 @@ int policy_identifier_handler(const char *content,
 
   while (1) {
     reg_status = regexec(&regex, s, 1, pmatch, 0);
-    int resize_flag = 0, num = 0;
+    int num = 0;
     char num_str[10], address[50];
     *address = '\0'; // init
 
@@ -70,18 +69,12 @@ int policy_identifier_handler(const char *content,
     }
 
     int extra_len = offset - las + strlen(address);
+    res_len += extra_len;
 
-    // realloc result in need
-    while (res_len + extra_len + 5 > res_size) {
-      resize_flag = 1;
-      res_size += ALLOC_UNIT;
-    }
-    if (resize_flag) {
-      result = realloc(result, res_size * sizeof(char));
-      if (result == NULL) {
-        SET_ERRORF("realloc error");
-        return 1;
-      }
+    result = realloc(result, (res_len + 5) * sizeof(char));
+    if (result == NULL) {
+      SET_ERRORF("realloc error");
+      return 1;
     }
 
     // update result
