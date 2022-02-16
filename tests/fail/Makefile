@@ -1,5 +1,5 @@
 SUBDIRS=01 02 03
-.PHONY=$(SUBDIRS) test force
+.PHONY=$(SUBDIRS) test force clean
 
 test: $(SUBDIRS)
 
@@ -8,5 +8,12 @@ $(SUBDIRS): force
 	@cd $@ && \
 	./do.sh && \
 	cd ..
+
+clean:
+	@for dir in $(SUBDIRS); do \
+		cd $$dir && \
+		$(RM) main.local .log.local *.err *.out && \
+		cd ..; \
+	done
 
 force: ;

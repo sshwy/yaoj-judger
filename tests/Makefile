@@ -14,3 +14,7 @@ force: ;
 clean:
 	$(RM) test.local
 	$(MAKE) clean -C traditional TESTER=../$(TESTER) PROJECT_ROOT=../$(PROJECT_ROOT) -s
+	$(MAKE) clean -C stress PROJECT_ROOT=../$(PROJECT_ROOT) -s
+	$(MAKE) clean -C interactive PROJECT_ROOT=../$(PROJECT_ROOT) -s
+	$(MAKE) clean -C fail PROJECT_ROOT=../$(PROJECT_ROOT) -s
+	$(MAKE) clean -C general PROJECT_ROOT=../$(PROJECT_ROOT) -s
