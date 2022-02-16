@@ -4,7 +4,8 @@ SUBDIRS=01_OK 02_TLE 03_FAIL
 test: $(SUBDIRS)
 
 $(SUBDIRS): force
-	cd $@ && \
+	@echo -e "\033[34mtesting interactive/$@\033[0m"
+	@cd $@ && \
 	./do.sh && \
 	cd ..
 

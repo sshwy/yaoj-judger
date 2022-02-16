@@ -4,7 +4,8 @@ SUBDIRS=02_RE 03_RTLE 04_CTLE
 test: $(SUBDIRS)
 
 $(SUBDIRS): force
-	cd $@ && \
+	@echo -e "\033[34mtesting stress/$@\033[0m"
+	@cd $@ && \
 	./do.sh && \
 	cd ..
 
