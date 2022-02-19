@@ -18,9 +18,6 @@ void log_set(const char *filename) {
   log_fd = fileno(log_fp);
 }
 
-char errmsg[1000];
-int error_flag = 0;
-
 char *path_join(const char *first, char seperator, const char *second) {
   size_t flen = strlen(first);
   size_t slen = strlen(second);

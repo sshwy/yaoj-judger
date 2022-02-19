@@ -60,9 +60,6 @@ extern char log_buf[1000];
     }                                                                          \
   } while (0)
 
-extern char errmsg[1000];
-extern int error_flag;
-
 #define CPU_TIME_H_LIMIT 300 //!< 5 minutes
 #define FSIZE_H_LIMIT (64 * MB)
 #define STACK_H_LIMIT (64 * MB)
