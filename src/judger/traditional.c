@@ -25,11 +25,11 @@
 #include "lib/builtin_hook.h"
 #include "lib/policy.h"
 #include "lib/resource.h"
+#include "yerr.h"
 
 static int runner_prework(const struct runner_ctxt *ctxt) {
   if (ctxt->argc != 5) {
-    SET_ERRORF("invalid arguments (argc=%d expect 5)", ctxt->argc);
-    return 1;
+    yreturn(E_ARGC);
   }
 
   if (strcmp(ctxt->argv[4], "std") == 0) {
@@ -37,31 +37,26 @@ static int runner_prework(const struct runner_ctxt *ctxt) {
               output_fd = open(ctxt->argv[2], O_WRONLY | O_TRUNC);
 
     if (input_fd < 0 || output_fd < 0) {
-      SET_ERRORF("open \"%s\" or \"%s\" failed", ctxt->argv[1], ctxt->argv[2]);
-      return 1;
+      yreturn(E_FILEFD);
     }
 
     if (dup2(input_fd, fileno(stdin)) < 0 ||
         dup2(output_fd, fileno(stdout)) < 0) {
-      SET_ERRORF("dup2 failed");
-      return 1;
+      yreturn(E_DUP);
     }
   } else {
     if (strcmp(ctxt->argv[4], "file") != 0) {
-      SET_ERRORF("invalid token %s", ctxt->argv[4]);
-      return 1;
+      yreturn(E_TOKEN);
     }
   }
 
   // whether is standard IO or file IO, we redirect its stderr stream.
   const int error_fd = open(ctxt->argv[3], O_WRONLY | O_TRUNC);
   if (error_fd < 0) {
-    SET_ERRORF("open fd failed");
-    return 1;
+    yreturn(E_ERRFD);
   }
   if (dup2(error_fd, fileno(stderr)) < 0) {
-    SET_ERRORF("dup2 failed");
-    return 1;
+    yreturn(E_DUP);
   }
   return 0;
 }
@@ -73,47 +68,46 @@ static void runner_run(const struct runner_ctxt *ctxt) {
 static int child_prework(perform_ctxt_t ctxt) {
   LOG_INFO("perform child (%d)", ctxt->pchild);
   // sleep(1); // simulate heavy work
-  if (runner_prework(ctxt->ectxt))
-    return 1;
-  if (apply_resource_limit(ctxt))
-    return 1;
-  if (apply_policy(ctxt))
-    return 1;
+  if (runner_prework(ctxt->ectxt) || apply_resource_limit(ctxt) ||
+      apply_policy(ctxt))
+    yreturn(yerrno);
   fflush(log_fp);
   return 0;
 }
 
 static void child_run(perform_ctxt_t ctxt) { runner_run(ctxt->ectxt); }
 
-void perform(perform_ctxt_t ctxt) {
+int perform(perform_ctxt_t ctxt) {
   const char ready[] = "ready";
   const char notready[] = "not";
 
   ctxt->pself = getpid();
   ctxt->pchild = -1;
   int p_run[2];
-  ASSERT(pipe(p_run) == 0, "pipe failed");
+  if (pipe(p_run))
+    yreturn(E_PIPE);
 
   register_hook(ctxt->hctxt, BEFORE_FORK, check_runner_duplicate_before_fork);
   register_builtin_hook(ctxt->hctxt);
   if (run_hook_chain(ctxt->hctxt->before_fork, ctxt))
-    EXIT_WITHMSG();
+    yreturn(yerrno);
   fflush(log_fp); // avoid multi logging
 
   // fork child process
   const pid_t child_pid = fork();
-  ASSERT(child_pid >= 0, "fork failed.\n");
+  if (child_pid < 0) {
+    yreturn(E_FORK);
+  }
 
   if (child_pid == 0) { // child process
     ctxt->pchild = getpid();
     if (setpgid(0, 0)) { // set process group ID to itself
-      SET_ERRORF("setpgid failed");
       write(p_run[1], notready, sizeof(notready));
-      EXIT_WITHMSG();
+      yexit(E_SETPGID);
     }
     if (child_prework(ctxt)) {
       write(p_run[1], notready, sizeof(notready));
-      EXIT_WITHMSG();
+      yexit(yerrno);
     }
     write(p_run[1], ready, sizeof(ready));
     child_run(ctxt);
@@ -125,24 +119,23 @@ void perform(perform_ctxt_t ctxt) {
   // wait until child send "ready"
   char receive[6];
   if (read(p_run[0], receive, sizeof(ready)) != sizeof(ready)) {
-    SET_ERRORF("child process not ready");
-    EXIT_WITHMSG();
+    yreturn(E_CHILD);
   }
 
   LOG_INFO("parent (%d) child (%d)", ctxt->pself, ctxt->pchild);
   if (run_hook_chain(ctxt->hctxt->after_fork, ctxt))
-    EXIT_WITHMSG();
+    yreturn(yerrno);
 
   int status;
   if (waitpid(child_pid, &status, WUNTRACED) == -1) {
     killpg(child_pid, SIGKILL);
-    SET_ERRORF("wait failed");
-    EXIT_WITHMSG();
+    yreturn(E_WAIT);
   }
 
   ctxt->status = status;
   if (run_hook_chain(ctxt->hctxt->after_wait, ctxt)) {
-    EXIT_WITHMSG();
+    yreturn(yerrno);
   }
   LOG_INFO("judge finished");
+  return 0;
 }

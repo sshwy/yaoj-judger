@@ -12,5 +12,3 @@ echo "judging..."
   --log=.log.local \
   -P . -p invalid \
   -t 1000
-
-[ $? -eq 1 ] && exit 0 || exit 1 # ensure return 1

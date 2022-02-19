@@ -22,6 +22,8 @@
 extern "C" {
 #endif
 
+#include "yerr.h"
+
 #define KB (1024)
 #define MB (1024 * KB)
 
@@ -114,7 +116,7 @@ typedef struct perform_ctxt *perform_ctxt_t;
 /**
  * @brief Perform a judgement.
  */
-void perform(perform_ctxt_t ctxt);
+int perform(perform_ctxt_t ctxt);
 
 /**
  * @brief Create a perform context

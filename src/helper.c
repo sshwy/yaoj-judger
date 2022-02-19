@@ -2,6 +2,7 @@
 #include "judger.h"
 #include "lib/policy.h"
 #include "lib/resource.h"
+#include "yerr.h"
 
 static rsclim_ctxt_t rsclim_ctxt_create() {
   rsclim_ctxt_t ctxt = malloc(sizeof(struct rsclim_ctxt));
@@ -96,8 +97,7 @@ int perform_set_limit(perform_ctxt_t ctxt, int type, int lim) {
     rctxt->stack_memory = lim;
     break;
   default:
-    SET_ERRORF("unknown limit type %d\n", type);
-    return 1;
+    return yerr(E_HELPER_INVALID_LIM);
   }
   return 0;
 }

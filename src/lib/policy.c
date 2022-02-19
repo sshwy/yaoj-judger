@@ -15,8 +15,7 @@ int policy_set(policy_ctxt_t ctxt, char *dirname, char *policy) {
       path_join(path_join(dirname, '/', policy), '.', "policy");
   FILE *fp = fopen(filename, "r");
   if (fp == NULL) {
-    SET_ERRORF("invalid fp");
-    return 1;
+    yreturn(E_FP);
   }
   ctxt->content = ftos(fp);
   ctxt->dirname = dirname; // seem dangerous
@@ -37,8 +36,7 @@ int policy_identifier_handler(const char *content,
   regex_t regex;
   char re[] = "%[0-9][0-9]*s";
   if (regcomp(&regex, re, REG_NEWLINE)) {
-    SET_ERRORF("regex compile failed");
-    return 1;
+    yreturn(E_ERROR);
   }
 
   const char *s = content;
@@ -60,8 +58,7 @@ int policy_identifier_handler(const char *content,
       num_str[len - 1] = 0;
       num = atoi(num_str);
       if (!(0 <= num && num < per_ctxt->ectxt->argc)) {
-        SET_ERRORF("invalid num (%d)", num);
-        return 1;
+        yreturn(E_POL_IDT);
       }
       sprintf(address, "%p", per_ctxt->ectxt->argv[num]);
     } else {
@@ -73,8 +70,7 @@ int policy_identifier_handler(const char *content,
 
     result = realloc(result, (res_len + 5) * sizeof(char));
     if (result == NULL) {
-      SET_ERRORF("realloc error");
-      return 1;
+      yreturn(E_ERROR);
     }
 
     // update result
@@ -97,14 +93,14 @@ int compile_policy_before_fork(perform_ctxt_t per_ctxt) {
   char *esc_content;
   if (policy_identifier_handler(per_ctxt->pctxt->content, per_ctxt,
                                 &esc_content))
-    return 1;
+    yreturn(yerrno);
   struct sock_fprog prog;
   kafel_ctxt_t kctxt = kafel_ctxt_create();
   kafel_set_input_string(kctxt, esc_content);
   kafel_add_include_search_path(kctxt, per_ctxt->pctxt->dirname);
   if (kafel_compile(kctxt, &prog)) {
-    SET_ERRORF("policy compilation failed: %s", kafel_error_msg(kctxt));
-    return 1;
+    LOG_DEBUG("policy compilation failed: %s", kafel_error_msg(kctxt));
+    yreturn(E_KAFEL);
   }
   kafel_ctxt_destroy(&kctxt);
   LOG_INFO("compile policy \"%s\" succeed", per_ctxt->pctxt->policy);
@@ -115,8 +111,7 @@ int compile_policy_before_fork(perform_ctxt_t per_ctxt) {
 int apply_policy_prog(struct sock_fprog prog) {
   if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) ||
       prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &prog, 0, 0)) {
-    SET_ERRORF("error applying policy");
-    return 1;
+    yreturn(E_APP_POL);
   }
   free(prog.filter);
   LOG_INFO("apply policy succeed");

@@ -2,11 +2,12 @@
 
 #include "common.h"
 #include "hook.h"
+#include "yerr.h"
 
 int run_hook_chain(hook_chain_t phead, perform_ctxt_t ctxt) {
   while (phead != NULL) {
     if (phead->hook(ctxt))
-      return 1;
+      yreturn(yerrno);
     phead = phead->next;
   }
   return 0;

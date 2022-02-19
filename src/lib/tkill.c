@@ -38,20 +38,11 @@ void *timeout_killer(void *_tkill_ctxt) { // return void specified!
   return NULL;
 }
 
-int start_timeout_killer(struct tkill_ctxt *tctxtp, pthread_t *tidp) {
-  *tidp = 0;
-  if (pthread_create(tidp, NULL, timeout_killer, (void *)(tctxtp)) != 0) {
-    // make sure pgid has set for child
-    killpg(tctxtp->pid, SIGKILL);
-    SET_ERRORF("pthread_create failed");
-    return 1;
-  }
-  return 0;
-}
-
 int stop_timeout_killer(pthread_t tid) {
+  LOG_INFO("stop tkiller");
+
   int signal;
-  if ((signal = pthread_cancel(tid) != 0)) {
+  if ((signal = pthread_cancel(tid)) != 0) {
     return signal; // let others handle exception
   };
   return 0;
@@ -60,12 +51,18 @@ int stop_timeout_killer(pthread_t tid) {
 static pthread_t tid = 0;
 
 int start_killer_after_fork(perform_ctxt_t ctxt) {
+  fflush(log_fp); // must!
+
   struct tkill_ctxt tctxt = {
       .pid = ctxt->pchild,
       .time = ctxt->rctxt->real_time,
   };
   if (ctxt->rctxt->real_time != RSC_UNLIMITED) {
-    return start_timeout_killer(&tctxt, &tid); // let others handle exception
+    if (pthread_create(&tid, NULL, timeout_killer, (void *)(&tctxt)) != 0) {
+      // make sure pgid has set for child
+      killpg(tctxt.pid, SIGKILL);
+      yreturn(E_TKILL_PTHREAD);
+    }
   }
   return 0;
 }

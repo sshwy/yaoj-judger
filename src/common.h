@@ -37,6 +37,7 @@ extern char log_buf[1000];
 #define LOG_INFO(fmt, args...)                                                 \
   do {                                                                         \
     fprintf(log_fp, GREEN("INFO") "(" AT "): " fmt ".\n", ##args);             \
+    fflush(log_fp);                                                            \
   } while (0)
 // write(log_fd, log_buf, sizeof(char) * strlen(log_buf));
 
@@ -61,24 +62,6 @@ extern char log_buf[1000];
 
 extern char errmsg[1000];
 extern int error_flag;
-
-#define LOG_ERRMSG()                                                           \
-  do {                                                                         \
-    fprintf(log_fp, RED("ERROR") "%s.\n", errmsg);                             \
-    fflush(log_fp);                                                            \
-  } while (0)
-
-#define SET_ERRORF(args...)                                                    \
-  do {                                                                         \
-    sprintf(errmsg, "(" AT "): " args);                                        \
-    error_flag = 1;                                                            \
-    LOG_ERRMSG();                                                              \
-  } while (0)
-
-#define EXIT_WITHMSG()                                                         \
-  do {                                                                         \
-    exit(1);                                                                   \
-  } while (0)
 
 #define CPU_TIME_H_LIMIT 300 //!< 5 minutes
 #define FSIZE_H_LIMIT (64 * MB)

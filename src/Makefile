@@ -21,7 +21,7 @@ else # production mode
 	CLI_CFLAGS+=-O2
 endif
 
-COMMON_NAME=common helper hook lib/builtin_hook lib/policy lib/resource lib/tkill
+COMMON_NAME=common helper hook lib/builtin_hook lib/policy lib/resource lib/tkill yerr
 JUDGER_NAME=traditional interactive general
 
 COMMON_OBJECTS=$(COMMON_NAME:%=%.o)
@@ -71,3 +71,4 @@ lib/policy.o: common.h lib/policy.h
 lib/resource.o: common.h lib/resource.h
 lib/tkill.o: common.h judger.h lib/tkill.h lib/resource.h
 main.o: main.c judger.h
+yerr.o: yerr.h

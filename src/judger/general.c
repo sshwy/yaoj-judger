@@ -25,6 +25,7 @@
 #include "lib/builtin_hook.h"
 #include "lib/policy.h"
 #include "lib/resource.h"
+#include "yerr.h"
 
 static void runner_run(struct runner_ctxt *ctxt) {
   execve(ctxt->argv[0], ctxt->argv + 1, ctxt->env);
@@ -36,42 +37,42 @@ static void child_run(perform_ctxt_t ctxt) { runner_run(ctxt->ectxt); }
  */
 static int child_prework(perform_ctxt_t ctxt) {
   LOG_INFO("perform child (%d)", ctxt->pchild);
-  if (apply_resource_limit(ctxt))
-    return 1;
-  if (apply_policy(ctxt))
-    return 1;
+  if (apply_resource_limit(ctxt) || apply_policy(ctxt))
+    yreturn(yerrno);
   fflush(log_fp);
   return 0;
 }
 
-void perform(perform_ctxt_t ctxt) {
+int perform(perform_ctxt_t ctxt) {
   const char ready[] = "ready";
   const char notready[] = "not";
 
   ctxt->pself = getpid();
   ctxt->pchild = -1;
   int p_run[2];
-  ASSERT(pipe(p_run) == 0, "pipe failed");
+  if (pipe(p_run))
+    yreturn(E_PIPE);
 
   register_builtin_hook(ctxt->hctxt);
   if (run_hook_chain(ctxt->hctxt->before_fork, ctxt))
-    EXIT_WITHMSG();
+    yreturn(yerrno);
   fflush(log_fp); // avoid multi logging
 
   // fork child process
   const pid_t child_pid = fork();
-  ASSERT(child_pid >= 0, "fork failed.\n");
+  if (child_pid < 0) {
+    yreturn(E_FORK);
+  }
 
   if (child_pid == 0) { // child process
     ctxt->pchild = getpid();
     if (setpgid(0, 0)) { // set process group ID to itself
-      SET_ERRORF("setpgid failed");
       write(p_run[1], notready, sizeof(notready));
-      EXIT_WITHMSG();
+      yexit(E_SETPGID);
     }
     if (child_prework(ctxt)) {
       write(p_run[1], notready, sizeof(notready));
-      EXIT_WITHMSG();
+      yexit(yerrno);
     }
     write(p_run[1], ready, sizeof(ready));
     child_run(ctxt);
@@ -83,24 +84,23 @@ void perform(perform_ctxt_t ctxt) {
   // wait until child send "ready"
   char receive[6];
   if (read(p_run[0], receive, sizeof(ready)) != sizeof(ready)) {
-    SET_ERRORF("child process not ready");
-    EXIT_WITHMSG();
+    yreturn(E_CHILD);
   }
 
   LOG_INFO("parent (%d) child (%d)", ctxt->pself, ctxt->pchild);
   if (run_hook_chain(ctxt->hctxt->after_fork, ctxt))
-    EXIT_WITHMSG();
+    yreturn(yerrno);
 
   int status;
   if (waitpid(child_pid, &status, WUNTRACED) == -1) {
     killpg(child_pid, SIGKILL);
-    SET_ERRORF("wait failed");
-    EXIT_WITHMSG();
+    yreturn(E_WAIT);
   }
 
   ctxt->status = status;
   if (run_hook_chain(ctxt->hctxt->after_wait, ctxt)) {
-    EXIT_WITHMSG();
+    yreturn(yerrno);
   }
   LOG_INFO("judge finished");
+  return 0;
 }

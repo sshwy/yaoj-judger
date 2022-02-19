@@ -120,8 +120,10 @@ int main(int argc, char **argv, char **env) {
   } else {
     perform_set_runner(cctxt, parsed_argc, parse_argv, env);
 
-    perform(cctxt);
-
+    if (perform(cctxt)) {
+      cctxt->result.code = SE;
+      fprintf(stderr, "SE: %s\n", ystrerr(yerrno));
+    }
     log_print_result(&cctxt->result);
   }
 

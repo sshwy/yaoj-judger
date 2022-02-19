@@ -25,8 +25,7 @@ int check_runner_duplicate_before_fork(perform_ctxt_t ctxt) {
   for (int i = 0; i < count; i++) {
     for (int j = i + 1; j < count; j++) {
       if (strcmp(ctxt->ectxt->argv[i], ctxt->ectxt->argv[j]) == 0) {
-        SET_ERRORF("duplicated files! (i=%d, j=%d", i, j);
-        return 1;
+        yreturn(E_DUPLICATE_FILE);
       }
     }
   }
@@ -55,8 +54,7 @@ static int init_result_before_fork(perform_ctxt_t ctxt) {
   ctxt->result.real_time = 0;
   // automatically close log_fp when invoke exec*
   if (fcntl(fileno(log_fp), F_SETFD, FD_CLOEXEC) == -1) {
-    SET_ERRORF("set fd failed");
-    return 1;
+    yreturn(E_FCNTL);
   }
   LOG_INFO("init ctxt before fork");
   return 0;
