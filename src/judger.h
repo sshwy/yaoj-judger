@@ -81,7 +81,7 @@ struct result {
   int exit_code;
   int real_time;   //!< in milliseconds.
   int cpu_time;    //!< in milliseconds.
-  int real_memory; //!< in kb.
+  int real_memory; //!< in bytes.
 };
 
 typedef struct result *result_t;
