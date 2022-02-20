@@ -1,6 +1,6 @@
 # Judger of Yao OJ
 
-[![codecov](https://codecov.io/gh/sshwy/yaoj-judger/branch/master/graph/badge.svg?token=J2YFL24TOH)](https://codecov.io/gh/sshwy/yaoj-judger)
+[![codecov](https://codecov.io/gh/sshwy/yaoj-judger/branch/master/graph/badge.svg?token=J2YFL24TOH)](https://codecov.io/gh/sshwy/yaoj-judger) [![CodeFactor](https://www.codefactor.io/repository/github/sshwy/yaoj-judger/badge/master)](https://www.codefactor.io/repository/github/sshwy/yaoj-judger/overview/master)
 
 （大概）是新一代 OJ 评测模块！
 
