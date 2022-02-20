@@ -4,8 +4,8 @@ CC=clang
 # do it for each run
 # write all available system call definition into syscall.policy
 syscall.policy: force
-	$(CC) update_syscall.c -o update_syscall.local; \
-	./update_syscall.local syscall.policy
+	$(CC) update_syscall.c -o update_syscall.local
+	./update_syscall.local syscall.polib
 
 clean:
 	$(RM) update_syscall.local

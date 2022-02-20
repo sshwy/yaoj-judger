@@ -1,4 +1,6 @@
-#include "syscall.policy"
+#include "syscall.polib"
+
+POLICY none { }
 
 POLICY basic_allow {
   ALLOW {

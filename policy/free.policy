@@ -1,4 +1,3 @@
-POLICY free {
-}
+#include "lib.polib"
 
-USE free DEFAULT ALLOW
+USE none DEFAULT ALLOW

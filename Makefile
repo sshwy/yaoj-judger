@@ -4,7 +4,9 @@ SUBDIRS=src policy tests
 PROJECT_ROOT?=
 
 .PHONY: $(SUBDIRS) clean kafel clean_all docs check
+
 all: kafel $(SUBDIRS)
+	@echo -e "done."
 
 # https://www.gnu.org/software/make/manual/make.html#Overriding
 # https://www.gnu.org/software/make/manual/make.html#Multiple-Targets
@@ -21,7 +23,7 @@ kafel:
 clean:
 	$(RM) libkafel.* *.local *.gcno *.gcda *.gcov
 	$(RM) -r local.cov
-	for dir in $(SUBDIRS); do \
+	@for dir in $(SUBDIRS); do \
 		$(MAKE) clean -C $$dir PROJECT_ROOT=../$(PROJECT_ROOT); \
 	done
 
