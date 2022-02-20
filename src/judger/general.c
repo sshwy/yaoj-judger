@@ -5,17 +5,13 @@
  * @date 2022-02-08
  * @copyright Copyright (c) 2022
  *
- * For runner arguments: argv is an array of pointers to strings, the first of
- * which (ie., `argv[0]`) acts like `pathname` in execve(), and the rest of
- * which are passed to the new program as its command-line arguments. By
- * convention, `argv[1]` should contain the filename associated with the file
- * being executed. The argv array must be terminated by a NULL pointer. (Thus,
- * in the new program, argv[argc] will be NULL.)
+ * For runner arguments: argv contains one argument: the executable script file.
  *
  * envp is an array of pointers to strings, conventionally of the form
  * `key=value`, which are passed as the environment of the new program.  The
  * envp array must be terminated by a NULL pointer.
  */
+#include <errno.h>
 #include <signal.h>
 #include <sys/wait.h>
 #include <unistd.h>
@@ -28,7 +24,7 @@
 #include "yerr.h"
 
 static void runner_run(struct runner_ctxt *ctxt) {
-  execve(ctxt->argv[0], ctxt->argv + 1, ctxt->env);
+  execle(ctxt->argv[0], "main", (char *)NULL, ctxt->env);
 }
 static void child_run(perform_ctxt_t ctxt) { runner_run(ctxt->ectxt); }
 
@@ -36,7 +32,7 @@ static void child_run(perform_ctxt_t ctxt) { runner_run(ctxt->ectxt); }
  * @return 0 on success, 1 otherwise
  */
 static int child_prework(perform_ctxt_t ctxt) {
-  LOG_INFO("perform child (%d)", ctxt->pchild);
+  LOG_DEBUG("perform child (%d)", ctxt->pchild);
   if (apply_resource_limit(ctxt) || apply_policy(ctxt))
     yreturn(yerrno);
   fflush(log_fp);
@@ -50,8 +46,12 @@ int perform(perform_ctxt_t ctxt) {
   ctxt->pself = getpid();
   ctxt->pchild = -1;
   int p_run[2];
-  if (pipe(p_run))
+  if (pipe(p_run)) {
     yreturn(E_PIPE);
+  }
+  if (ctxt->ectxt->argc != 1) {
+    yreturn(E_ARGC);
+  }
 
   register_builtin_hook(ctxt->hctxt);
   if (run_hook_chain(ctxt->hctxt->before_fork, ctxt))
@@ -75,8 +75,13 @@ int perform(perform_ctxt_t ctxt) {
       yexit(yerrno);
     }
     write(p_run[1], ready, sizeof(ready));
+    fflush(log_fp);
+
     child_run(ctxt);
-    exit(1); // child process doesn't terminate
+    if (errno == EACCES) {
+      LOG_ERROR("exec error getting access");
+    }
+    yexit(E_EXEC); // child process doesn't terminate
   }
   // parent process
   ctxt->pchild = child_pid;
@@ -87,7 +92,7 @@ int perform(perform_ctxt_t ctxt) {
     yreturn(E_CHILD);
   }
 
-  LOG_INFO("parent (%d) child (%d)", ctxt->pself, ctxt->pchild);
+  LOG_DEBUG("parent (%d) child (%d)", ctxt->pself, ctxt->pchild);
   if (run_hook_chain(ctxt->hctxt->after_fork, ctxt))
     yreturn(yerrno);
 

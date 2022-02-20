@@ -100,7 +100,12 @@ static int analyze_after_wait(perform_ctxt_t ctxt) {
     }
 
   } else if (WIFEXITED(ctxt->status)) {
-    LOG_INFO("child process exited with code %d", WEXITSTATUS(ctxt->status));
+    if (WEXITSTATUS(ctxt->status)) {
+      LOG_WARN("child process exited with code %d (%s)",
+               WEXITSTATUS(ctxt->status), ystrerr(WEXITSTATUS(ctxt->status)));
+    } else {
+      LOG_INFO("child process exited with code 0");
+    }
 
     ctxt->result.exit_code = WEXITSTATUS(ctxt->status);
     if (WEXITSTATUS(ctxt->status) == 0) {

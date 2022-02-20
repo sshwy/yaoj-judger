@@ -1,4 +1,4 @@
-SUBDIRS=01 02 03
+SUBDIRS=01 02
 .PHONY=$(SUBDIRS) test force clean
 
 test: $(SUBDIRS)
