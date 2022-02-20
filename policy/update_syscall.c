@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
   char line[1000];
   /* can't use fscanf directly! */
   while (fgets(line, sizeof(line), flistp) != NULL) {
-    if (sscanf(line, "%d%s", &id, name) == 2 && name[0] != '_') {
+    if (sscanf(line, "%d%80s", &id, name) == 2 && name[0] != '_') {
       fprintf(foutp, "#define %s %d\n", name, id);
     } else {
       fprintf(stderr, "%s: [ignore] %s", argv[0], line);
