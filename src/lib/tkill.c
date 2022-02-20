@@ -24,8 +24,6 @@ void *timeout_killer(void *_tkill_ctxt) { // return void specified!
     return NULL;
   }
 
-  // LOG_INFO("timeout_killer: pid=%d timeout=%d\n", pid, time);
-
   // usleep can't be used, for time args must < 1000ms
   // this may sleep longer that expected, but we will have a check at the end
   if (sleep((unsigned int)((time + 1000) / 1000)) != 0) {
@@ -39,7 +37,7 @@ void *timeout_killer(void *_tkill_ctxt) { // return void specified!
 }
 
 int stop_timeout_killer(pthread_t tid) {
-  LOG_INFO("stop tkiller");
+  LOG_DEBUG("stop tkiller");
 
   int signal;
   if ((signal = pthread_cancel(tid)) != 0) {
@@ -70,7 +68,7 @@ int start_killer_after_fork(perform_ctxt_t ctxt) {
 int stop_killer_after_wait(perform_ctxt_t ctxt) {
   if (ctxt->rctxt->real_time != RSC_UNLIMITED) {
     if (stop_timeout_killer(tid)) {
-      LOG_INFO("[ignored] stop timeout killer failed");
+      LOG_WARN("[ignored] stop timeout killer failed");
       return 0;
     }
   }
