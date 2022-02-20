@@ -32,6 +32,7 @@ static char yerrmsg[][100] = {
     [E_POL_IDT] = "invalid indentifier number",
     [E_KAFEL] = "policy compilation failed",
     [E_APP_POL] = "apply policy failed",
+    [E_EXEC] = "exec* failed",
 };
 
 char *ystrerr(int errnum) { return yerrmsg[errnum]; }

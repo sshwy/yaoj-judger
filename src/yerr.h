@@ -27,6 +27,7 @@
 #define E_POL_IDT 22
 #define E_KAFEL 23
 #define E_APP_POL 24
+#define E_EXEC 25
 
 extern int yerrno;
 

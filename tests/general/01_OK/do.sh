@@ -1,6 +1,6 @@
 #!/bin/bash
 
-../../../judger_general.local $(which ls) ls . \
+../../../judger_general.local script.sh \
   -r OK \
   --log=.log.local \
   -P ../../../policy \

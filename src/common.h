@@ -37,13 +37,22 @@ extern char log_buf[1000];
 #define LOG_INFO(fmt, args...)                                                 \
   do {                                                                         \
     fprintf(log_fp, GREEN("INFO") "(" AT "): " fmt ".\n", ##args);             \
-    fflush(log_fp);                                                            \
   } while (0)
 // write(log_fd, log_buf, sizeof(char) * strlen(log_buf));
 
 #define LOG_DEBUG(fmt, args...)                                                \
   do {                                                                         \
     fprintf(log_fp, BLUE("DEBUG") "(" AT "): " fmt ".\n", ##args);             \
+  } while (0)
+
+#define LOG_WARN(fmt, args...)                                                 \
+  do {                                                                         \
+    fprintf(log_fp, YELLOW("WARN") "(" AT "): " fmt ".\n", ##args);            \
+  } while (0)
+
+#define LOG_ERROR(fmt, args...)                                                \
+  do {                                                                         \
+    fprintf(log_fp, RED("ERROR") "(" AT "): " fmt ".\n", ##args);              \
   } while (0)
 
 /**
