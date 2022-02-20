@@ -54,7 +54,7 @@ void fprint_result(FILE *fp, struct result *pres) {
           "code=%d signal=%d "
           "exit_code=%d\n",
           code_name[pres->code], pres->real_time / 1000.0,
-          pres->cpu_time / 1000.0, pres->real_memory / 1000.0, pres->code,
+          pres->cpu_time / 1000.0, pres->real_memory / 1000000.0, pres->code,
           pres->signal, pres->exit_code);
 }
 

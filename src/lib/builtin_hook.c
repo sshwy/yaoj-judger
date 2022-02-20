@@ -60,45 +60,74 @@ static int init_result_before_fork(perform_ctxt_t ctxt) {
   return 0;
 }
 
+static int real_tle(perform_ctxt_t ctxt) {
+  return ctxt->rctxt->real_time != RSC_UNLIMITED &&
+         ctxt->result.real_time > ctxt->rctxt->real_time;
+}
+static int cpu_tle(perform_ctxt_t ctxt) {
+  return ctxt->rctxt->cpu_time != RSC_UNLIMITED &&
+         ctxt->result.cpu_time > ctxt->rctxt->cpu_time;
+}
+static int real_mle(perform_ctxt_t ctxt) {
+  return ctxt->rctxt->actual_memory != RSC_UNLIMITED &&
+         ctxt->result.real_memory > ctxt->rctxt->actual_memory;
+}
+
+static void set_signal_status(perform_ctxt_t ctxt, int signal) {
+  ctxt->result.signal = signal;
+
+  switch (signal) {
+  case SIGUSR1:
+    ctxt->result.code = SE;
+    break;
+  case SIGSYS:
+    ctxt->result.code = DSC;
+    break;
+  case SIGXCPU:
+    ctxt->result.code = TLE;
+    break;
+  case SIGSEGV:
+    if (ctxt->rctxt->virtual_memory == RSC_UNLIMITED)
+      ctxt->result.code = RE;
+    else
+      ctxt->result.code = MLE;
+    break;
+  case SIGXFSZ:
+    ctxt->result.code = OLE;
+    break;
+  case SIGKILL: // often killed by tkiller
+    if (real_tle(ctxt))
+      ctxt->result.code = TLE;
+    break;
+  // https://stackoverflow.com/questions/3413166/when-does-a-process-get-sigabrt-signal-6
+  case SIGABRT:
+    ctxt->result.code = RE;
+    break;
+  }
+}
+
+static void set_exitcode_status(perform_ctxt_t ctxt, int code) {
+  ctxt->result.exit_code = code;
+  if (code == 0) {
+    if (real_mle(ctxt))
+      ctxt->result.code = MLE;
+    else if (real_tle(ctxt) || cpu_tle(ctxt))
+      ctxt->result.code = TLE;
+    else
+      ctxt->result.code = OK;
+  } else {
+    ctxt->result.code = ECE;
+  }
+}
+
 static int analyze_after_wait(perform_ctxt_t ctxt) {
-  ctxt->result.real_memory = ctxt->rusage.ru_maxrss;
+  ctxt->result.real_memory = ctxt->rusage.ru_maxrss * KB;
 
   if (WIFSIGNALED(ctxt->status)) {
     LOG_WARN("child process terminated by signal %d (%s)",
              WTERMSIG(ctxt->status), strsignal(WTERMSIG(ctxt->status)));
 
-    ctxt->result.signal = WTERMSIG(ctxt->status);
-
-    switch (WTERMSIG(ctxt->status)) {
-    case SIGUSR1:
-      ctxt->result.code = SE;
-      break;
-    case SIGSYS:
-      ctxt->result.code = DSC;
-      break;
-    case SIGXCPU:
-      ctxt->result.code = TLE;
-      break;
-    case SIGSEGV:
-      if (ctxt->rctxt->virtual_memory == RSC_UNLIMITED)
-        ctxt->result.code = RE;
-      else
-        ctxt->result.code = MLE;
-      break;
-    case SIGXFSZ:
-      ctxt->result.code = OLE;
-      break;
-    case SIGKILL: // often killed by tkiller
-      if (ctxt->rctxt->real_time != RSC_UNLIMITED &&
-          ctxt->result.real_time > ctxt->rctxt->real_time)
-        ctxt->result.code = TLE;
-      break;
-    // https://stackoverflow.com/questions/3413166/when-does-a-process-get-sigabrt-signal-6
-    case SIGABRT:
-      ctxt->result.code = RE;
-      break;
-    }
-
+    set_signal_status(ctxt, WTERMSIG(ctxt->status));
   } else if (WIFEXITED(ctxt->status)) {
     if (WEXITSTATUS(ctxt->status)) {
       LOG_WARN("child process exited with code %d (%s)",
@@ -107,22 +136,7 @@ static int analyze_after_wait(perform_ctxt_t ctxt) {
       LOG_INFO("child process exited with code 0");
     }
 
-    ctxt->result.exit_code = WEXITSTATUS(ctxt->status);
-    if (WEXITSTATUS(ctxt->status) == 0) {
-      if (ctxt->rctxt->actual_memory != RSC_UNLIMITED &&
-          ctxt->result.real_memory * KB > ctxt->rctxt->actual_memory)
-        ctxt->result.code = MLE;
-      else if (ctxt->rctxt->real_time != RSC_UNLIMITED &&
-               ctxt->result.real_time > ctxt->rctxt->real_time)
-        ctxt->result.code = TLE;
-      else if (ctxt->rctxt->cpu_time != RSC_UNLIMITED &&
-               ctxt->result.cpu_time > ctxt->rctxt->cpu_time)
-        ctxt->result.code = TLE;
-      else
-        ctxt->result.code = OK;
-    } else {
-      ctxt->result.code = ECE;
-    }
+    set_exitcode_status(ctxt, WEXITSTATUS(ctxt->status));
   }
   LOG_INFO("analyzed result");
   return 0;
