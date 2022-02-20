@@ -44,6 +44,8 @@ cat log.local # 看看评测结果吧
 
 另外执行 `./judger_xxx.local --help` 可获得更多玩法。
 
+内建规则见 `policy` 目录。
+
 ```
 $ ./judger_traditional.local --help
 Usage: judger_traditional.local [OPTION...] runner arguments...

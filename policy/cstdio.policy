@@ -1,18 +1,16 @@
 #include "lib.polib"
 
-POLICY c_std_with_file_io {
+POLICY main {
   USE basic_allow,
   ALLOW {
-    dup3,
     execve(path, argv, envp) {
       path == %0s
     },
     rt_sigprocmask,
     getpid,
     gettid,
-    fcntl,
     tgkill
   }
 }
 
-USE c_std_with_file_io DEFAULT KILL
+USE main DEFAULT KILL

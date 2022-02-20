@@ -14,6 +14,7 @@ echo "judging..."
   -p free \
   --memory=30 \
   --timeout=5000
+#  -p free cstdio \
 
 # cat .log.local
 # echo -e "\033[32m[main.out]\033[0m"
