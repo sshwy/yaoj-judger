@@ -68,7 +68,7 @@ int get_usage_after_wait(perform_ctxt_t ctxt) {
   ctxt->rusage = r2;
   ctxt->result.cpu_time = to_millisecond(ctxt->rusage.ru_utime) +
                           to_millisecond(ctxt->rusage.ru_stime);
-  LOG_INFO("get rusage succeed");
+  LOG_DEBUG("get rusage succeed");
   return 0;
 }
 

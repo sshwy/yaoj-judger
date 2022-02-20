@@ -34,7 +34,7 @@ int check_runner_duplicate_before_fork(perform_ctxt_t ctxt) {
 
 static int timer_after_fork(perform_ctxt_t ctxt) {
   // actually immediately after receiving "ready to run"
-  LOG_INFO("get start time");
+  LOG_DEBUG("get start time");
   gettimeofday(&start, NULL);
   return 0;
 }
@@ -56,7 +56,7 @@ static int init_result_before_fork(perform_ctxt_t ctxt) {
   if (fcntl(fileno(log_fp), F_SETFD, FD_CLOEXEC) == -1) {
     yreturn(E_FCNTL);
   }
-  LOG_INFO("init ctxt before fork");
+  LOG_DEBUG("init ctxt before fork");
   return 0;
 }
 
@@ -64,7 +64,7 @@ static int analyze_after_wait(perform_ctxt_t ctxt) {
   ctxt->result.real_memory = ctxt->rusage.ru_maxrss;
 
   if (WIFSIGNALED(ctxt->status)) {
-    LOG_INFO("child process terminated by signal %d (%s)",
+    LOG_WARN("child process terminated by signal %d (%s)",
              WTERMSIG(ctxt->status), strsignal(WTERMSIG(ctxt->status)));
 
     ctxt->result.signal = WTERMSIG(ctxt->status);
