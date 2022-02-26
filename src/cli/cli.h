@@ -38,7 +38,6 @@ extern "C" {
 struct gengetopt_args_info
 {
   const char *help_help; /**< @brief Print help and exit help description.  */
-  const char *detailed_help_help; /**< @brief Print help, including all details and hidden options, and exit help description.  */
   const char *version_help; /**< @brief Print version and exit help description.  */
   char * result_arg;	/**< @brief specify the result code using name.  */
   char * result_orig;	/**< @brief specify the result code using name original value given at command line.  */
@@ -79,18 +78,8 @@ struct gengetopt_args_info
   int output_size_arg;	/**< @brief specify the output limit in MB.  */
   char * output_size_orig;	/**< @brief specify the output limit in MB original value given at command line.  */
   const char *output_size_help; /**< @brief specify the output limit in MB help description.  */
-  int flag_opt_flag;	/**< @brief A flag option (default=off).  */
-  const char *flag_opt_help; /**< @brief A flag option help description.  */
-  const char *funct_opt_help; /**< @brief A function option help description.  */
-  long long_opt_arg;	/**< @brief A long option.  */
-  char * long_opt_orig;	/**< @brief A long option original value given at command line.  */
-  const char *long_opt_help; /**< @brief A long option help description.  */
-  char * def_opt_arg;	/**< @brief A string option with default (default='Hello').  */
-  char * def_opt_orig;	/**< @brief A string option with default original value given at command line.  */
-  const char *def_opt_help; /**< @brief A string option with default help description.  */
   
   unsigned int help_given ;	/**< @brief Whether help was given.  */
-  unsigned int detailed_help_given ;	/**< @brief Whether detailed-help was given.  */
   unsigned int version_given ;	/**< @brief Whether version was given.  */
   unsigned int result_given ;	/**< @brief Whether result was given.  */
   unsigned int log_given ;	/**< @brief Whether log was given.  */
@@ -105,10 +94,6 @@ struct gengetopt_args_info
   unsigned int real_memory_given ;	/**< @brief Whether real-memory was given.  */
   unsigned int stack_memory_given ;	/**< @brief Whether stack-memory was given.  */
   unsigned int output_size_given ;	/**< @brief Whether output-size was given.  */
-  unsigned int flag_opt_given ;	/**< @brief Whether flag-opt was given.  */
-  unsigned int funct_opt_given ;	/**< @brief Whether funct-opt was given.  */
-  unsigned int long_opt_given ;	/**< @brief Whether long-opt was given.  */
-  unsigned int def_opt_given ;	/**< @brief Whether def-opt was given.  */
 
   char **inputs ; /**< @brief unnamed options (options without names) */
   unsigned inputs_num ; /**< @brief unnamed options number */
@@ -132,8 +117,6 @@ extern const char *gengetopt_args_info_usage;
 extern const char *gengetopt_args_info_description;
 /** @brief all the lines making the help output */
 extern const char *gengetopt_args_info_help[];
-/** @brief all the lines making the detailed help output (including hidden options and details) */
-extern const char *gengetopt_args_info_detailed_help[];
 
 /**
  * The command line parser
@@ -195,10 +178,6 @@ int cmdline_parser_file_save(const char *filename,
  * Print the help
  */
 void cmdline_parser_print_help(void);
-/**
- * Print the detailed help (including hidden options and details)
- */
-void cmdline_parser_print_detailed_help(void);
 /**
  * Print the version
  */

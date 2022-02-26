@@ -33,9 +33,8 @@ const char *gengetopt_args_info_versiontext = "Copyright (c) Sshwy 2022";
 
 const char *gengetopt_args_info_description = "judger for the future yaoj";
 
-const char *gengetopt_args_info_detailed_help[] = {
+const char *gengetopt_args_info_help[] = {
   "  -h, --help                    Print help and exit",
-  "      --detailed-help           Print help, including all details and hidden\n                                  options, and exit",
   "  -V, --version                 Print version and exit",
   "\nRequired Options:",
   "\nA brief text description before the other options.\n",
@@ -54,56 +53,12 @@ const char *gengetopt_args_info_detailed_help[] = {
   "      --real-memory=integer     specify the actual memory limit in MB",
   "      --stack-memory=integer    specify the stack memory limit in MB",
   "  -g, --output-size=integer     specify the output limit in MB",
-  "      --flag-opt                A flag option  (default=off)",
-  "  -F, --funct-opt               A function option",
-  "  \n  A function option is basically an option with no argument.  It can be used,\n  e.g., to specify a specific behavior for a program. Well, this further\n  explanation is quite useless, but it's only to show an example of an option\n  with details, which will be printed only when --detailed-help is given at the\n  command line.",
-  "\nlast option section:",
-  "      --long-opt=LONG           A long option",
-  "      --def-opt=STRING          A string option with default  (default=`Hello')",
-  "\nAn ending text.",
     0
 };
 
-static void
-init_help_array(void)
-{
-  gengetopt_args_info_help[0] = gengetopt_args_info_detailed_help[0];
-  gengetopt_args_info_help[1] = gengetopt_args_info_detailed_help[1];
-  gengetopt_args_info_help[2] = gengetopt_args_info_detailed_help[2];
-  gengetopt_args_info_help[3] = gengetopt_args_info_detailed_help[3];
-  gengetopt_args_info_help[4] = gengetopt_args_info_detailed_help[4];
-  gengetopt_args_info_help[5] = gengetopt_args_info_detailed_help[5];
-  gengetopt_args_info_help[6] = gengetopt_args_info_detailed_help[6];
-  gengetopt_args_info_help[7] = gengetopt_args_info_detailed_help[7];
-  gengetopt_args_info_help[8] = gengetopt_args_info_detailed_help[8];
-  gengetopt_args_info_help[9] = gengetopt_args_info_detailed_help[9];
-  gengetopt_args_info_help[10] = gengetopt_args_info_detailed_help[10];
-  gengetopt_args_info_help[11] = gengetopt_args_info_detailed_help[11];
-  gengetopt_args_info_help[12] = gengetopt_args_info_detailed_help[12];
-  gengetopt_args_info_help[13] = gengetopt_args_info_detailed_help[13];
-  gengetopt_args_info_help[14] = gengetopt_args_info_detailed_help[14];
-  gengetopt_args_info_help[15] = gengetopt_args_info_detailed_help[15];
-  gengetopt_args_info_help[16] = gengetopt_args_info_detailed_help[16];
-  gengetopt_args_info_help[17] = gengetopt_args_info_detailed_help[17];
-  gengetopt_args_info_help[18] = gengetopt_args_info_detailed_help[18];
-  gengetopt_args_info_help[19] = gengetopt_args_info_detailed_help[19];
-  gengetopt_args_info_help[20] = gengetopt_args_info_detailed_help[20];
-  gengetopt_args_info_help[21] = gengetopt_args_info_detailed_help[21];
-  gengetopt_args_info_help[22] = gengetopt_args_info_detailed_help[23];
-  gengetopt_args_info_help[23] = gengetopt_args_info_detailed_help[24];
-  gengetopt_args_info_help[24] = gengetopt_args_info_detailed_help[25];
-  gengetopt_args_info_help[25] = gengetopt_args_info_detailed_help[26];
-  gengetopt_args_info_help[26] = 0; 
-  
-}
-
-const char *gengetopt_args_info_help[27];
-
 typedef enum {ARG_NO
-  , ARG_FLAG
   , ARG_STRING
   , ARG_INT
-  , ARG_LONG
 } cmdline_parser_arg_type;
 
 static
@@ -127,7 +82,6 @@ static
 void clear_given (struct gengetopt_args_info *args_info)
 {
   args_info->help_given = 0 ;
-  args_info->detailed_help_given = 0 ;
   args_info->version_given = 0 ;
   args_info->result_given = 0 ;
   args_info->log_given = 0 ;
@@ -142,10 +96,6 @@ void clear_given (struct gengetopt_args_info *args_info)
   args_info->real_memory_given = 0 ;
   args_info->stack_memory_given = 0 ;
   args_info->output_size_given = 0 ;
-  args_info->flag_opt_given = 0 ;
-  args_info->funct_opt_given = 0 ;
-  args_info->long_opt_given = 0 ;
-  args_info->def_opt_given = 0 ;
 }
 
 static
@@ -170,10 +120,6 @@ void clear_args (struct gengetopt_args_info *args_info)
   args_info->real_memory_orig = NULL;
   args_info->stack_memory_orig = NULL;
   args_info->output_size_orig = NULL;
-  args_info->flag_opt_flag = 0;
-  args_info->long_opt_orig = NULL;
-  args_info->def_opt_arg = gengetopt_strdup ("Hello");
-  args_info->def_opt_orig = NULL;
   
 }
 
@@ -181,27 +127,22 @@ static
 void init_args_info(struct gengetopt_args_info *args_info)
 {
 
-  init_help_array(); 
-  args_info->help_help = gengetopt_args_info_detailed_help[0] ;
-  args_info->detailed_help_help = gengetopt_args_info_detailed_help[1] ;
-  args_info->version_help = gengetopt_args_info_detailed_help[2] ;
-  args_info->result_help = gengetopt_args_info_detailed_help[5] ;
-  args_info->log_help = gengetopt_args_info_detailed_help[6] ;
-  args_info->policy_help = gengetopt_args_info_detailed_help[7] ;
-  args_info->policy_dir_help = gengetopt_args_info_detailed_help[8] ;
-  args_info->judger_help = gengetopt_args_info_detailed_help[9] ;
-  args_info->timeout_help = gengetopt_args_info_detailed_help[12] ;
-  args_info->realtime_help = gengetopt_args_info_detailed_help[13] ;
-  args_info->cputime_help = gengetopt_args_info_detailed_help[14] ;
-  args_info->memory_help = gengetopt_args_info_detailed_help[15] ;
-  args_info->virtual_memory_help = gengetopt_args_info_detailed_help[16] ;
-  args_info->real_memory_help = gengetopt_args_info_detailed_help[17] ;
-  args_info->stack_memory_help = gengetopt_args_info_detailed_help[18] ;
-  args_info->output_size_help = gengetopt_args_info_detailed_help[19] ;
-  args_info->flag_opt_help = gengetopt_args_info_detailed_help[20] ;
-  args_info->funct_opt_help = gengetopt_args_info_detailed_help[21] ;
-  args_info->long_opt_help = gengetopt_args_info_detailed_help[24] ;
-  args_info->def_opt_help = gengetopt_args_info_detailed_help[25] ;
+
+  args_info->help_help = gengetopt_args_info_help[0] ;
+  args_info->version_help = gengetopt_args_info_help[1] ;
+  args_info->result_help = gengetopt_args_info_help[4] ;
+  args_info->log_help = gengetopt_args_info_help[5] ;
+  args_info->policy_help = gengetopt_args_info_help[6] ;
+  args_info->policy_dir_help = gengetopt_args_info_help[7] ;
+  args_info->judger_help = gengetopt_args_info_help[8] ;
+  args_info->timeout_help = gengetopt_args_info_help[11] ;
+  args_info->realtime_help = gengetopt_args_info_help[12] ;
+  args_info->cputime_help = gengetopt_args_info_help[13] ;
+  args_info->memory_help = gengetopt_args_info_help[14] ;
+  args_info->virtual_memory_help = gengetopt_args_info_help[15] ;
+  args_info->real_memory_help = gengetopt_args_info_help[16] ;
+  args_info->stack_memory_help = gengetopt_args_info_help[17] ;
+  args_info->output_size_help = gengetopt_args_info_help[18] ;
   
 }
 
@@ -244,15 +185,6 @@ cmdline_parser_print_help (void)
   print_help_common();
   while (gengetopt_args_info_help[i])
     printf("%s\n", gengetopt_args_info_help[i++]);
-}
-
-void
-cmdline_parser_print_detailed_help (void)
-{
-  int i = 0;
-  print_help_common();
-  while (gengetopt_args_info_detailed_help[i])
-    printf("%s\n", gengetopt_args_info_detailed_help[i++]);
 }
 
 void
@@ -321,9 +253,6 @@ cmdline_parser_release (struct gengetopt_args_info *args_info)
   free_string_field (&(args_info->real_memory_orig));
   free_string_field (&(args_info->stack_memory_orig));
   free_string_field (&(args_info->output_size_orig));
-  free_string_field (&(args_info->long_opt_orig));
-  free_string_field (&(args_info->def_opt_arg));
-  free_string_field (&(args_info->def_opt_orig));
   
   
   for (i = 0; i < args_info->inputs_num; ++i)
@@ -402,8 +331,6 @@ cmdline_parser_dump(FILE *outfile, struct gengetopt_args_info *args_info)
 
   if (args_info->help_given)
     write_into_file(outfile, "help", 0, 0 );
-  if (args_info->detailed_help_given)
-    write_into_file(outfile, "detailed-help", 0, 0 );
   if (args_info->version_given)
     write_into_file(outfile, "version", 0, 0 );
   if (args_info->result_given)
@@ -432,14 +359,6 @@ cmdline_parser_dump(FILE *outfile, struct gengetopt_args_info *args_info)
     write_into_file(outfile, "stack-memory", args_info->stack_memory_orig, 0);
   if (args_info->output_size_given)
     write_into_file(outfile, "output-size", args_info->output_size_orig, 0);
-  if (args_info->flag_opt_given)
-    write_into_file(outfile, "flag-opt", 0, 0 );
-  if (args_info->funct_opt_given)
-    write_into_file(outfile, "funct-opt", 0, 0 );
-  if (args_info->long_opt_given)
-    write_into_file(outfile, "long-opt", args_info->long_opt_orig, 0);
-  if (args_info->def_opt_given)
-    write_into_file(outfile, "def-opt", args_info->def_opt_orig, 0);
   
 
   i = EXIT_SUCCESS;
@@ -669,14 +588,8 @@ int update_arg(void *field, char **orig_field,
     val = possible_values[found];
 
   switch(arg_type) {
-  case ARG_FLAG:
-    *((int *)field) = !*((int *)field);
-    break;
   case ARG_INT:
     if (val) *((int *)field) = strtol (val, &stop_char, 0);
-    break;
-  case ARG_LONG:
-    if (val) *((long *)field) = (long)strtol (val, &stop_char, 0);
     break;
   case ARG_STRING:
     if (val) {
@@ -693,7 +606,6 @@ int update_arg(void *field, char **orig_field,
   /* check numeric conversion */
   switch(arg_type) {
   case ARG_INT:
-  case ARG_LONG:
     if (val && !(stop_char && *stop_char == '\0')) {
       fprintf(stderr, "%s: invalid numeric value: %s\n", package_name, val);
       return 1; /* failure */
@@ -706,7 +618,6 @@ int update_arg(void *field, char **orig_field,
   /* store the original value */
   switch(arg_type) {
   case ARG_NO:
-  case ARG_FLAG:
     break;
   default:
     if (value && orig_field) {
@@ -768,7 +679,6 @@ cmdline_parser_internal (
 
       static struct option long_options[] = {
         { "help",	0, NULL, 'h' },
-        { "detailed-help",	0, NULL, 0 },
         { "version",	0, NULL, 'V' },
         { "result",	1, NULL, 'r' },
         { "log",	1, NULL, 0 },
@@ -783,14 +693,10 @@ cmdline_parser_internal (
         { "real-memory",	1, NULL, 0 },
         { "stack-memory",	1, NULL, 0 },
         { "output-size",	1, NULL, 'g' },
-        { "flag-opt",	0, NULL, 0 },
-        { "funct-opt",	0, NULL, 'F' },
-        { "long-opt",	1, NULL, 0 },
-        { "def-opt",	1, NULL, 0 },
         { 0,  0, 0, 0 }
       };
 
-      c = getopt_long (argc, argv, "hVr:p:P:j:t:m:g:F", long_options, &option_index);
+      c = getopt_long (argc, argv, "hVr:p:P:j:t:m:g:", long_options, &option_index);
 
       if (c == -1) break;	/* Exit from `while (1)' loop.  */
 
@@ -890,26 +796,8 @@ cmdline_parser_internal (
             goto failure;
         
           break;
-        case 'F':	/* A function option.  */
-        
-        
-          if (update_arg( 0 , 
-               0 , &(args_info->funct_opt_given),
-              &(local_args_info.funct_opt_given), optarg, 0, 0, ARG_NO,
-              check_ambiguity, override, 0, 0,
-              "funct-opt", 'F',
-              additional_error))
-            goto failure;
-        
-          break;
 
         case 0:	/* Long option with no short option */
-          if (strcmp (long_options[option_index].name, "detailed-help") == 0) {
-            cmdline_parser_print_detailed_help ();
-            cmdline_parser_free (&local_args_info);
-            exit (EXIT_SUCCESS);
-          }
-
           /* specify judger result file.  */
           if (strcmp (long_options[option_index].name, "log") == 0)
           {
@@ -990,46 +878,6 @@ cmdline_parser_internal (
                 &(local_args_info.stack_memory_given), optarg, 0, 0, ARG_INT,
                 check_ambiguity, override, 0, 0,
                 "stack-memory", '-',
-                additional_error))
-              goto failure;
-          
-          }
-          /* A flag option.  */
-          else if (strcmp (long_options[option_index].name, "flag-opt") == 0)
-          {
-          
-          
-            if (update_arg((void *)&(args_info->flag_opt_flag), 0, &(args_info->flag_opt_given),
-                &(local_args_info.flag_opt_given), optarg, 0, 0, ARG_FLAG,
-                check_ambiguity, override, 1, 0, "flag-opt", '-',
-                additional_error))
-              goto failure;
-          
-          }
-          /* A long option.  */
-          else if (strcmp (long_options[option_index].name, "long-opt") == 0)
-          {
-          
-          
-            if (update_arg( (void *)&(args_info->long_opt_arg), 
-                 &(args_info->long_opt_orig), &(args_info->long_opt_given),
-                &(local_args_info.long_opt_given), optarg, 0, 0, ARG_LONG,
-                check_ambiguity, override, 0, 0,
-                "long-opt", '-',
-                additional_error))
-              goto failure;
-          
-          }
-          /* A string option with default.  */
-          else if (strcmp (long_options[option_index].name, "def-opt") == 0)
-          {
-          
-          
-            if (update_arg( (void *)&(args_info->def_opt_arg), 
-                 &(args_info->def_opt_orig), &(args_info->def_opt_given),
-                &(local_args_info.def_opt_given), optarg, 0, "Hello", ARG_STRING,
-                check_ambiguity, override, 0, 0,
-                "def-opt", '-',
                 additional_error))
               goto failure;
           
