@@ -1,14 +1,16 @@
 #!/bin/bash
 
 echo -e "test failure #1"
-../../../judger_general.local script.sh \
+../../../yjudger.local script.sh \
+  -j general \
   -r SE \
   -P ../../../policy \
   -p free \
   -t 1000 -m 128
 
 echo -e "test failure #2"
-../../../judger_general.local script.sh \
+../../../yjudger.local script.sh \
+  -j general \
   -r SE \
   --log=.log.local \
   -P ../../../policy \
@@ -16,7 +18,8 @@ echo -e "test failure #2"
   -t -1
 
 echo -e "test failure #3"
-../../../judger_general.local script.sh \
+../../../yjudger.local script.sh \
+  -j general \
   -r OK \
   --log=.log.local \
   -P ../../../policy \
@@ -24,7 +27,8 @@ echo -e "test failure #3"
   -m -128
 
 echo -e "test failure #4"
-../../../judger_general.local script.sh \
+../../../yjudger.local script.sh \
+  -j general \
   -r OK \
   --log=.log.local \
   -P ../../../policy \
@@ -32,28 +36,48 @@ echo -e "test failure #4"
   -g -128
 
 echo -e "test failure #5"
-../../../judger_general.local script.sh \
+../../../yjudger.local script.sh \
+  -j general \
   -r OKK \
   --log=.log.local \
   -P ../../../policy -p free
 
 echo -e "test failure #6"
-../../../judger_general.local noexec_script.sh \
+../../../yjudger.local noexec_script.sh \
+  -j general \
   -r OKK \
   --log=.log.local \
   -P ../../../policy -p free
 
 echo -e "test failure #7"
-../../../judger_general.local script.sh \
+../../../yjudger.local script.sh \
+  -j general \
   -r SE \
   --log=.log.local \
   -t 1000 -m 128
 
 echo -e "test failure #8"
-../../../judger_general.local script.sh 2 \
+../../../yjudger.local script.sh 2 \
+  -j general \
   -r SE \
   --log=.log.local \
   -t 1000 -m 128 \
   -P ../../../policy -p free
+
+echo -e "test failure #9"
+../../../yjudger.local script.sh \
+  -j general \
+  -r SE \
+  --log=.log.local \
+  -t 1000 -m 128 \
+  -P ../../../polic -p free
+
+echo -e "test failure #10"
+../../../yjudger.local script.sh \
+  -j general \
+  -r SE \
+  --log=.log.local \
+  -t 1000 -m 128 \
+  -P ../../../policp -p fre
 
 exit 0

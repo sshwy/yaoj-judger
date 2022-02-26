@@ -35,6 +35,10 @@ check: test
 test:
 	$(MAKE) test -C tests PROJECT_ROOT=../$(PROJECT_ROOT)
 
+gcovr:
+	$(MAKE) clean
+	$(MAKE) coverage GCOVR=true
+
 # generate gcov files in local.cov dir
 coverage: kafel policy
 	$(MAKE) all -C src PROJECT_ROOT=../$(PROJECT_ROOT) MODE=coverage

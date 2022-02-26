@@ -6,8 +6,9 @@ cc main.c -o main.local
 cc interactor.c -o interactor.local
 touch interactor.out interactor.err main.err
 
-../../../judger_interactive.local main.local interactor.local \
+../../../yjudger.local main.local interactor.local \
   interactor.in interactor.out interactor.err main.err \
+  -j interactive \
   -r OK \
   --log=.log.local \
   -P ../../../policy \
