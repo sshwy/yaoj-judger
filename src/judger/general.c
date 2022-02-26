@@ -39,7 +39,7 @@ static int child_prework(perform_ctxt_t ctxt) {
   return 0;
 }
 
-int perform(perform_ctxt_t ctxt) {
+int perform_general(perform_ctxt_t ctxt) {
   const char ready[] = "ready";
   const char notready[] = "not";
 

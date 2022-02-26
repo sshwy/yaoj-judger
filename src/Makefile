@@ -21,25 +21,33 @@ else # production mode
 	CLI_CFLAGS+=-O2
 endif
 
-COMMON_NAME=common helper hook lib/builtin_hook lib/policy lib/resource lib/tkill yerr
+COMMON_NAME=common helper hook yerr lib/builtin_hook lib/policy lib/resource lib/tkill
 JUDGER_NAME=traditional interactive general
 
-COMMON_OBJECTS=$(COMMON_NAME:%=%.o)
-JUDGER_OBJECTS=$(JUDGER_NAME:%=judger/%.o)
-OBJECTS=$(COMMON_OBJECTS) $(JUDGER_OBJECTS) main.o
-GCDA_FILES=$(OBJECTS:%.o=%.gcda)
-GCOV_FILES=$(OBJECTS:%.o=%.gcno) $(GCDA_FILES)
-ARCHIVE_LIBRARY=$(JUDGER_NAME:%=$(PROJECT_ROOT)libjudger_%.a)
+LIB_OBJECTS=$(COMMON_NAME:%=%.o) $(JUDGER_NAME:%=judger/%.o) #cli/main.o
+GCDA_FILES=$(LIB_OBJECTS:%.o=%.gcda)
+GCOV_FILES=$(LIB_OBJECTS:%.o=%.gcno) $(GCDA_FILES)
+
+ARCHIVE_LIBRARY=$(PROJECT_ROOT)libyjudger.a
+EXECUTABLE=$(PROJECT_ROOT)yjudger.local
 
 .PHONY: all clean $(JUDGER_NAME) compile cov
 
 all: compile
 
 # compile source files to object files and then link them together equiping with different judger
-compile: $(OBJECTS) $(JUDGER_NAME)
+compile: $(ARCHIVE_LIBRARY) $(EXECUTABLE)
+
+$(ARCHIVE_LIBRARY): $(LIB_OBJECTS)
+	$(LD) $(LDFLAGS) -r ${LIB_OBJECTS} -o libyjudger.o
+	$(AR) -x $(PROJECT_ROOT)kafel/libkafel.a
+	$(AR) -rcs $(ARCHIVE_LIBRARY) libyjudger.o libkafel.o
+
+$(EXECUTABLE): $(ARCHIVE_LIBRARY) cli/main.o cli/cli.o
+	$(CC) cli/main.o cli/cli.o -o $(EXECUTABLE) -L./$(PROJECT_ROOT) -lyjudger $(CLI_CFLAGS)
 
 clean:
-	$(RM) $(OBJECTS) $(ARCHIVE_LIBRARY) $(GCOV_FILES) $(JUDGER_NAME:%=libjudger_%.o) libkafel.o
+	$(RM) $(LIB_OBJECTS) $(ARCHIVE_LIBRARY) $(GCOV_FILES) libyjudger.o libkafel.o
 
 cov:
 ifeq (true,$(GCOVR)) # if enable gcovr
@@ -52,13 +60,6 @@ else # production mode
 	mv *.c.gcov $(PROJECT_ROOT)local.cov
 endif
 
-# build corresponding static library and cli executable for each judger
-$(JUDGER_NAME): $(OBJECTS)
-	$(LD) $(LDFLAGS) -r ${COMMON_OBJECTS} judger/$@.o -o libjudger_$@.o
-	$(AR) -x $(PROJECT_ROOT)kafel/libkafel.a
-	$(AR) -rcs $(PROJECT_ROOT)libjudger_$@.a libjudger_$@.o libkafel.o
-	$(CC) main.o -o $(PROJECT_ROOT)judger_$@.local -L./$(PROJECT_ROOT) -ljudger_$@ $(CLI_CFLAGS)
-
 # https://www.gnu.org/software/make/manual/make.html#Implicit-Rules
 common.o: common.h judger.h
 helper.o: common.h judger.h lib/policy.h lib/resource.h hook.h
@@ -70,5 +71,7 @@ lib/builtin_hook.o: common.h hook.h lib/builtin_hook.h lib/policy.h lib/resource
 lib/policy.o: common.h lib/policy.h
 lib/resource.o: common.h lib/resource.h
 lib/tkill.o: common.h judger.h lib/tkill.h lib/resource.h
-main.o: main.c judger.h
+cli/main.o: cli/cli.h judger.h
+cli/cli.o: cli/cli.h
+# main.o: main.c judger.h
 yerr.o: yerr.h

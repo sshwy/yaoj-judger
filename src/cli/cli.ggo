@@ -1,0 +1,59 @@
+package "yaoj-judger"
+version "0.0.0"
+purpose "judger for the future yaoj"
+usage "<usage>"
+description "judger for the future yaoj"
+versiontext "Copyright (c) Sshwy 2022"
+
+args "--file-name=cli --unnamed-opts"
+
+text "\nA brief text description"
+text " before the other options.\n"
+
+# Options
+section "Required Options" 
+option "result" r "specify the result code using name"
+  string typestr="string" required
+option "log" - "specify judger result file"
+  string typestr="filename" required
+option "policy" p "specify policy name"
+  string typestr="filename" required
+option "policy-dir" P "specify policy search directory"
+  string typestr="filename" required
+option "judger" j "specify which judger to use"
+  typestr="judgername" values="traditional","interactive","general" required
+
+section "Resource Limitations" 
+  sectiondesc="the following options are all optional"
+option "timeout" t "specify both time limits in milliseconds"
+  int typestr="integer" optional
+option "realtime" - "specify the runtime limit in milliseconds"
+  int typestr="integer" optional
+option "cputime" - "specify the cpu limit in milliseconds"
+  int typestr="integer" optional
+option "memory" m "specify all three memory limits in MB"
+  int typestr="integer" optional
+option "virtual-memory" - "specify the virtual memory limit in MB"
+  int typestr="integer" optional
+option "real-memory" - "specify the actual memory limit in MB"
+  int typestr="integer" optional
+option "stack-memory" - "specify the stack memory limit in MB"
+  int typestr="integer" optional
+option "output-size" g "specify the output limit in MB"
+  int typestr="integer" optional
+
+option  "flag-opt"        - "A flag option"        flag       off
+option  "funct-opt"       F "A function option"    optional 
+    details="\nA function option is basically an option with no argument.\
+  It can be used, e.g., to specify a specific behavior for a program. \
+Well, this further explanation is quite useless, but it's only to \
+show an example of an option with details, \
+which will be printed only when --detailed-help is given \
+at the command line."
+
+section "last option section"
+option  "long-opt"        - "A long option"        long       optional
+option  "def-opt"         - "A string option with default" 
+        string default="Hello" optional
+
+text "\nAn ending text."
