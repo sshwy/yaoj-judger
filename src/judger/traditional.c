@@ -77,7 +77,7 @@ static int child_prework(perform_ctxt_t ctxt) {
 
 static void child_run(perform_ctxt_t ctxt) { runner_run(ctxt->ectxt); }
 
-int perform(perform_ctxt_t ctxt) {
+int perform_traditional(perform_ctxt_t ctxt) {
   const char ready[] = "ready";
   const char notready[] = "not";
 

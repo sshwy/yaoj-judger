@@ -116,7 +116,9 @@ typedef struct perform_ctxt *perform_ctxt_t;
 /**
  * @brief Perform a judgement.
  */
-int perform(perform_ctxt_t ctxt);
+int perform_general(perform_ctxt_t ctxt);
+int perform_interactive(perform_ctxt_t ctxt);
+int perform_traditional(perform_ctxt_t ctxt);
 
 /**
  * @brief Create a perform context

@@ -57,7 +57,7 @@ static void run_executable(struct runner_ctxt *ctxt) {
   execl(ctxt->argv[0], "main", (char *)NULL);
 }
 
-int perform(perform_ctxt_t ctxt) {
+int perform_interactive(perform_ctxt_t ctxt) {
   const char ready[] = "ready";
   const char notready[] = "not";
 
