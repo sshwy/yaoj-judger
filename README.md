@@ -34,15 +34,16 @@ touch main.out main.err  # 创建测试代码的 stdout, stderr 对应的文件
 # 可执行文件、读入文件、输出文件、错误输出文件、IO类型（std 或者 file）
 # 注意所有文件都要存在（main.out，main.err 至少需要创建空白的文件）
 # interactive 用法类似，详见 src/judger/interactive.c 的注释
-../../../judger_traditional.local main.local main.in main.out main.err std \
+../../../yjudger.local main.local main.in main.out main.err std \
+  -j traditional \
   -r DSC \
   -P ../../../policy \
-  -p c_std_io \
+  -p cstdio \
   --log=log.local
 cat log.local # 看看评测结果吧
 ```
 
-另外执行 `./judger_xxx.local --help` 可获得更多玩法。
+另外执行 `./yjudger.local --help` 可获得更多玩法。
 
 内建规则见 `policy` 目录。
 
