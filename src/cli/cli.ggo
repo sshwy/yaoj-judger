@@ -41,19 +41,3 @@ option "stack-memory" - "specify the stack memory limit in MB"
   int typestr="integer" optional
 option "output-size" g "specify the output limit in MB"
   int typestr="integer" optional
-
-option  "flag-opt"        - "A flag option"        flag       off
-option  "funct-opt"       F "A function option"    optional 
-    details="\nA function option is basically an option with no argument.\
-  It can be used, e.g., to specify a specific behavior for a program. \
-Well, this further explanation is quite useless, but it's only to \
-show an example of an option with details, \
-which will be printed only when --detailed-help is given \
-at the command line."
-
-section "last option section"
-option  "long-opt"        - "A long option"        long       optional
-option  "def-opt"         - "A string option with default" 
-        string default="Hello" optional
-
-text "\nAn ending text."
