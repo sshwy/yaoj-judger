@@ -11,15 +11,17 @@
 #include "policy.h"
 
 int policy_set(policy_ctxt_t ctxt, char *dirname, char *policy) {
-  const char *filename =
-      path_join(path_join(dirname, '/', policy), '.', "policy");
+  char *tmp = path_join(dirname, '/', policy);
+  const char *filename = path_join(tmp, '.', "policy");
+  free(tmp);
+
   FILE *fp = fopen(filename, "r");
   if (fp == NULL) {
     yreturn(E_FP);
   }
   ctxt->content = ftos(fp);
-  ctxt->dirname = dirname; // seem dangerous
-  ctxt->policy = policy;   // seem dangerous
+  ctxt->dirname = strdup(dirname); // seem dangerous
+  ctxt->policy = strdup(policy);   // seem dangerous
   return 0;
 }
 
@@ -113,7 +115,6 @@ int apply_policy_prog(struct sock_fprog prog) {
       prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &prog, 0, 0)) {
     yreturn(E_APP_POL);
   }
-  free(prog.filter);
   LOG_INFO("apply policy succeed");
   return 0;
 }

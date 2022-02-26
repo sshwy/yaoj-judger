@@ -125,6 +125,8 @@ int perform_traditional(perform_ctxt_t ctxt);
  */
 perform_ctxt_t perform_ctxt_create();
 
+void perform_ctxt_free(perform_ctxt_t ctxt);
+
 /**
  * @brief Set kafel policy (enhanced) for the runner.
  *

@@ -99,6 +99,8 @@ void fprint_result(FILE *fp, result_t resp);
  *
  * Note that if the last character of `first` equals to `seperator`, then it
  * will not be inserted.
+ *
+ * @return a pointer at a dynamic allocated string
  */
 char *path_join(const char *first, char seperator, const char *second);
 
@@ -106,6 +108,8 @@ char *path_join(const char *first, char seperator, const char *second);
  * @brief read the whole file and return a string containing its content.
  *
  * `fp` must be valid and opened with at least read access.
+ *
+ * @return a pointer at a dynamic allocated string
  */
 char *ftos(FILE *fp);
 

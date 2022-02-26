@@ -23,23 +23,23 @@ int main(int argc, char **argv, char **env) {
   if (cmdline_parser(argc, argv, &args_info))
     exit(1);
 
-  perform_ctxt_t cctxt = perform_ctxt_create();
+  perform_ctxt_t ctxt = perform_ctxt_create();
   if (args_info.timeout_given)
-    perform_set_limit(cctxt, TIME, args_info.timeout_arg);
+    perform_set_limit(ctxt, TIME, args_info.timeout_arg);
   if (args_info.cputime_given)
-    perform_set_limit(cctxt, CPU_TIME, args_info.cputime_arg);
+    perform_set_limit(ctxt, CPU_TIME, args_info.cputime_arg);
   if (args_info.realtime_given)
-    perform_set_limit(cctxt, REAL_TIME, args_info.realtime_arg);
+    perform_set_limit(ctxt, REAL_TIME, args_info.realtime_arg);
   if (args_info.memory_given)
-    perform_set_limit(cctxt, MEM, args_info.memory_arg * MB);
+    perform_set_limit(ctxt, MEM, args_info.memory_arg * MB);
   if (args_info.virtual_memory_given)
-    perform_set_limit(cctxt, VIR_MEM, args_info.virtual_memory_arg * MB);
+    perform_set_limit(ctxt, VIR_MEM, args_info.virtual_memory_arg * MB);
   if (args_info.real_memory_given)
-    perform_set_limit(cctxt, ACT_MEM, args_info.real_memory_arg * MB);
+    perform_set_limit(ctxt, ACT_MEM, args_info.real_memory_arg * MB);
   if (args_info.stack_memory_given)
-    perform_set_limit(cctxt, STK_MEM, args_info.stack_memory_arg * MB);
+    perform_set_limit(ctxt, STK_MEM, args_info.stack_memory_arg * MB);
   if (args_info.output_size_given)
-    perform_set_limit(cctxt, OUT, args_info.output_size_arg * MB);
+    perform_set_limit(ctxt, OUT, args_info.output_size_arg * MB);
 
   // transform inputs to NULL ended char* array
   int inputs_num = args_info.inputs_num;
@@ -50,41 +50,42 @@ int main(int argc, char **argv, char **env) {
   // required
   log_set(args_info.log_arg);
   result_code = atorc(args_info.result_arg);
-  if (perform_set_policy(cctxt, args_info.policy_dir_arg,
+  if (perform_set_policy(ctxt, args_info.policy_dir_arg,
                          args_info.policy_arg)) {
-    cctxt->result.code = SE;
+    ctxt->result.code = SE;
   } else {
-    perform_set_runner(cctxt, inputs_num, inputs, env);
+    perform_set_runner(ctxt, inputs_num, inputs, env);
 
     if (strcmp(args_info.judger_arg, "traditional") == 0) {
-      if (perform_traditional(cctxt)) {
-        cctxt->result.code = SE;
+      if (perform_traditional(ctxt)) {
+        ctxt->result.code = SE;
         fprintf(stderr, "SE: %s\n", ystrerr(yerrno));
       }
     } else if (strcmp(args_info.judger_arg, "interactive") == 0) {
-      if (perform_interactive(cctxt)) {
-        cctxt->result.code = SE;
+      if (perform_interactive(ctxt)) {
+        ctxt->result.code = SE;
         fprintf(stderr, "SE: %s\n", ystrerr(yerrno));
       }
     } else if (strcmp(args_info.judger_arg, "general") == 0) {
-      if (perform_general(cctxt)) {
-        cctxt->result.code = SE;
+      if (perform_general(ctxt)) {
+        ctxt->result.code = SE;
         fprintf(stderr, "SE: %s\n", ystrerr(yerrno));
       }
     } else {
       exit(1);
     }
 
-    log_print_result(&cctxt->result);
+    log_print_result(&ctxt->result);
   }
 
-  if ((int)cctxt->result.code != result_code) {
+  if ((int)ctxt->result.code != result_code) {
     fprintf(stderr, "test failed (result=%d, expect=%d)\n",
-            (int)cctxt->result.code, result_code);
+            (int)ctxt->result.code, result_code);
     return 1;
   }
 
   log_close();
   cmdline_parser_free(&args_info);
+  perform_ctxt_free(ctxt);
   return 0;
 }
