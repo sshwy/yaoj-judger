@@ -57,10 +57,73 @@ static void run_executable(struct runner_ctxt *ctxt) {
   execl(ctxt->argv[0], "main", (char *)NULL);
 }
 
-int perform_interactive(perform_ctxt_t ctxt) {
-  const char ready[] = "ready";
-  const char notready[] = "not";
+static const char ready[] = "ready";
+static const char notready[] = "not";
 
+static void yexit_notready(int code, int write_pipe) {
+  write(write_pipe, notready, sizeof(notready));
+  yexit(code);
+}
+
+static void child_process(perform_ctxt_t ctxt, int *p_run) { // child process
+  ctxt->pchild = getpid();
+  int itoe[2], etoi[2], i_run[2];
+  // set process group ID to itself
+  if (setpgid(0, 0)) {
+    yexit_notready(E_SETPGID, p_run[1]);
+  }
+  if (pipe(itoe) || pipe(etoi) || pipe(i_run)) {
+    yexit_notready(E_PIPE, p_run[1]);
+  }
+
+  fflush(log_fp); // avoid multi logging
+  // when a process is forked, it inherits its PGID from its parent.
+  // https://unix.stackexchange.com/questions/139222/why-is-the-pgid-of-my-child-processes-not-the-pid-of-the-parent
+  const pid_t exec_pid = fork(); // fork again
+  if (exec_pid == 0) {           // process for executable
+    if (getpgrp() != ctxt->pchild) {
+      yexit_notready(E_PGID, i_run[1]);
+    }
+    if (dup2(itoe[0], fileno(stdin)) == -1 ||
+        dup2(etoi[1], fileno(stdout)) == -1) {
+      yexit_notready(E_DUP, i_run[1]);
+    }
+    if (executable_prework(ctxt->ectxt) || apply_resource_limit(ctxt) ||
+        apply_policy(ctxt)) {
+      yexit_notready(yerrno, i_run[1]);
+    }
+    LOG_INFO("executable prepared");
+    fflush(log_fp);
+    // assume that exec* doesn't change pgid
+    // https://www.cs.uleth.ca/~holzmann/C/system/pipeforkexec.html
+    // use chmod could reset the suid/sgid mode
+    write(i_run[1], ready, sizeof(ready));
+    run_executable(ctxt->ectxt);
+    exit(1); // process doesn't terminate
+  }
+  // process for interactor
+  if (dup2(etoi[0], fileno(stdin)) == -1 ||
+      dup2(itoe[1], fileno(stdout)) == -1) {
+    yexit_notready(E_DUP, p_run[1]);
+  }
+  // apply the same policy for interactor
+  if (interactor_prework(ctxt->ectxt) || apply_policy(ctxt)) {
+    yexit_notready(yerrno, p_run[1]);
+  }
+  LOG_INFO("interactor prepared");
+  // when executable is ready, tell judger that I'm ready
+  char receive[6];
+  if (read(i_run[0], receive, sizeof(ready)) != sizeof(ready)) {
+    yexit_notready(E_INTACT_EXEC, p_run[1]);
+  }
+  write(p_run[1], ready, sizeof(ready));
+
+  fflush(log_fp);
+  run_interactor(ctxt->ectxt);
+  exit(1); // process doesn't terminate
+}
+
+int perform_interactive(perform_ctxt_t ctxt) {
   ctxt->pself = getpid();
   ctxt->pchild = -1;
   int p_run[2];
@@ -83,70 +146,8 @@ int perform_interactive(perform_ctxt_t ctxt) {
     yreturn(E_FORK);
   }
 
-  if (child_pid == 0) { // child process
-    ctxt->pchild = getpid();
-    int itoe[2], etoi[2], i_run[2];
-    // set process group ID to itself
-    if (setpgid(0, 0)) {
-      write(p_run[1], notready, sizeof(notready));
-      yexit(E_SETPGID);
-    }
-    if (pipe(itoe) || pipe(etoi) || pipe(i_run)) {
-      write(p_run[1], notready, sizeof(notready));
-      yexit(E_PIPE);
-    }
-
-    fflush(log_fp); // avoid multi logging
-    // when a process is forked, it inherits its PGID from its parent.
-    // https://unix.stackexchange.com/questions/139222/why-is-the-pgid-of-my-child-processes-not-the-pid-of-the-parent
-    const pid_t exec_pid = fork(); // fork again
-    if (exec_pid == 0) {           // process for executable
-      if (getpgrp() != ctxt->pchild) {
-        write(i_run[1], notready, sizeof(notready));
-        yexit(E_PGID);
-      }
-      if (dup2(itoe[0], fileno(stdin)) == -1 ||
-          dup2(etoi[1], fileno(stdout)) == -1) {
-        write(i_run[1], notready, sizeof(notready));
-        yexit(E_DUP);
-      }
-      if (executable_prework(ctxt->ectxt) || apply_resource_limit(ctxt) ||
-          apply_policy(ctxt)) {
-        write(i_run[1], notready, sizeof(notready));
-        yexit(yerrno);
-      }
-      LOG_INFO("executable prepared");
-      fflush(log_fp);
-      // assume that exec* doesn't change pgid
-      // https://www.cs.uleth.ca/~holzmann/C/system/pipeforkexec.html
-      // use chmod could reset the suid/sgid mode
-      write(i_run[1], ready, sizeof(ready));
-      run_executable(ctxt->ectxt);
-      exit(1); // process doesn't terminate
-    }
-    // process for interactor
-    if (dup2(etoi[0], fileno(stdin)) == -1 ||
-        dup2(itoe[1], fileno(stdout)) == -1) {
-      write(p_run[1], notready, sizeof(notready));
-      yexit(E_DUP);
-    }
-    // apply the same policy for interactor
-    if (interactor_prework(ctxt->ectxt) || apply_policy(ctxt)) {
-      write(p_run[1], notready, sizeof(notready));
-      yexit(yerrno);
-    }
-    LOG_INFO("interactor prepared");
-    // when executable is ready, tell judger that I'm ready
-    char receive[6];
-    if (read(i_run[0], receive, sizeof(ready)) != sizeof(ready)) {
-      write(p_run[1], notready, sizeof(notready));
-      yexit(E_INTACT_EXEC);
-    }
-    write(p_run[1], ready, sizeof(ready));
-
-    fflush(log_fp);
-    run_interactor(ctxt->ectxt);
-    exit(1); // process doesn't terminate
+  if (child_pid == 0) {
+    child_process(ctxt, p_run);
   }
   // parent process
   LOG_DEBUG("after fork");

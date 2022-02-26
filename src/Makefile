@@ -47,7 +47,8 @@ $(EXECUTABLE): $(ARCHIVE_LIBRARY) cli/main.o cli/cli.o
 	$(CC) cli/main.o cli/cli.o -o $(EXECUTABLE) -L./$(PROJECT_ROOT) -lyjudger $(CLI_CFLAGS)
 
 clean:
-	$(RM) $(LIB_OBJECTS) $(ARCHIVE_LIBRARY) $(GCOV_FILES) libyjudger.o libkafel.o
+	$(RM) $(LIB_OBJECTS) $(ARCHIVE_LIBRARY) $(GCOV_FILES) libyjudger.o libkafel.o \
+	cli/main.o cli/cli.o
 
 cov:
 ifeq (true,$(GCOVR)) # if enable gcovr
