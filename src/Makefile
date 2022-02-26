@@ -24,7 +24,7 @@ endif
 COMMON_NAME=common helper hook yerr lib/builtin_hook lib/policy lib/resource lib/tkill
 JUDGER_NAME=traditional interactive general
 
-LIB_OBJECTS=$(COMMON_NAME:%=%.o) $(JUDGER_NAME:%=judger/%.o) #cli/main.o
+LIB_OBJECTS=$(COMMON_NAME:%=%.o) $(JUDGER_NAME:%=judger/%.o)
 GCDA_FILES=$(LIB_OBJECTS:%.o=%.gcda)
 GCOV_FILES=$(LIB_OBJECTS:%.o=%.gcno) $(GCDA_FILES)
 
@@ -48,7 +48,7 @@ $(EXECUTABLE): $(ARCHIVE_LIBRARY) cli/main.o cli/cli.o
 
 clean:
 	$(RM) $(LIB_OBJECTS) $(ARCHIVE_LIBRARY) $(GCOV_FILES) libyjudger.o libkafel.o \
-	cli/main.o cli/cli.o
+	cli/main.o cli/cli.o cli/main.gcda cli/main.gcno cli/cli.gcda cli/cli.gcno
 
 cov:
 ifeq (true,$(GCOVR)) # if enable gcovr
@@ -74,5 +74,4 @@ lib/resource.o: common.h lib/resource.h
 lib/tkill.o: common.h judger.h lib/tkill.h lib/resource.h
 cli/main.o: cli/cli.h judger.h
 cli/cli.o: cli/cli.h
-# main.o: main.c judger.h
 yerr.o: yerr.h
