@@ -1,8 +1,7 @@
 package "yaoj-judger"
 version "0.0.0"
 purpose "judger for the future yaoj"
-usage "<usage>"
-description "judger for the future yaoj"
+description "A set of program runners with resource limitation, syscall limitation and final status report."
 versiontext "Copyright (c) Sshwy 2022"
 
 args "--file-name=cli --unnamed-opts"
