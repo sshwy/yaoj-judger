@@ -15,6 +15,13 @@ int run_hook_chain(hook_chain_t phead, perform_ctxt_t ctxt) {
 
 hook_chain_t create_hook_chain() { return NULL; }
 
+void hook_chain_free(hook_chain_t phead) {
+  if (phead == NULL)
+    return;
+  hook_chain_free(phead->next);
+  free(phead);
+}
+
 hook_chain_t pushfront_hook(hook_chain_t phead, hook_func_t hook) {
   hook_chain_t phook = malloc(sizeof(struct hook_chain));
   phook->hook = hook;

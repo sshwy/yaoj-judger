@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "hook.h"
 #include "judger.h"
 #include "lib/policy.h"
@@ -52,15 +54,35 @@ int perform_set_policy(perform_ctxt_t ctxt, char *dirname, char *policy) {
   return policy_set(ctxt->pctxt, dirname, policy);
 }
 
-static void runner_set(runner_ctxt_t ctxt, int argc, char **argv, char **env) {
-  ctxt->argc = argc;
-  ctxt->argv = argv;
-  ctxt->env = env;
+/**
+ * @brief duplicate char** and add a NULL end
+ */
+static char **strsndupn(char **strs, size_t n) {
+  char **ps = (char **)(malloc((n + 1) * sizeof(char *)));
+  for (size_t i = 0; i < n; i++) {
+    ps[i] = strdup(strs[i]);
+  }
+  ps[n] = NULL;
+  return ps;
 }
+
+/**
+ * @brief duplicate char** ended by NULL
+ */
+static char **strsdupn(char **strs) {
+  size_t n = 0;
+  while (strs[n] != NULL)
+    ++n;
+  return strsndupn(strs, n);
+}
+
 int perform_set_runner(perform_ctxt_t ctxt, int argc, char **argv, char **env) {
-  runner_set(ctxt->ectxt, argc, argv, env);
+  ctxt->ectxt->argc = argc;
+  ctxt->ectxt->argv = strsndupn(argv, argc);
+  ctxt->ectxt->env = strsdupn(env);
   return 0;
 }
+
 int perform_set_limit(perform_ctxt_t ctxt, int type, int lim) {
   rsclim_ctxt_t rctxt = ctxt->rctxt;
   switch (type) {
@@ -100,4 +122,35 @@ int perform_set_limit(perform_ctxt_t ctxt, int type, int lim) {
     return yerr(E_HELPER_INVALID_LIM);
   }
   return 0;
+}
+
+static void free_argv(char **p) {
+  if (p == NULL)
+    return;
+  for (size_t i = 0; p[i] != NULL; i++) {
+    free(p[i]);
+    p[i] = NULL;
+  }
+  free(p);
+}
+
+void perform_ctxt_free(perform_ctxt_t ctxt) {
+  free(ctxt->pctxt->content);
+  free(ctxt->pctxt->dirname);
+  free(ctxt->pctxt->policy);
+  free(ctxt->pctxt->prog.filter);
+
+  free_argv(ctxt->ectxt->argv);
+  free_argv(ctxt->ectxt->env);
+
+  hook_chain_free(ctxt->hctxt->after_fork);
+  hook_chain_free(ctxt->hctxt->before_fork);
+  hook_chain_free(ctxt->hctxt->after_wait);
+
+  free(ctxt->pctxt);
+  free(ctxt->ectxt);
+  free(ctxt->rctxt);
+  free(ctxt->hctxt);
+
+  free(ctxt);
 }
