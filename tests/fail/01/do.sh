@@ -3,7 +3,8 @@ touch main.out main.err
 cc main.c -o main.local
 
 echo -e "test failure #1"
-../../../judger_traditional.local main.local main.in main.out main.err\
+../../../yjudger.local main.local main.in main.out main.err\
+  -j traditional \
   -r OK \
   -P ../../../policy \
   -p free \
@@ -11,7 +12,8 @@ echo -e "test failure #1"
   -t 1000 -m 128
 
 echo -e "test failure #2"
-../../../judger_traditional.local main.local m.in main.out main.err std\
+../../../yjudger.local main.local m.in main.out main.err std\
+  -j traditional \
   -r OK \
   -P ../../../policy \
   -p free \
@@ -19,7 +21,8 @@ echo -e "test failure #2"
   -t 1000 -m 128
 
 echo -e "test failure #3"
-../../../judger_traditional.local main.local main.in m.out main.err std\
+../../../yjudger.local main.local main.in m.out main.err std\
+  -j traditional \
   -r OK \
   -P ../../../policy \
   -p free \
@@ -27,7 +30,8 @@ echo -e "test failure #3"
   -t 1000 -m 128
 
 echo -e "test failure #4"
-../../../judger_traditional.local main.local main.in main.out main.err s\
+../../../yjudger.local main.local main.in main.out main.err s\
+  -j traditional \
   -r OK \
   -P ../../../policy \
   -p free \
@@ -35,7 +39,8 @@ echo -e "test failure #4"
   -t 1000 -m 128
 
 echo -e "test failure #5"
-../../../judger_traditional.local main.local main.in main.out m.err std\
+../../../yjudger.local main.local main.in main.out m.err std\
+  -j traditional \
   -r OK \
   -P ../../../policy \
   -p free \
@@ -43,7 +48,8 @@ echo -e "test failure #5"
   -t 1000 -m 128
 
 echo -e "test failure #6"
-../../../judger_traditional.local main.local main.in main.out main.err std\
+../../../yjudger.local main.local main.in main.out main.err std\
+  -j traditional \
   -r OK \
   -P ../../../policy \
   -p free \
@@ -51,7 +57,8 @@ echo -e "test failure #6"
   -t 1000 -m -128
 
 echo -e "test failure #7"
-../../../judger_traditional.local main.local main.in main.err main.err std\
+../../../yjudger.local main.local main.in main.err main.err std\
+  -j traditional \
   -r OK \
   -P ../../../policy \
   -p free \

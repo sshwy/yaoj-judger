@@ -1,6 +1,7 @@
 #!/bin/bash
 
-../../../judger_general.local script.sh \
+../../../yjudger.local script.sh \
+  -j general \
   -r OK \
   --log=.log.local \
   -P ../../../policy \
