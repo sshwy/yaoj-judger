@@ -48,29 +48,43 @@ cat log.local # 看看评测结果吧
 内建规则见 `policy` 目录。
 
 ```
-$ ./judger_traditional.local --help
-Usage: judger_traditional.local [OPTION...] runner arguments...
-Command line interface of judger (for the future yaoj)
+$ ./yjudger.local -h
+Usage: yaoj-judger [OPTION]... [FILE]...
+judger for the future yaoj
 
-      --actmem=ACTUAL_MEMORY specify the actual memory limit in MB
-      --cputime=CPU_TIME     specify the cpu limit in milliseconds
-  -g, --fsize=OUTPUT         specify the output limit in MB
-      --log=LOG_FILE         specify judger result file
-  -m, --memory=MEMORY        specify all three memory limits in MB
-  -p, --policy=POLICY        specify policy name
-  -P, --policydir=POLICY_DIR specify policy search directory
-      --realtime=REAL_TIME   specify the runtime limit in milliseconds
-  -r, --result=RESULT        specify the result code using name
-      --stkmem=STACK_MEMORY  specify the stack memory limit in MB
-  -t, --timeout=TIMEOUT      specify both time limits in milliseconds
-      --virmem=VIRTUAL_MEMORY   specify the virtual memory limit in MB
-  -?, --help                 Give this help list
-      --usage                Give a short usage message
+A set of program runners with resource limitation, syscall limitation and final
+status report.
+
+  -h, --help                    Print help and exit
+  -V, --version                 Print version and exit
+
+Required Options:
+
+A brief text description before the other options.
+
+  -r, --result=string           specify the result code using name
+      --log=filename            specify judger result file
+  -p, --policy=filename         specify policy name
+  -P, --policy-dir=filename     specify policy search directory
+  -j, --judger=judgername       specify which judger to use  (possible
+                                  values="traditional", "interactive",
+                                  "general")
+
+Resource Limitations:
+  the following options are all optional
+  -t, --timeout=integer         specify both time limits in milliseconds
+      --realtime=integer        specify the runtime limit in milliseconds
+      --cputime=integer         specify the cpu limit in milliseconds
+  -m, --memory=integer          specify all three memory limits in MB
+      --virtual-memory=integer  specify the virtual memory limit in MB
+      --real-memory=integer     specify the actual memory limit in MB
+      --stack-memory=integer    specify the stack memory limit in MB
+  -g, --output-size=integer     specify the output limit in MB
 ```
 
 对于更多使用方法，您可以去 [tests/](https://github.com/sshwy/yaoj-judger/tree/master/tests) 了解一下！
 
-如果你在尝试链接库文件来自己写 main，那么在编译时需加上 `-Lpath/to/libjudger -lpthread -ljudger_xxx`，并且链接的顺序有时候会影响编译结果（[Why does the order in which libraries are linked sometimes cause errors in GCC?](https://stackoverflow.com/questions/45135/why-does-the-order-in-which-libraries-are-linked-sometimes-cause-errors-in-gcc)）。解决方法就是穷举……一般来说 `-ljudger_xxx` 放最前面就可以。
+如果你在尝试链接库文件来自己写 main，那么在编译时需加上 `-Lpath/to/libyjudger -lpthread -lyjudger`，并且链接的顺序有时候会影响编译结果（[Why does the order in which libraries are linked sometimes cause errors in GCC?](https://stackoverflow.com/questions/45135/why-does-the-order-in-which-libraries-are-linked-sometimes-cause-errors-in-gcc)）。解决方法就是穷举……一般来说 `-lyjudger` 放最前面就可以。
 
 ## Development
 
@@ -80,7 +94,7 @@ code coverage（需要 gcovr）：
 
 ```
 make clean
-make coverage GCOVR=true
+make gcovr
 ```
 
 可以在 local.cov 文件夹下查看代码覆盖情况。
