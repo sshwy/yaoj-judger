@@ -27,11 +27,11 @@
 
 const char *gengetopt_args_info_purpose = "judger for the future yaoj";
 
-const char *gengetopt_args_info_usage = "Usage: <usage>";
+const char *gengetopt_args_info_usage = "Usage: yaoj-judger [OPTION]... [FILE]...";
 
 const char *gengetopt_args_info_versiontext = "Copyright (c) Sshwy 2022";
 
-const char *gengetopt_args_info_description = "judger for the future yaoj";
+const char *gengetopt_args_info_description = "A set of program runners with resource limitation, syscall limitation and final\nstatus report.";
 
 const char *gengetopt_args_info_help[] = {
   "  -h, --help                    Print help and exit",
