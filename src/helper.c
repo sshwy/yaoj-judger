@@ -1,5 +1,6 @@
 #include <string.h>
 
+#include "common.h"
 #include "hook.h"
 #include "judger.h"
 #include "lib/policy.h"
@@ -145,7 +146,7 @@ static void free_nonull(void *p) {
 
 void perform_ctxt_free(perform_ctxt_t ctxt) {
   if (ctxt->pctxt->is_builtin) {
-    rmtree(ctxt->pctxt->dirname);
+    rmtree_depth1(ctxt->pctxt->dirname);
   }
 
   free_nonull(ctxt->pctxt->content);
