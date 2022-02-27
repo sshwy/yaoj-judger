@@ -39,6 +39,9 @@ struct gengetopt_args_info
 {
   const char *help_help; /**< @brief Print help and exit help description.  */
   const char *version_help; /**< @brief Print version and exit help description.  */
+  char * judger_arg;	/**< @brief specify which judger to use.  */
+  char * judger_orig;	/**< @brief specify which judger to use original value given at command line.  */
+  const char *judger_help; /**< @brief specify which judger to use help description.  */
   char * result_arg;	/**< @brief specify the result code using name.  */
   char * result_orig;	/**< @brief specify the result code using name original value given at command line.  */
   const char *result_help; /**< @brief specify the result code using name help description.  */
@@ -48,12 +51,9 @@ struct gengetopt_args_info
   char * policy_arg;	/**< @brief specify policy name.  */
   char * policy_orig;	/**< @brief specify policy name original value given at command line.  */
   const char *policy_help; /**< @brief specify policy name help description.  */
-  char * policy_dir_arg;	/**< @brief specify policy search directory.  */
-  char * policy_dir_orig;	/**< @brief specify policy search directory original value given at command line.  */
-  const char *policy_dir_help; /**< @brief specify policy search directory help description.  */
-  char * judger_arg;	/**< @brief specify which judger to use.  */
-  char * judger_orig;	/**< @brief specify which judger to use original value given at command line.  */
-  const char *judger_help; /**< @brief specify which judger to use help description.  */
+  char * policy_dir_arg;	/**< @brief specify policy search directory, depend on 'policy' option (default='.').  */
+  char * policy_dir_orig;	/**< @brief specify policy search directory, depend on 'policy' option original value given at command line.  */
+  const char *policy_dir_help; /**< @brief specify policy search directory, depend on 'policy' option help description.  */
   int timeout_arg;	/**< @brief specify both time limits in milliseconds.  */
   char * timeout_orig;	/**< @brief specify both time limits in milliseconds original value given at command line.  */
   const char *timeout_help; /**< @brief specify both time limits in milliseconds help description.  */
@@ -81,11 +81,11 @@ struct gengetopt_args_info
   
   unsigned int help_given ;	/**< @brief Whether help was given.  */
   unsigned int version_given ;	/**< @brief Whether version was given.  */
+  unsigned int judger_given ;	/**< @brief Whether judger was given.  */
   unsigned int result_given ;	/**< @brief Whether result was given.  */
   unsigned int log_given ;	/**< @brief Whether log was given.  */
   unsigned int policy_given ;	/**< @brief Whether policy was given.  */
   unsigned int policy_dir_given ;	/**< @brief Whether policy-dir was given.  */
-  unsigned int judger_given ;	/**< @brief Whether judger was given.  */
   unsigned int timeout_given ;	/**< @brief Whether timeout was given.  */
   unsigned int realtime_given ;	/**< @brief Whether realtime was given.  */
   unsigned int cputime_given ;	/**< @brief Whether cputime was given.  */

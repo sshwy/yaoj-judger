@@ -12,7 +12,7 @@ echo "judging..."
   -r OK \
   --log=.log.local \
   -P ../../../policy \
-  -p c_std_io \
+  -p c_std_io_coverage \
   --memory=128 \
   --timeout=5000
 

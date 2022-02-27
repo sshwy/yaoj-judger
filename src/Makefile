@@ -28,26 +28,26 @@ LIB_OBJECTS=$(COMMON_NAME:%=%.o) $(JUDGER_NAME:%=judger/%.o)
 GCDA_FILES=$(LIB_OBJECTS:%.o=%.gcda)
 GCOV_FILES=$(LIB_OBJECTS:%.o=%.gcno) $(GCDA_FILES)
 
-ARCHIVE_LIBRARY=$(PROJECT_ROOT)libyjudger.a
+STATIC_TARGET=$(PROJECT_ROOT)libyjudger.a
 EXECUTABLE=$(PROJECT_ROOT)yjudger.local
 
-.PHONY: all clean $(JUDGER_NAME) compile cov
+.PHONY: all clean compile cov check_buildenv
 
 all: compile
 
 # compile source files to object files and then link them together equiping with different judger
-compile: $(ARCHIVE_LIBRARY) $(EXECUTABLE)
+compile: check_buildenv $(STATIC_TARGET) $(EXECUTABLE)
 
-$(ARCHIVE_LIBRARY): $(LIB_OBJECTS)
+$(STATIC_TARGET): $(LIB_OBJECTS)
 	$(LD) $(LDFLAGS) -r ${LIB_OBJECTS} -o libyjudger.o
 	$(AR) -x $(PROJECT_ROOT)kafel/libkafel.a
-	$(AR) -rcs $(ARCHIVE_LIBRARY) libyjudger.o libkafel.o
+	$(AR) -rcs $(STATIC_TARGET) libyjudger.o libkafel.o
 
-$(EXECUTABLE): $(ARCHIVE_LIBRARY) cli/main.o cli/cli.o
+$(EXECUTABLE): $(STATIC_TARGET) cli/main.o cli/cli.o
 	$(CC) cli/main.o cli/cli.o -o $(EXECUTABLE) -L./$(PROJECT_ROOT) -lyjudger $(CLI_CFLAGS)
 
 clean:
-	$(RM) $(LIB_OBJECTS) $(ARCHIVE_LIBRARY) $(GCOV_FILES) libyjudger.o libkafel.o \
+	$(RM) $(LIB_OBJECTS) $(STATIC_TARGET) $(GCOV_FILES) libyjudger.o libkafel.o \
 	cli/main.o cli/cli.o cli/main.gcda cli/main.gcno cli/cli.gcda cli/cli.gcno
 
 cov:
@@ -59,6 +59,18 @@ ifeq (true,$(GCOVR)) # if enable gcovr
 else # production mode
 	$(GCOV) -abcfu $(GCDA_FILES)
 	mv *.c.gcov $(PROJECT_ROOT)local.cov
+endif
+
+# currently support x86_64
+check_buildenv:
+ifneq (x86_64,$(shell uname -m))
+	$(error currently only support x86_64 architecture)
+else ifeq (, $(shell which flex 2> /dev/null))
+	$(error command flex not found, please install it)
+else ifeq (, $(shell which ausyscall 2> /dev/null))
+	$(error command ausyscall not found, please install it)
+else ifeq (, $(shell which $(CC) 2> /dev/null))
+	$(error command $(CC) not found, please install it)
 endif
 
 # https://www.gnu.org/software/make/manual/make.html#Implicit-Rules
