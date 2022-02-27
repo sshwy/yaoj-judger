@@ -31,6 +31,7 @@ static policy_ctxt_t policy_ctxt_create() {
   ctxt->policy = NULL;
   ctxt->content = NULL;
   ctxt->dirname = NULL;
+  ctxt->prog.filter = NULL;
   ctxt->is_builtin = 0;
   return ctxt;
 }
@@ -129,19 +130,19 @@ int perform_set_limit(perform_ctxt_t ctxt, int type, int lim) {
   return 0;
 }
 
+static void free_nonull(void *p) {
+  if (p != NULL)
+    free(p);
+}
+
 static void free_argv(char **p) {
   if (p == NULL)
     return;
   for (size_t i = 0; p[i] != NULL; i++) {
-    free(p[i]);
+    free_nonull(p[i]);
     p[i] = NULL;
   }
-  free(p);
-}
-
-static void free_nonull(void *p) {
-  if (p != NULL)
-    free(p);
+  free_nonull(p);
 }
 
 void perform_ctxt_free(perform_ctxt_t ctxt) {
