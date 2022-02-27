@@ -1,6 +1,6 @@
 SHELL=/bin/sh
 CC=clang
-SUBDIRS=src policy tests
+SUBDIRS=policy src tests
 PROJECT_ROOT?=
 
 .PHONY: $(SUBDIRS) clean kafel clean_all docs check

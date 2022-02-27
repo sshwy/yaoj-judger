@@ -33,6 +33,7 @@ static char yerrmsg[][100] = {
     [E_KAFEL] = "policy compilation failed",
     [E_APP_POL] = "apply policy failed",
     [E_EXEC] = "exec* failed",
+    [E_BULTIN_POL] = "invalid builtin policy",
 };
 
 char *ystrerr(int errnum) { return yerrmsg[errnum]; }

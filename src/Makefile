@@ -21,7 +21,8 @@ else # production mode
 	CLI_CFLAGS+=-O2
 endif
 
-COMMON_NAME=common helper hook yerr lib/builtin_hook lib/policy lib/resource lib/tkill
+COMMON_NAME=common helper hook yerr\
+	lib/builtin_hook lib/policy lib/resource lib/tkill lib/builtin_policy.gen
 JUDGER_NAME=traditional interactive general
 
 LIB_OBJECTS=$(COMMON_NAME:%=%.o) $(JUDGER_NAME:%=judger/%.o)
@@ -51,15 +52,13 @@ clean:
 	cli/main.o cli/cli.o cli/main.gcda cli/main.gcno cli/cli.gcda cli/cli.gcno
 
 cov:
-ifeq (true,$(GCOVR)) # if enable gcovr
 	$(GCOV) -abcfu $(GCDA_FILES)
+	$(RM) *.gen.c.gcov
+ifeq (true,$(GCOVR)) # if enable gcovr
 	gcovr -r . -k -g --gcov-ignore-parse-errors --html --html-details -s\
 		-o $(PROJECT_ROOT)/local.cov/coverage.html
-	mv *.c.gcov $(PROJECT_ROOT)local.cov
-else # production mode
-	$(GCOV) -abcfu $(GCDA_FILES)
-	mv *.c.gcov $(PROJECT_ROOT)local.cov
 endif
+	mv *.c.gcov $(PROJECT_ROOT)local.cov
 
 # currently support x86_64
 check_buildenv:
@@ -74,6 +73,8 @@ else ifeq (, $(shell which $(CC) 2> /dev/null))
 endif
 
 # https://www.gnu.org/software/make/manual/make.html#Implicit-Rules
+cli/cli.o: cli/cli.h
+cli/main.o: cli/cli.h judger.h
 common.o: common.h judger.h
 helper.o: common.h judger.h lib/policy.h lib/resource.h hook.h
 hook.o: common.h hook.h
@@ -81,9 +82,8 @@ judger/general.o: common.h judger.h hook.h lib/builtin_hook.h lib/policy.h lib/r
 judger/interactive.o: common.h judger.h hook.h lib/builtin_hook.h lib/policy.h lib/resource.h
 judger/traditional.o: common.h judger.h hook.h lib/builtin_hook.h lib/policy.h lib/resource.h
 lib/builtin_hook.o: common.h hook.h lib/builtin_hook.h lib/policy.h lib/resource.h lib/tkill.h
+lib/builtin_policy.gen.o: common.h lib/policy.h
 lib/policy.o: common.h lib/policy.h
 lib/resource.o: common.h lib/resource.h
 lib/tkill.o: common.h judger.h lib/tkill.h lib/resource.h
-cli/main.o: cli/cli.h judger.h
-cli/cli.o: cli/cli.h
 yerr.o: yerr.h

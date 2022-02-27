@@ -1,9 +1,14 @@
+#include "yerr.h"
 #define _GNU_SOURCE
 
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+// POSIX dependencies
+#include <dirent.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 #include "common.h"
 #include "judger.h"
@@ -21,8 +26,6 @@ void log_set(const char *filename) {
 char *path_join(const char *first, char seperator, const char *second) {
   size_t flen = strlen(first);
   size_t slen = strlen(second);
-  ASSERT(flen <= SIZE_MAX - 2, "assertion failed\n");        // overflow
-  ASSERT(flen + 2 <= SIZE_MAX - slen, "assertion failed\n"); // overflow
   if (flen > 0 && first[flen - 1] == seperator)
     --flen; // remove trailing '/'
   size_t len = flen + slen + 1;
@@ -99,4 +102,67 @@ enum result_code atorc(char *arg) {
 
 int to_millisecond(struct timeval tv) {
   return (int)(tv.tv_sec * 1000 + tv.tv_usec / 1000);
+}
+
+int rmtree(const char *path) {
+  char *full_path;
+  DIR *dir;
+  struct stat stat_path, stat_entry;
+  struct dirent *entry;
+
+  // stat for the path
+  stat(path, &stat_path);
+
+  // if path does not exists or is not dir - exit with status -1
+  if (S_ISDIR(stat_path.st_mode) == 0) {
+    LOG_ERROR("%s: %s\n", "Is not directory", path);
+    yreturn(E_ERROR);
+  }
+
+  // if not possible to read the directory for this user
+  if ((dir = opendir(path)) == NULL) {
+    LOG_ERROR("%s: %s\n", "Can`t open directory", path);
+    yreturn(E_ERROR);
+  }
+
+  // iteration through entries in the directory
+  while ((entry = readdir(dir)) != NULL) {
+
+    // skip entries "." and ".."
+    if (!strcmp(entry->d_name, ".") || !strcmp(entry->d_name, ".."))
+      continue;
+
+    // determinate a full path of an entry
+    full_path = path_join(path, '/', entry->d_name);
+
+    // stat for the entry
+    stat(full_path, &stat_entry);
+
+    // recursively remove a nested directory
+    if (S_ISDIR(stat_entry.st_mode) != 0) {
+      if (rmtree(full_path))
+        yreturn(yerrno);
+      continue;
+    }
+
+    // remove a file object
+    if (unlink(full_path) == 0) {
+      LOG_DEBUG("removed a file: %s", full_path);
+    } else {
+      LOG_ERROR("can`t remove a file: %s", full_path);
+      yreturn(E_ERROR);
+    }
+    free(full_path);
+  }
+
+  // remove the devastated directory and close the object of it
+  if (rmdir(path) == 0) {
+    LOG_DEBUG("removed a directory: %s", path);
+  } else {
+    LOG_ERROR("Can`t remove a directory: %s", path);
+    yreturn(E_ERROR);
+  }
+
+  closedir(dir);
+  return 0;
 }

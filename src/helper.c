@@ -27,6 +27,10 @@ static runner_ctxt_t runner_ctxt_create() {
 
 static policy_ctxt_t policy_ctxt_create() {
   policy_ctxt_t ctxt = malloc(sizeof(struct policy_ctxt));
+  ctxt->policy = NULL;
+  ctxt->content = NULL;
+  ctxt->dirname = NULL;
+  ctxt->is_builtin = 0;
   return ctxt;
 }
 
@@ -134,11 +138,20 @@ static void free_argv(char **p) {
   free(p);
 }
 
+static void free_nonull(void *p) {
+  if (p != NULL)
+    free(p);
+}
+
 void perform_ctxt_free(perform_ctxt_t ctxt) {
-  free(ctxt->pctxt->content);
-  free(ctxt->pctxt->dirname);
-  free(ctxt->pctxt->policy);
-  free(ctxt->pctxt->prog.filter);
+  if (ctxt->pctxt->is_builtin) {
+    rmtree(ctxt->pctxt->dirname);
+  }
+
+  free_nonull(ctxt->pctxt->content);
+  free_nonull(ctxt->pctxt->dirname);
+  free_nonull(ctxt->pctxt->policy);
+  free_nonull(ctxt->pctxt->prog.filter);
 
   free_argv(ctxt->ectxt->argv);
   free_argv(ctxt->ectxt->env);
@@ -147,10 +160,10 @@ void perform_ctxt_free(perform_ctxt_t ctxt) {
   hook_chain_free(ctxt->hctxt->before_fork);
   hook_chain_free(ctxt->hctxt->after_wait);
 
-  free(ctxt->pctxt);
-  free(ctxt->ectxt);
-  free(ctxt->rctxt);
-  free(ctxt->hctxt);
+  free_nonull(ctxt->pctxt);
+  free_nonull(ctxt->ectxt);
+  free_nonull(ctxt->rctxt);
+  free_nonull(ctxt->hctxt);
 
-  free(ctxt);
+  free_nonull(ctxt);
 }

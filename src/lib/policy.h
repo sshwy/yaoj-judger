@@ -18,7 +18,10 @@
  * @brief Kafel policy context
  */
 struct policy_ctxt {
-  char *dirname; //!< provide policy search path
+  /// @brief use builtin policy, which means `dirname` should be a tmp folder.
+  int is_builtin;
+  /// @brief provide policy search path
+  char *dirname;
   /**
    * @brief Just filename of the policy.
    *
@@ -39,7 +42,18 @@ struct policy_ctxt {
 
 typedef struct policy_ctxt *policy_ctxt_t;
 
-int policy_set(policy_ctxt_t ctxt, char *dirname, char *policy);
+struct builtin_policy {
+  char *filename;
+  unsigned char *content; //!< may not end with NULL
+  unsigned int len;
+};
+
+typedef struct builtin_policy *builtin_policy_t;
+extern const unsigned int policy_num;
+
+struct builtin_policy *policy_list_get();
+
+int policy_set(policy_ctxt_t ctxt, const char *dirname, const char *policy);
 
 int compile_policy_before_fork(perform_ctxt_t ctxt);
 
