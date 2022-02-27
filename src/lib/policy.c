@@ -61,8 +61,7 @@ int policy_set(policy_ctxt_t ctxt, const char *dirname, const char *policy) {
   }
 
   char *tmp = path_join(dirname, '/', policy);
-  const char *filename = path_join(tmp, '.', "policy");
-  free(tmp);
+  char *filename = path_join(tmp, '.', "policy");
 
   FILE *fp = fopen(filename, "r");
   if (fp == NULL) {
@@ -71,6 +70,9 @@ int policy_set(policy_ctxt_t ctxt, const char *dirname, const char *policy) {
   ctxt->content = ftos(fp);
   ctxt->dirname = strdup(dirname);
   ctxt->policy = strdup(policy);
+
+  free(tmp);
+  free(filename);
   return 0;
 }
 
