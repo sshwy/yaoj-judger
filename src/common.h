@@ -119,6 +119,6 @@ char *ftos(FILE *fp);
  */
 int to_millisecond(struct timeval tv);
 
-int rmtree(const char *path);
+int rmtree_depth1(const char *path);
 
 #endif

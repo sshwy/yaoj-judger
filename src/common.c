@@ -104,7 +104,7 @@ int to_millisecond(struct timeval tv) {
   return (int)(tv.tv_sec * 1000 + tv.tv_usec / 1000);
 }
 
-int rmtree(const char *path) {
+int rmtree_depth1(const char *path) {
   char *full_path;
   DIR *dir;
   struct stat stat_path, stat_entry;
@@ -115,13 +115,11 @@ int rmtree(const char *path) {
 
   // if path does not exists or is not dir - exit with status -1
   if (S_ISDIR(stat_path.st_mode) == 0) {
-    LOG_ERROR("%s: %s\n", "Is not directory", path);
     yreturn(E_ERROR);
   }
 
   // if not possible to read the directory for this user
   if ((dir = opendir(path)) == NULL) {
-    LOG_ERROR("%s: %s\n", "Can`t open directory", path);
     yreturn(E_ERROR);
   }
 
@@ -139,17 +137,16 @@ int rmtree(const char *path) {
     stat(full_path, &stat_entry);
 
     // recursively remove a nested directory
-    if (S_ISDIR(stat_entry.st_mode) != 0) {
-      if (rmtree(full_path))
-        yreturn(yerrno);
-      continue;
-    }
+    // if (S_ISDIR(stat_entry.st_mode) != 0) {
+    //   if (rmtree(full_path))
+    //     yreturn(yerrno);
+    //   continue;
+    // }
 
     // remove a file object
     if (unlink(full_path) == 0) {
       LOG_DEBUG("removed a file: %s", full_path);
     } else {
-      LOG_ERROR("can`t remove a file: %s", full_path);
       yreturn(E_ERROR);
     }
     free(full_path);
@@ -159,7 +156,6 @@ int rmtree(const char *path) {
   if (rmdir(path) == 0) {
     LOG_DEBUG("removed a directory: %s", path);
   } else {
-    LOG_ERROR("Can`t remove a directory: %s", path);
     yreturn(E_ERROR);
   }
 
