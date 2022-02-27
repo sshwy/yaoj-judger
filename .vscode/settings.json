@@ -1,5 +1,18 @@
 {
   "files.associations": {
-    "runner.h": "c"
-  }
+    "runner.h": "c",
+    "*.h": "c",
+    "*.c": "c",
+    "*.ggo": "shellscript"
+  },
+  "clangd.fallbackFlags": [
+    "-I${workspaceFolder}/src",
+    "-I${workspaceFolder}/kafel/include",
+    "-Wall",
+    "-Wextra"
+  ],
+  "C_Cpp.clang_format_sortIncludes": true,
+  "C_Cpp.debugger.useBacktickCommandSubstitution": true,
+  "C_Cpp.formatting": "clangFormat",
+  "C_Cpp.clang_format_style": "LLVM"
 }
