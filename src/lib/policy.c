@@ -2,6 +2,7 @@
 #include <linux/seccomp.h>
 #include <regex.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/prctl.h>
 
@@ -10,7 +11,55 @@
 #include "kafel.h"
 #include "policy.h"
 
-int policy_set(policy_ctxt_t ctxt, char *dirname, char *policy) {
+static const char prefix[] = "builtin:";
+static const int prefix_len = 8;
+
+static int is_builtin_policy(const char *policy) {
+  if (strlen(policy) >= prefix_len &&
+      strncmp(policy, prefix, prefix_len) == 0) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+static int policy_set_builtin(policy_ctxt_t ctxt, const char *policy) {
+  const char *policyname = policy + prefix_len;
+  LOG_DEBUG("load builtin policy: \"%s\"", policyname);
+
+  struct builtin_policy *list = policy_list_get();
+  char tdir[] = "/tmp/yjudger.XXXXXX";
+  if (mkdtemp(tdir) == NULL) {
+    yreturn(E_BULTIN_POL);
+  }
+  char *path = NULL;
+  LOG_DEBUG("create tmp dir: %s", tdir);
+  for (unsigned i = 0; i < policy_num; i++) {
+    LOG_DEBUG("find %s (%d bytes)", list[i].filename, list[i].len);
+    path = path_join(tdir, '/', list[i].filename);
+
+    FILE *fp = fopen(path, "w");
+    if (fp == NULL) {
+      yreturn(E_FP);
+    }
+    if (fwrite(list[i].content, sizeof(unsigned char), list[i].len, fp) !=
+        list[i].len) {
+      yreturn(E_BULTIN_POL);
+    }
+    fclose(fp);
+    free(path);
+  }
+
+  free(list);
+  ctxt->is_builtin = 1;
+  return policy_set(ctxt, tdir, policyname);
+}
+
+int policy_set(policy_ctxt_t ctxt, const char *dirname, const char *policy) {
+  if (is_builtin_policy(policy)) {
+    return policy_set_builtin(ctxt, policy);
+  }
+
   char *tmp = path_join(dirname, '/', policy);
   const char *filename = path_join(tmp, '.', "policy");
   free(tmp);
@@ -20,8 +69,8 @@ int policy_set(policy_ctxt_t ctxt, char *dirname, char *policy) {
     yreturn(E_FP);
   }
   ctxt->content = ftos(fp);
-  ctxt->dirname = strdup(dirname); // seem dangerous
-  ctxt->policy = strdup(policy);   // seem dangerous
+  ctxt->dirname = strdup(dirname);
+  ctxt->policy = strdup(policy);
   return 0;
 }
 

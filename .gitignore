@@ -4,6 +4,7 @@ local.*
 *.so
 *.a
 *.o
+*.gen.c
 tests/**/*.out
 tests/**/*.err
 docs/web

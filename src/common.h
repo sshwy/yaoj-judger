@@ -43,6 +43,7 @@ extern char log_buf[1000];
 #define LOG_DEBUG(fmt, args...)                                                \
   do {                                                                         \
     fprintf(log_fp, BLUE("DEBUG") "(" AT "): " fmt ".\n", ##args);             \
+    fflush(log_fp);                                                            \
   } while (0)
 
 #define LOG_WARN(fmt, args...)                                                 \
@@ -117,5 +118,7 @@ char *ftos(FILE *fp);
  * @brief calculate millisecond value of `timeval`
  */
 int to_millisecond(struct timeval tv);
+
+int rmtree(const char *path);
 
 #endif

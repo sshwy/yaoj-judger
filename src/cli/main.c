@@ -81,11 +81,14 @@ int main(int argc, char **argv, char **env) {
   if ((int)ctxt->result.code != result_code) {
     fprintf(stderr, "test failed (result=%d, expect=%d)\n",
             (int)ctxt->result.code, result_code);
+    cmdline_parser_free(&args_info);
+    perform_ctxt_free(ctxt);
+    log_close();
     return 1;
   }
 
-  log_close();
   cmdline_parser_free(&args_info);
   perform_ctxt_free(ctxt);
+  log_close();
   return 0;
 }
