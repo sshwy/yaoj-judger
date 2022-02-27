@@ -1,4 +1,6 @@
-#!/bin/sh
+#!/bin/bash
+
+outname=../src/lib/builtin_policy.gen.c
 
 files=()
 
@@ -12,8 +14,6 @@ done < <(find . -type f -name '*.policy' && find . -type f -name '*.polib')
 # - "$@" expand each element as a separate argument.
 # - "$*" expand to the arguments merged into one argument.
 # If you need to get length of the array use symbol "#" before the name of array. 
-
-outname=../src/lib/builtin_policy.gen.c
 
 # include headers
 cat > $outname << EOF
