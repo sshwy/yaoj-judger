@@ -37,7 +37,7 @@ char *path_join(const char *first, char seperator, const char *second) {
   return rv;
 }
 
-void fprint_result(FILE *fp, struct result *pres) {
+void fprint_result(FILE *fp, struct perform_result *pres) {
   char code_name[10][30] = {
       [OK] = "OK",
       [RE] = "Runtime Error",
@@ -60,7 +60,9 @@ void fprint_result(FILE *fp, struct result *pres) {
           pres->signal, pres->exit_code);
 }
 
-void log_print_result(struct result *pres) { fprint_result(log_fp, pres); }
+void log_print_result(struct perform_result *pres) {
+  fprint_result(log_fp, pres);
+}
 void log_close() { fclose(log_fp); }
 
 // void fprint_rusage(FILE *fp, struct rusage *rsp) {
