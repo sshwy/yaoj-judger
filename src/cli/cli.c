@@ -33,14 +33,18 @@ const char *gengetopt_args_info_versiontext = "Copyright (c) Sshwy 2022";
 
 const char *gengetopt_args_info_description = "A set of program runners with resource limitation, syscall limitation and final\nstatus report.";
 
-const char *gengetopt_args_info_help[] = {
+const char *gengetopt_args_info_detailed_help[] = {
   "  -h, --help                    Print help and exit",
+  "      --detailed-help           Print help, including all details and hidden\n                                  options, and exit",
   "  -V, --version                 Print version and exit",
   "  -j, --judger=judgername       specify which judger to use  (possible\n                                  values=\"traditional\", \"interactive\",\n                                  \"general\") (required)",
-  "  -r, --result=string           specify the result code using name (required)",
+  "  -r, --result=string           specify the result code using name  (possible\n                                  values=\"OK\", \"RE\", \"MLE\", \"TLE\",\n                                  \"OLE\", \"SE\", \"DSC\", \"ECE\") (required)",
+  "  \n    Meanings of those shortname:\n      OK: all correct\n      RE: runtime error\n      MLE: memory limitation exceed\n      TLE: time limitation exceed\n      OLE: output limitation exceed\n      SE: system error, aka judger error\n      DSC: dangerous system call\n      ECE: exit code error\n    ",
   "      --log=filename            specify judger result file (required)",
   "  -p, --policy=filename         specify policy name (required)",
+  "  \n    Note that if using builtin policy, add 'builtin:' prefix to policy's name.\n    ",
   "  -P, --policy-dir=filename     specify policy search directory, depend on\n                                  'policy' option  (default=`.')",
+  "  \n    If using builtin policy, this option is meaningless.\n    ",
   "\nResource Limitations:",
   "  note that 'timeout' and 'memory' option can be override by their\n  corresponding detailed options, such as realtime, stack-memory.",
   "  -t, --timeout=integer         specify both time limits in milliseconds",
@@ -53,6 +57,33 @@ const char *gengetopt_args_info_help[] = {
   "  -g, --output-size=integer     specify the output limit in MB",
     0
 };
+
+static void
+init_help_array(void)
+{
+  gengetopt_args_info_help[0] = gengetopt_args_info_detailed_help[0];
+  gengetopt_args_info_help[1] = gengetopt_args_info_detailed_help[1];
+  gengetopt_args_info_help[2] = gengetopt_args_info_detailed_help[2];
+  gengetopt_args_info_help[3] = gengetopt_args_info_detailed_help[3];
+  gengetopt_args_info_help[4] = gengetopt_args_info_detailed_help[4];
+  gengetopt_args_info_help[5] = gengetopt_args_info_detailed_help[6];
+  gengetopt_args_info_help[6] = gengetopt_args_info_detailed_help[7];
+  gengetopt_args_info_help[7] = gengetopt_args_info_detailed_help[9];
+  gengetopt_args_info_help[8] = gengetopt_args_info_detailed_help[11];
+  gengetopt_args_info_help[9] = gengetopt_args_info_detailed_help[12];
+  gengetopt_args_info_help[10] = gengetopt_args_info_detailed_help[13];
+  gengetopt_args_info_help[11] = gengetopt_args_info_detailed_help[14];
+  gengetopt_args_info_help[12] = gengetopt_args_info_detailed_help[15];
+  gengetopt_args_info_help[13] = gengetopt_args_info_detailed_help[16];
+  gengetopt_args_info_help[14] = gengetopt_args_info_detailed_help[17];
+  gengetopt_args_info_help[15] = gengetopt_args_info_detailed_help[18];
+  gengetopt_args_info_help[16] = gengetopt_args_info_detailed_help[19];
+  gengetopt_args_info_help[17] = gengetopt_args_info_detailed_help[20];
+  gengetopt_args_info_help[18] = 0; 
+  
+}
+
+const char *gengetopt_args_info_help[19];
 
 typedef enum {ARG_NO
   , ARG_STRING
@@ -72,6 +103,7 @@ static int
 cmdline_parser_required2 (struct gengetopt_args_info *args_info, const char *prog_name, const char *additional_error);
 
 const char *cmdline_parser_judger_values[] = {"traditional", "interactive", "general", 0}; /*< Possible values for judger. */
+const char *cmdline_parser_result_values[] = {"OK", "RE", "MLE", "TLE", "OLE", "SE", "DSC", "ECE", 0}; /*< Possible values for result. */
 
 static char *
 gengetopt_strdup (const char *s);
@@ -80,6 +112,7 @@ static
 void clear_given (struct gengetopt_args_info *args_info)
 {
   args_info->help_given = 0 ;
+  args_info->detailed_help_given = 0 ;
   args_info->version_given = 0 ;
   args_info->judger_given = 0 ;
   args_info->result_given = 0 ;
@@ -125,22 +158,23 @@ static
 void init_args_info(struct gengetopt_args_info *args_info)
 {
 
-
-  args_info->help_help = gengetopt_args_info_help[0] ;
-  args_info->version_help = gengetopt_args_info_help[1] ;
-  args_info->judger_help = gengetopt_args_info_help[2] ;
-  args_info->result_help = gengetopt_args_info_help[3] ;
-  args_info->log_help = gengetopt_args_info_help[4] ;
-  args_info->policy_help = gengetopt_args_info_help[5] ;
-  args_info->policy_dir_help = gengetopt_args_info_help[6] ;
-  args_info->timeout_help = gengetopt_args_info_help[9] ;
-  args_info->realtime_help = gengetopt_args_info_help[10] ;
-  args_info->cputime_help = gengetopt_args_info_help[11] ;
-  args_info->memory_help = gengetopt_args_info_help[12] ;
-  args_info->virtual_memory_help = gengetopt_args_info_help[13] ;
-  args_info->real_memory_help = gengetopt_args_info_help[14] ;
-  args_info->stack_memory_help = gengetopt_args_info_help[15] ;
-  args_info->output_size_help = gengetopt_args_info_help[16] ;
+  init_help_array(); 
+  args_info->help_help = gengetopt_args_info_detailed_help[0] ;
+  args_info->detailed_help_help = gengetopt_args_info_detailed_help[1] ;
+  args_info->version_help = gengetopt_args_info_detailed_help[2] ;
+  args_info->judger_help = gengetopt_args_info_detailed_help[3] ;
+  args_info->result_help = gengetopt_args_info_detailed_help[4] ;
+  args_info->log_help = gengetopt_args_info_detailed_help[6] ;
+  args_info->policy_help = gengetopt_args_info_detailed_help[7] ;
+  args_info->policy_dir_help = gengetopt_args_info_detailed_help[9] ;
+  args_info->timeout_help = gengetopt_args_info_detailed_help[13] ;
+  args_info->realtime_help = gengetopt_args_info_detailed_help[14] ;
+  args_info->cputime_help = gengetopt_args_info_detailed_help[15] ;
+  args_info->memory_help = gengetopt_args_info_detailed_help[16] ;
+  args_info->virtual_memory_help = gengetopt_args_info_detailed_help[17] ;
+  args_info->real_memory_help = gengetopt_args_info_detailed_help[18] ;
+  args_info->stack_memory_help = gengetopt_args_info_detailed_help[19] ;
+  args_info->output_size_help = gengetopt_args_info_detailed_help[20] ;
   
 }
 
@@ -183,6 +217,15 @@ cmdline_parser_print_help (void)
   print_help_common();
   while (gengetopt_args_info_help[i])
     printf("%s\n", gengetopt_args_info_help[i++]);
+}
+
+void
+cmdline_parser_print_detailed_help (void)
+{
+  int i = 0;
+  print_help_common();
+  while (gengetopt_args_info_detailed_help[i])
+    printf("%s\n", gengetopt_args_info_detailed_help[i++]);
 }
 
 void
@@ -329,12 +372,14 @@ cmdline_parser_dump(FILE *outfile, struct gengetopt_args_info *args_info)
 
   if (args_info->help_given)
     write_into_file(outfile, "help", 0, 0 );
+  if (args_info->detailed_help_given)
+    write_into_file(outfile, "detailed-help", 0, 0 );
   if (args_info->version_given)
     write_into_file(outfile, "version", 0, 0 );
   if (args_info->judger_given)
     write_into_file(outfile, "judger", args_info->judger_orig, cmdline_parser_judger_values);
   if (args_info->result_given)
-    write_into_file(outfile, "result", args_info->result_orig, 0);
+    write_into_file(outfile, "result", args_info->result_orig, cmdline_parser_result_values);
   if (args_info->log_given)
     write_into_file(outfile, "log", args_info->log_orig, 0);
   if (args_info->policy_given)
@@ -676,6 +721,7 @@ cmdline_parser_internal (
 
       static struct option long_options[] = {
         { "help",	0, NULL, 'h' },
+        { "detailed-help",	0, NULL, 0 },
         { "version",	0, NULL, 'V' },
         { "judger",	1, NULL, 'j' },
         { "result",	1, NULL, 'r' },
@@ -726,7 +772,7 @@ cmdline_parser_internal (
         
           if (update_arg( (void *)&(args_info->result_arg), 
                &(args_info->result_orig), &(args_info->result_given),
-              &(local_args_info.result_given), optarg, 0, 0, ARG_STRING,
+              &(local_args_info.result_given), optarg, cmdline_parser_result_values, 0, ARG_STRING,
               check_ambiguity, override, 0, 0,
               "result", 'r',
               additional_error))
@@ -795,6 +841,12 @@ cmdline_parser_internal (
           break;
 
         case 0:	/* Long option with no short option */
+          if (strcmp (long_options[option_index].name, "detailed-help") == 0) {
+            cmdline_parser_print_detailed_help ();
+            cmdline_parser_free (&local_args_info);
+            exit (EXIT_SUCCESS);
+          }
+
           /* specify judger result file.  */
           if (strcmp (long_options[option_index].name, "log") == 0)
           {
