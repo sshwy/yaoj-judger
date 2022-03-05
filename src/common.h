@@ -16,6 +16,8 @@
 #include <sys/resource.h>
 #include <sys/types.h>
 
+#include "yerr.h"
+
 /// wrap the string with ASCII's red color character
 #define RED(s) "\033[31m" s "\033[0m"
 /// wrap the string with ASCII's green color character
@@ -75,6 +77,24 @@ extern char log_buf[1000];
 #define STACK_H_LIMIT (64 * MB)
 #define AS_H_LIMIT (512 * MB)
 #define RSC_UNLIMITED 0
+
+#define yerrlog(errnum)                                                        \
+  do {                                                                         \
+    fprintf(log_fp, RED("ERROR") "(" AT "): %s.\n", ystrerr(errnum));          \
+    fflush(log_fp);                                                            \
+  } while (0)
+
+#define yreturn(errnum)                                                        \
+  do {                                                                         \
+    yerrlog(errnum);                                                           \
+    return yerr(errnum);                                                       \
+  } while (0)
+
+#define yexit(errnum)                                                          \
+  do {                                                                         \
+    yerrlog(errnum);                                                           \
+    exit(errnum);                                                              \
+  } while (0)
 
 /**
  * @brief Context for all runners.

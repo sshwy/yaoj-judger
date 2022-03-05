@@ -5,7 +5,6 @@
 #include "judger.h"
 #include "lib/policy.h"
 #include "lib/resource.h"
-#include "yerr.h"
 
 static rsclim_ctxt_t rsclim_ctxt_create() {
   rsclim_ctxt_t ctxt = malloc(sizeof(struct rsclim_ctxt));

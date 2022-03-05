@@ -25,7 +25,6 @@
 #include "lib/builtin_hook.h"
 #include "lib/policy.h"
 #include "lib/resource.h"
-#include "yerr.h"
 
 static int runner_prework(const struct runner_ctxt *ctxt) {
   if (ctxt->argc != 5) {
