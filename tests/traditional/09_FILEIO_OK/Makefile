@@ -19,7 +19,7 @@ test: compile
 		-r $(R_CODE) --log=.log.local \
 		-t $(TIME) -g $(OUTPUT) --virtual-memory=$(V_MEM) \
 		--real-memory=$(A_MEM) --stack-memory=$(S_MEM) \
-		-P $(PROJECT_ROOT)policy -p c_std_io_coverage
+		-p builtin:_coverage
 #		-P $(PROJECT_ROOT)policy -p cfileio \
 
 compile:

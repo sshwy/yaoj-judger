@@ -7,7 +7,7 @@ test: compile
 	@$(PROJECT_ROOT)yjudger.local main.local main.in main.out main.err $(IO) \
 		-j traditional \
 		-r $(R_CODE) --log=.log.local \
-		-P $(PROJECT_ROOT)policy -p c_std_io_coverage \
+		-p builtin:_coverage \
 		-t $(TIME) -g $(OUTPUT) --virtual-memory=$(V_MEM) \
 		--real-memory=$(A_MEM) --stack-memory=$(S_MEM) \
 

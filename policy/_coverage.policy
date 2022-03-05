@@ -1,6 +1,6 @@
 #include "lib.polib"
 
-POLICY c_std_with_file_io {
+POLICY coverage {
   USE basic_allow,
   ALLOW {
     dup3,
@@ -15,4 +15,4 @@ POLICY c_std_with_file_io {
   }
 }
 
-USE c_std_with_file_io DEFAULT KILL
+USE coverage DEFAULT KILL

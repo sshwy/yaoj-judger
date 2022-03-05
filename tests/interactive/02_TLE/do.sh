@@ -10,8 +10,7 @@ touch interactor.out interactor.err main.err
   -j interactive \
   -r TLE \
   --log=.log.local \
-  -P ../../../policy \
-  -p free \
+  -p builtin:free \
   -t 500
 # cat .log.local
 # echo -e "\033[32m[interactor.out]\033[0m"

@@ -11,8 +11,7 @@ echo "judging..."
   -j traditional \
   -r OK \
   --log=.log.local \
-  -P ../../../policy \
-  -p c_std_io_coverage \
+  -p builtin:_coverage \
   --memory=128 \
   --timeout=5000
 

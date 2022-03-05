@@ -11,11 +11,10 @@ echo "judging..."
   -j traditional \
   -r RE \
   --log=.log.local \
-  -P ../../../policy \
-  -p free \
+  -p builtin:free \
   --memory=30 \
   --timeout=10000
-#  -p free cstdio \
+#  -p cstdio \
 
 # cat .log.local
 # echo -e "\033[32m[main.out]\033[0m"

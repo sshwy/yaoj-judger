@@ -11,8 +11,7 @@ echo "judging..."
   -j traditional \
   -r TLE \
   --log=.log.local \
-  -P ../../../policy \
-  -p free \
+  -p builtin:free \
   --memory=30 \
   --timeout=1500
 
