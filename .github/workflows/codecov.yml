@@ -22,3 +22,8 @@ jobs:
           curl -Os https://uploader.codecov.io/latest/linux/codecov
           chmod +x codecov
           ./codecov -X gcov -s local.cov -t ${{ secrets.CODECOV_TOKEN }} -v
+      - name: Test Install
+        run: |
+          make clean
+          make all
+          sudo make install
