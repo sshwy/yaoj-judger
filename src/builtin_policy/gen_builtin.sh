@@ -1,6 +1,6 @@
 #!/bin/bash
 
-outname=../src/lib/builtin_policy.gen.c
+outname=../lib/builtin_policy.gen.c
 
 files=()
 

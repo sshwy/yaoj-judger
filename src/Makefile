@@ -32,14 +32,14 @@ GCOV_FILES=$(LIB_OBJECTS:%.o=%.gcno) $(GCDA_FILES)
 STATIC_TARGET=$(PROJECT_ROOT)libyjudger.a
 EXECUTABLE=$(PROJECT_ROOT)yjudger.local
 
-.PHONY: all clean compile cov
+.PHONY: all clean compile cov builtin_policy
 
 all: compile
 
 # compile source files to object files and then link them together equiping with different judger
 compile: $(STATIC_TARGET) $(EXECUTABLE)
 
-$(STATIC_TARGET): $(LIB_OBJECTS)
+$(STATIC_TARGET): builtin_policy $(LIB_OBJECTS)
 	$(LD) $(LDFLAGS) -r ${LIB_OBJECTS} -o libyjudger.o
 	$(AR) -x $(PROJECT_ROOT)kafel/libkafel.a
 	$(AR) -rcs $(STATIC_TARGET) libyjudger.o libkafel.o
@@ -62,6 +62,9 @@ endif
 
 cli/cli.c: cli/cli.ggo
 	cd cli && gengetopt < cli.ggo && cd ..
+
+builtin_policy:
+	$(MAKE) all -C builtin_policy
 
 # https://www.gnu.org/software/make/manual/make.html#Implicit-Rules
 cli/cli.o: cli/cli.h
