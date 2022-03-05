@@ -130,6 +130,20 @@ int perform_set_limit(perform_ctxt_t ctxt, int type, int lim) {
   return 0;
 }
 
+const char result_code_name[][10] = {
+    [OK] = "OK",   [RE] = "RE", [MLE] = "MLE", [TLE] = "TLE",
+    [OLE] = "OLE", [SE] = "SE", [DSC] = "DSC", [ECE] = "ECE",
+};
+
+enum result_code atorc(char *arg) {
+  for (int i = 0; i < 8; i++) {
+    if (strcmp(arg, result_code_name[i]) == 0)
+      return i;
+  }
+  fprintf(stderr, "\"%s\" doesn't match any result code name.\n", arg);
+  exit(1);
+}
+
 static void free_argv(char **p) {
   if (p == NULL)
     return;

@@ -3,10 +3,12 @@ CC=clang
 SUBDIRS=policy src tests
 PROJECT_ROOT?=
 
-.PHONY: $(SUBDIRS) clean kafel clean_all docs check
+.PHONY: $(SUBDIRS) clean kafel clean_all docs check check_buildenv
 
-all: kafel $(SUBDIRS)
-	@echo -e "done."
+all: build
+
+build: check_buildenv kafel $(SUBDIRS)
+	$(info done.)
 
 # https://www.gnu.org/software/make/manual/make.html#Overriding
 # https://www.gnu.org/software/make/manual/make.html#Multiple-Targets
@@ -49,7 +51,21 @@ coverage: kafel policy
 docs:
 	doxygen; \
 	sed -i 's/code.JavaDocCode/code.JavaDocCode{/g' docs/web/html/doxygen.css
+# sed is for known bugs, which will be fixed in doxgen 1.9.4
 
 src: kafel
 
-# sed is for known bugs, which will be fixed in doxgen 1.9.4
+# currently support x86_64
+check_buildenv:
+	$(info checking build environment...)
+ifneq (x86_64,$(shell uname -m))
+	$(error currently only support x86_64 architecture)
+else ifeq (, $(shell which flex 2> /dev/null))
+	$(error command flex not found, please install it)
+else ifeq (, $(shell which ausyscall 2> /dev/null))
+	$(error command ausyscall not found, please install it)
+else ifeq (, $(shell which $(CC) 2> /dev/null))
+	$(error command $(CC) not found, please install it)
+else ifeq (, $(shell which gengetopt 2> /dev/null))
+	$(error command gengetopt not found, please install it)
+endif

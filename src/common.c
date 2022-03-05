@@ -86,20 +86,6 @@ char *ftos(FILE *fp) {
   return s;
 }
 
-const char result_code_name[][10] = {
-    [OK] = "OK",   [RE] = "RE", [MLE] = "MLE", [TLE] = "TLE",
-    [OLE] = "OLE", [SE] = "SE", [DSC] = "DSC", [ECE] = "ECE",
-};
-
-enum result_code atorc(char *arg) {
-  for (int i = 0; i < 8; i++) {
-    if (strcmp(arg, result_code_name[i]) == 0)
-      return i;
-  }
-  fprintf(stderr, "\"%s\" doesn't match any result code name.\n", arg);
-  exit(1);
-}
-
 int to_millisecond(struct timeval tv) {
   return (int)(tv.tv_sec * 1000 + tv.tv_usec / 1000);
 }

@@ -32,12 +32,12 @@ GCOV_FILES=$(LIB_OBJECTS:%.o=%.gcno) $(GCDA_FILES)
 STATIC_TARGET=$(PROJECT_ROOT)libyjudger.a
 EXECUTABLE=$(PROJECT_ROOT)yjudger.local
 
-.PHONY: all clean compile cov check_buildenv
+.PHONY: all clean compile cov
 
 all: compile
 
 # compile source files to object files and then link them together equiping with different judger
-compile: check_buildenv $(STATIC_TARGET) $(EXECUTABLE)
+compile: $(STATIC_TARGET) $(EXECUTABLE)
 
 $(STATIC_TARGET): $(LIB_OBJECTS)
 	$(LD) $(LDFLAGS) -r ${LIB_OBJECTS} -o libyjudger.o
@@ -60,17 +60,8 @@ ifeq (true,$(GCOVR)) # if enable gcovr
 endif
 	mv *.c.gcov $(PROJECT_ROOT)local.cov
 
-# currently support x86_64
-check_buildenv:
-ifneq (x86_64,$(shell uname -m))
-	$(error currently only support x86_64 architecture)
-else ifeq (, $(shell which flex 2> /dev/null))
-	$(error command flex not found, please install it)
-else ifeq (, $(shell which ausyscall 2> /dev/null))
-	$(error command ausyscall not found, please install it)
-else ifeq (, $(shell which $(CC) 2> /dev/null))
-	$(error command $(CC) not found, please install it)
-endif
+cli/cli.c: cli/cli.ggo
+	cd cli && gengetopt < cli.ggo && cd ..
 
 # https://www.gnu.org/software/make/manual/make.html#Implicit-Rules
 cli/cli.o: cli/cli.h

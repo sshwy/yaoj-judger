@@ -8,7 +8,7 @@ jobs:
         uses: actions/checkout@master
       - name: Install neccessary commands
         run: |
-          sudo apt-get install -y auditd flex make
+          sudo apt-get install -y auditd flex make gengetopt
       - name: Install LLVM and Clang
         uses: KyleMayes/install-llvm-action@v1
         with:
