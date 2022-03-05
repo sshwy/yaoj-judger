@@ -33,7 +33,7 @@ kafel:
 #	cp kafel/lib* ./
 
 clean:
-	$(RM) libkafel.* *.local *.gcno *.gcda *.gcov
+	$(RM) libkafel.* *.local *.gcno *.gcda *.gcov yaoj-judger
 	$(RM) -r local.cov
 	@for dir in $(SUBDIRS); do \
 		$(MAKE) clean -C $$dir PROJECT_ROOT=../$(PROJECT_ROOT); \
