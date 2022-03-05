@@ -32,7 +32,7 @@ GCDA_FILES=$(LIB_OBJECTS:%.o=%.gcda)
 GCOV_FILES=$(LIB_OBJECTS:%.o=%.gcno) $(GCDA_FILES)
 
 STATIC_TARGET=$(PROJECT_ROOT)libyjudger.a
-EXECUTABLE=$(PROJECT_ROOT)yjudger.local
+EXECUTABLE=$(PROJECT_ROOT)yaoj-judger
 
 .PHONY: all clean compile cov builtin_policy
 

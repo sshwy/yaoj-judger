@@ -14,3 +14,4 @@ docs/web
 *.gcov
 *.profraw
 *.profdata
+/yaoj-judger

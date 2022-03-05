@@ -7,7 +7,7 @@ cc interactor.c -o interactor.local
 touch interactor.out interactor.err main.err
 
 echo -e "Test interactive failure #1"
-../../../yjudger.local main.local interactor.local \
+../../../yaoj-judger main.local interactor.local \
   interactor.in interactor.out i.err main.err \
   -j interactive \
   -r OK \
@@ -16,7 +16,7 @@ echo -e "Test interactive failure #1"
   -t 1000
 
 echo -e "Test interactive failure #2"
-../../../yjudger.local m.local interactor.local \
+../../../yaoj-judger m.local interactor.local \
   interactor.in interactor.out interactor.err main.err \
   -j interactive \
   -r OK \
@@ -25,7 +25,7 @@ echo -e "Test interactive failure #2"
   -t 1000
 
 echo -e "Test interactive failure #3"
-../../../yjudger.local main.local i.local \
+../../../yaoj-judger main.local i.local \
   interactor.in interactor.out interactor.err main.err \
   -j interactive \
   -r OK \
@@ -34,7 +34,7 @@ echo -e "Test interactive failure #3"
   -t 1000
 
 echo -e "Test interactive failure #4"
-../../../yjudger.local main.local i.local \
+../../../yaoj-judger main.local i.local \
   interactor.in interactor.out interactor.err main.err \
   -j interactive \
   -r OK \
@@ -44,7 +44,7 @@ echo -e "Test interactive failure #4"
   -m -1
 
 echo -e "Test interactive failure #5"
-../../../yjudger.local main.local interactor.local \
+../../../yaoj-judger main.local interactor.local \
   interactor.in interactor.out interactor.err m.err \
   -j interactive \
   -r OK \
@@ -53,7 +53,7 @@ echo -e "Test interactive failure #5"
   -t 1000
 
 echo -e "Test interactive failure #6"
-../../../yjudger.local main.local interactor.local \
+../../../yaoj-judger main.local interactor.local \
   interactor.in interactor.out interactor.err \
   -j interactive \
   -r OK \
@@ -62,7 +62,7 @@ echo -e "Test interactive failure #6"
   -t 1000
 
 echo -e "Test interactive failure #7"
-../../../yjudger.local main.local interactor.local \
+../../../yaoj-judger main.local interactor.local \
   interactor.in interactor.out interactor.err main.err \
   -j interactive \
   -r OK \
@@ -72,7 +72,7 @@ echo -e "Test interactive failure #7"
   --real-memory=-1
 
 echo -e "Test interactive failure #8"
-../../../yjudger.local main.local interactor.local \
+../../../yaoj-judger main.local interactor.local \
   interactor.in interactor.out interactor.err main.err \
   -j interactive \
   -r OK \

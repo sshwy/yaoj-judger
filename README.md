@@ -36,7 +36,7 @@ touch main.out main.err  # 创建测试代码的 stdout, stderr 对应的文件
 # 可执行文件、读入文件、输出文件、错误输出文件、IO类型（std 或者 file）
 # 注意所有文件都要存在（main.out，main.err 至少需要创建空白的文件）
 # interactive 用法类似，详见 src/judger/interactive.c 的注释
-../../../yjudger.local main.local main.in main.out main.err std \
+../../../yaoj-judger main.local main.in main.out main.err std \
   -j traditional \
   -r DSC \
   -P ../../../policy \
@@ -45,35 +45,51 @@ touch main.out main.err  # 创建测试代码的 stdout, stderr 对应的文件
 cat log.local # 看看评测结果吧
 ```
 
-另外执行 `./yjudger.local --help` 可获得更多玩法。
-
-内建规则见 `policy` 目录。
+内建规则见 `src/builtin_policy` 目录。
 
 ```
-$ ./yjudger.local -h
-Usage: yaoj-judger [OPTION]... [FILE]...
+$ ./yaoj-judger --detailed-help
+Usage: yaoj-judger [OPTION]... [arguments]...
 judger for the future yaoj
 
 A set of program runners with resource limitation, syscall limitation and final
 status report.
 
   -h, --help                    Print help and exit
+      --detailed-help           Print help, including all details and hidden
+                                  options, and exit
   -V, --version                 Print version and exit
-
-Required Options:
-
-A brief text description before the other options.
-
-  -r, --result=string           specify the result code using name
-      --log=filename            specify judger result file
-  -p, --policy=filename         specify policy name
-  -P, --policy-dir=filename     specify policy search directory
   -j, --judger=judgername       specify which judger to use  (possible
                                   values="traditional", "interactive",
-                                  "general")
+                                  "general") (required)
+  -r, --result=string           specify the result code using name  (possible
+                                  values="OK", "RE", "MLE", "TLE",
+                                  "OLE", "SE", "DSC", "ECE") (required)
+
+    Meanings of those shortname:
+      OK: all correct
+      RE: runtime error
+      MLE: memory limitation exceed
+      TLE: time limitation exceed
+      OLE: output limitation exceed
+      SE: system error, aka judger error
+      DSC: dangerous system call
+      ECE: exit code error
+
+      --log=filename            specify judger result file (required)
+  -p, --policy=filename         specify policy name (required)
+
+    Note that if using builtin policy, add 'builtin:' prefix to policy's name.
+
+  -P, --policy-dir=filename     specify policy search directory, depend on
+                                  'policy' option  (default=`.')
+
+    If using builtin policy, this option is meaningless.
+
 
 Resource Limitations:
-  the following options are all optional
+  note that 'timeout' and 'memory' option can be override by their
+  corresponding detailed options, such as realtime, stack-memory.
   -t, --timeout=integer         specify both time limits in milliseconds
       --realtime=integer        specify the runtime limit in milliseconds
       --cputime=integer         specify the cpu limit in milliseconds

@@ -1,14 +1,14 @@
 #!/bin/bash
 
 echo -e "test failure #1"
-../../../yjudger.local script.sh \
+../../../yaoj-judger script.sh \
   -j general \
   -r SE \
   -p builtin:free \
   -t 1000 -m 128
 
 echo -e "test failure #2"
-../../../yjudger.local script.sh \
+../../../yaoj-judger script.sh \
   -j general \
   -r SE \
   --log=.log.local \
@@ -16,7 +16,7 @@ echo -e "test failure #2"
   -t -1
 
 echo -e "test failure #3"
-../../../yjudger.local script.sh \
+../../../yaoj-judger script.sh \
   -j general \
   -r OK \
   --log=.log.local \
@@ -24,7 +24,7 @@ echo -e "test failure #3"
   -m -128
 
 echo -e "test failure #4"
-../../../yjudger.local script.sh \
+../../../yaoj-judger script.sh \
   -j general \
   -r OK \
   --log=.log.local \
@@ -32,28 +32,28 @@ echo -e "test failure #4"
   -g -128
 
 echo -e "test failure #5"
-../../../yjudger.local script.sh \
+../../../yaoj-judger script.sh \
   -j general \
   -r OKK \
   --log=.log.local \
   -p builtin:free
 
 echo -e "test failure #6"
-../../../yjudger.local noexec_script.sh \
+../../../yaoj-judger noexec_script.sh \
   -j general \
   -r OKK \
   --log=.log.local \
   -p builtin:free
 
 echo -e "test failure #7"
-../../../yjudger.local script.sh \
+../../../yaoj-judger script.sh \
   -j general \
   -r SE \
   --log=.log.local \
   -t 1000 -m 128
 
 echo -e "test failure #8"
-../../../yjudger.local script.sh 2 \
+../../../yaoj-judger script.sh 2 \
   -j general \
   -r SE \
   --log=.log.local \
@@ -61,7 +61,7 @@ echo -e "test failure #8"
   -p builtin:free
 
 echo -e "test failure #9"
-../../../yjudger.local script.sh \
+../../../yaoj-judger script.sh \
   -j general \
   -r SE \
   --log=.log.local \

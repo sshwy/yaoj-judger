@@ -7,7 +7,7 @@ clang main.c -o main.local -O2
 touch main.out main.err
 
 echo "judging..."
-../../../yjudger.local main.local main.in main.out main.err std \
+../../../yaoj-judger main.local main.in main.out main.err std \
   -j traditional \
   -r TLE \
   --log=.log.local \
