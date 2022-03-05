@@ -16,12 +16,12 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+#include "common.h"
 #include "hook.h"
 #include "judger.h"
 #include "lib/builtin_hook.h"
 #include "lib/policy.h"
 #include "lib/resource.h"
-#include "yerr.h"
 
 static void runner_run(struct runner_ctxt *ctxt) {
   execle(ctxt->argv[0], "main", (char *)NULL, ctxt->env);

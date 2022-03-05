@@ -7,6 +7,7 @@
   },
   "clangd.fallbackFlags": [
     "-I${workspaceFolder}/src",
+    "-I${workspaceFolder}/include",
     "-I${workspaceFolder}/kafel/include",
     "-Wall",
     "-Wextra"

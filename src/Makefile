@@ -4,7 +4,9 @@ CC=clang
 COMMON_FLAGS=-g --std=gnu17 -Wall -Wextra
 
 CFLAGS+=$(COMMON_FLAGS) -Wno-unused-parameter -Wno-missing-field-initializers \
-	-I$(PROJECT_ROOT)src -I$(PROJECT_ROOT)kafel/include
+	-I$(PROJECT_ROOT)src \
+	-I$(PROJECT_ROOT)include \
+	-I$(PROJECT_ROOT)kafel/include
 
 # https://stackoverflow.com/questions/5311515/gcc-fpic-option
 ifeq (coverage,$(MODE)) # if enable coverage
@@ -68,16 +70,16 @@ builtin_policy:
 
 # https://www.gnu.org/software/make/manual/make.html#Implicit-Rules
 cli/cli.o: cli/cli.h
-cli/main.o: cli/cli.h judger.h
-common.o: common.h judger.h
-helper.o: common.h judger.h lib/policy.h lib/resource.h hook.h
+cli/main.o: cli/cli.h $(PROJECT_ROOT)include/judger.h
+common.o: common.h $(PROJECT_ROOT)include/judger.h
+helper.o: common.h $(PROJECT_ROOT)include/judger.h lib/policy.h lib/resource.h hook.h
 hook.o: common.h hook.h
-judger/general.o: common.h judger.h hook.h lib/builtin_hook.h lib/policy.h lib/resource.h
-judger/interactive.o: common.h judger.h hook.h lib/builtin_hook.h lib/policy.h lib/resource.h
-judger/traditional.o: common.h judger.h hook.h lib/builtin_hook.h lib/policy.h lib/resource.h
+judger/general.o: common.h $(PROJECT_ROOT)include/judger.h hook.h lib/builtin_hook.h lib/policy.h lib/resource.h
+judger/interactive.o: common.h $(PROJECT_ROOT)include/judger.h hook.h lib/builtin_hook.h lib/policy.h lib/resource.h
+judger/traditional.o: common.h $(PROJECT_ROOT)include/judger.h hook.h lib/builtin_hook.h lib/policy.h lib/resource.h
 lib/builtin_hook.o: common.h hook.h lib/builtin_hook.h lib/policy.h lib/resource.h lib/tkill.h
 lib/builtin_policy.gen.o: common.h lib/policy.h
 lib/policy.o: common.h lib/policy.h
 lib/resource.o: common.h lib/resource.h
-lib/tkill.o: common.h judger.h lib/tkill.h lib/resource.h
-yerr.o: yerr.h
+lib/tkill.o: common.h $(PROJECT_ROOT)include/judger.h lib/tkill.h lib/resource.h
+yerr.o: $(PROJECT_ROOT)include/yerr.h

@@ -29,7 +29,6 @@
 #include "lib/builtin_hook.h"
 #include "lib/policy.h"
 #include "lib/resource.h"
-#include "yerr.h"
 
 static int interactor_prework(struct runner_ctxt *ctxt) {
   const int error_fd = open(ctxt->argv[4], O_WRONLY | O_TRUNC);
