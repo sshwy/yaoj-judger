@@ -10,13 +10,35 @@ args "--file-name=cli --unnamed-opts=arguments --show-required=(required)"
 
 option "judger" j "specify which judger to use"
   typestr="judgername" values="traditional","interactive","general" required
+
 option "result" r "specify the result code using name"
-  string typestr="string" required
+  typestr="string" required
+  values="OK","RE","MLE","TLE","OLE","SE","DSC","ECE"
+  details="
+  Meanings of those shortname:
+    OK: all correct
+    RE: runtime error
+    MLE: memory limitation exceed
+    TLE: time limitation exceed
+    OLE: output limitation exceed
+    SE: system error, aka judger error
+    DSC: dangerous system call
+    ECE: exit code error
+  "
+
 option "log" - "specify judger result file"
   string typestr="filename" required
+
 option "policy" p "specify policy name"
+  details="
+  Note that if using builtin policy, add 'builtin:' prefix to policy's name.
+  "
   string typestr="filename" required
+
 option "policy-dir" P "specify policy search directory, depend on 'policy' option"
+  details="
+  If using builtin policy, this option is meaningless.
+  "
   string typestr="filename" default="."
   dependon="policy"
   optional

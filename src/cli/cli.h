@@ -38,6 +38,7 @@ extern "C" {
 struct gengetopt_args_info
 {
   const char *help_help; /**< @brief Print help and exit help description.  */
+  const char *detailed_help_help; /**< @brief Print help, including all details and hidden options, and exit help description.  */
   const char *version_help; /**< @brief Print version and exit help description.  */
   char * judger_arg;	/**< @brief specify which judger to use.  */
   char * judger_orig;	/**< @brief specify which judger to use original value given at command line.  */
@@ -80,6 +81,7 @@ struct gengetopt_args_info
   const char *output_size_help; /**< @brief specify the output limit in MB help description.  */
   
   unsigned int help_given ;	/**< @brief Whether help was given.  */
+  unsigned int detailed_help_given ;	/**< @brief Whether detailed-help was given.  */
   unsigned int version_given ;	/**< @brief Whether version was given.  */
   unsigned int judger_given ;	/**< @brief Whether judger was given.  */
   unsigned int result_given ;	/**< @brief Whether result was given.  */
@@ -117,6 +119,8 @@ extern const char *gengetopt_args_info_usage;
 extern const char *gengetopt_args_info_description;
 /** @brief all the lines making the help output */
 extern const char *gengetopt_args_info_help[];
+/** @brief all the lines making the detailed help output (including hidden options and details) */
+extern const char *gengetopt_args_info_detailed_help[];
 
 /**
  * The command line parser
@@ -179,6 +183,10 @@ int cmdline_parser_file_save(const char *filename,
  */
 void cmdline_parser_print_help(void);
 /**
+ * Print the detailed help (including hidden options and details)
+ */
+void cmdline_parser_print_detailed_help(void);
+/**
  * Print the version
  */
 void cmdline_parser_print_version(void);
@@ -221,6 +229,7 @@ int cmdline_parser_required (struct gengetopt_args_info *args_info,
   const char *prog_name);
 
 extern const char *cmdline_parser_judger_values[];  /**< @brief Possible values for judger. */
+extern const char *cmdline_parser_result_values[];  /**< @brief Possible values for result. */
 
 
 #ifdef __cplusplus
