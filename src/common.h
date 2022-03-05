@@ -16,6 +16,7 @@
 #include <sys/resource.h>
 #include <sys/types.h>
 
+#include "judger.h"
 #include "yerr.h"
 
 /// wrap the string with ASCII's red color character
@@ -109,9 +110,34 @@ typedef struct runner_ctxt *runner_ctxt_t;
 typedef struct result *result_t;
 typedef struct perform_ctxt *perform_ctxt_t;
 
+/**
+ * @brief Context of perform.
+ */
+struct perform_ctxt {
+  /// pid of the current process
+  pid_t pself;
+  /// pid of the forked child (It's often assumed that the `perform` will do at
+  /// least one fork)
+  pid_t pchild;
+
+  int status;                   //!< child process termination status
+  struct rusage rusage;         //!< resource usage of child process (getrusage)
+  struct perform_result result; //!< perform result of child process
+
+  // these member are not considered to be exposed
+  /// pointer at the policy context (used by builtin_hooks).
+  struct policy_ctxt *pctxt;
+  /// pointer at the resource limitation context (used by builtin_hooks).
+  struct rsclim_ctxt *rctxt;
+  /// pointer at the runner context.
+  struct runner_ctxt *ectxt;
+  /// pointer at the hook context.
+  struct hook_ctxt *hctxt;
+};
+
 int max(int a, int b);
 
-void fprint_result(FILE *fp, result_t resp);
+void fprint_result(FILE *fp, struct perform_result *resp);
 
 // void fprint_rusage(FILE *fp, struct rusage *rsp);
 

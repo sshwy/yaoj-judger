@@ -153,6 +153,10 @@ static void free_argv(char **p) {
   free(p);
 }
 
+struct perform_result perform_result(perform_ctxt_t ctxt) {
+  return ctxt->result;
+}
+
 void perform_ctxt_free(perform_ctxt_t ctxt) {
   if (ctxt->pctxt->is_builtin) {
     rmtree_depth1(ctxt->pctxt->dirname);

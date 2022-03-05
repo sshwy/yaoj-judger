@@ -18,6 +18,7 @@
 
 int main(int argc, char **argv, char **env) {
   struct gengetopt_args_info args_info;
+  struct perform_result result;
   int result_code;
 
   if (cmdline_parser(argc, argv, &args_info))
@@ -52,35 +53,37 @@ int main(int argc, char **argv, char **env) {
   result_code = atorc(args_info.result_arg);
   if (perform_set_policy(ctxt, args_info.policy_dir_arg,
                          args_info.policy_arg)) {
-    ctxt->result.code = SE;
+    result.code = SE;
   } else {
     perform_set_runner(ctxt, inputs_num, inputs, env);
 
     if (strcmp(args_info.judger_arg, "traditional") == 0) {
       if (perform_traditional(ctxt)) {
-        ctxt->result.code = SE;
+        result.code = SE;
         fprintf(stderr, "SE: %s\n", ystrerr(yerrno));
       }
     } else if (strcmp(args_info.judger_arg, "interactive") == 0) {
       if (perform_interactive(ctxt)) {
-        ctxt->result.code = SE;
+        result.code = SE;
         fprintf(stderr, "SE: %s\n", ystrerr(yerrno));
       }
     } else if (strcmp(args_info.judger_arg, "general") == 0) {
       if (perform_general(ctxt)) {
-        ctxt->result.code = SE;
+        result.code = SE;
         fprintf(stderr, "SE: %s\n", ystrerr(yerrno));
       }
     } else {
       exit(1);
     }
+    result = perform_result(ctxt);
 
-    log_print_result(&ctxt->result);
+    log_print_result(&result);
   }
 
-  if ((int)ctxt->result.code != result_code) {
-    fprintf(stderr, "test failed (result=%d, expect=%d)\n",
-            (int)ctxt->result.code, result_code);
+  if ((int)result.code != result_code) {
+    fprintf(stderr, "test failed (result=%d, expect=%d)\n", (int)result.code,
+            result_code);
+
     cmdline_parser_free(&args_info);
     perform_ctxt_free(ctxt);
     log_close();

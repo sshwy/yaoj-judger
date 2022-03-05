@@ -1,8 +1,7 @@
 /**
  * @file judger.h
  * @author sshwy (jy.cat@qq.com)
- * @brief Judger interface. This should be the entry header file, which any
- * other header file should not include.
+ * @brief Public judger library.
  * @date 2022-02-01
  * @copyright Copyright (c) 2022
  *
@@ -62,7 +61,7 @@ enum result_code atorc(char *arg);
 /**
  * @brief Describe result of a terminated process.
  */
-struct result {
+struct perform_result {
   /// return code of the judgement (often set during perform)
   enum result_code code;
   /**
@@ -80,33 +79,6 @@ struct result {
   int real_time;   //!< in milliseconds.
   int cpu_time;    //!< in milliseconds.
   int real_memory; //!< in bytes.
-};
-
-typedef struct result *result_t;
-
-/**
- * @brief Context of perform.
- */
-struct perform_ctxt {
-  /// pid of the current process
-  pid_t pself;
-  /// pid of the forked child (It's often assumed that the `perform` will do at
-  /// least one fork)
-  pid_t pchild;
-
-  int status;           //!< child process termination status
-  struct rusage rusage; //!< resource usage of child process (getrusage)
-  struct result result; //!< perform result of child process
-
-  // these member are not considered to be exposed
-  /// pointer at the policy context (used by builtin_hooks).
-  struct policy_ctxt *pctxt;
-  /// pointer at the resource limitation context (used by builtin_hooks).
-  struct rsclim_ctxt *rctxt;
-  /// pointer at the runner context.
-  struct runner_ctxt *ectxt;
-  /// pointer at the hook context.
-  struct hook_ctxt *hctxt;
 };
 
 typedef struct perform_ctxt *perform_ctxt_t;
@@ -155,6 +127,16 @@ int perform_set_runner(perform_ctxt_t ctxt, int argc, char **argv, char **env);
 int perform_set_limit(perform_ctxt_t ctxt, int type, int lim);
 
 /**
+ * @brief get result of perform
+ *
+ * shall be valid before calling perform_ctxt_free().
+ *
+ * @param ctxt
+ * @return struct result
+ */
+struct perform_result perform_result(perform_ctxt_t ctxt);
+
+/**
  * @brief set perform log file.
  */
 void log_set(const char *filename);
@@ -162,7 +144,7 @@ void log_set(const char *filename);
 /**
  * @brief print a result message to log file.
  */
-void log_print_result(result_t pres);
+void log_print_result(struct perform_result *pres);
 
 /**
  * @brief close log file.
