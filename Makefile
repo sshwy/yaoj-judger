@@ -2,6 +2,7 @@ SHELL=/bin/sh
 CC=clang
 SUBDIRS=src tests
 PROJECT_ROOT?=
+INSTALL=install
 
 .PHONY: $(SUBDIRS) clean kafel clean_all docs check check_buildenv
 
@@ -9,6 +10,15 @@ all: build
 
 build: check_buildenv kafel $(SUBDIRS)
 	$(info done.)
+
+install:
+ifeq (, $(shell which $(INSTALL) 2> /dev/null))
+	$(error command $(INSTALL) not found, please install it)
+endif
+	$(INSTALL) $(PROJECT_ROOT)yaoj-judger /usr/bin/yaoj-judger
+
+uninstall:
+	$(RM) -rf /usr/bin/yaoj-judger
 
 # https://www.gnu.org/software/make/manual/make.html#Overriding
 # https://www.gnu.org/software/make/manual/make.html#Multiple-Targets
