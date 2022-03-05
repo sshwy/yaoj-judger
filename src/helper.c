@@ -130,19 +130,14 @@ int perform_set_limit(perform_ctxt_t ctxt, int type, int lim) {
   return 0;
 }
 
-static void free_nonull(void *p) {
-  if (p != NULL)
-    free(p);
-}
-
 static void free_argv(char **p) {
   if (p == NULL)
     return;
   for (size_t i = 0; p[i] != NULL; i++) {
-    free_nonull(p[i]);
+    free(p[i]);
     p[i] = NULL;
   }
-  free_nonull(p);
+  free(p);
 }
 
 void perform_ctxt_free(perform_ctxt_t ctxt) {
@@ -150,10 +145,10 @@ void perform_ctxt_free(perform_ctxt_t ctxt) {
     rmtree_depth1(ctxt->pctxt->dirname);
   }
 
-  free_nonull(ctxt->pctxt->content);
-  free_nonull(ctxt->pctxt->dirname);
-  free_nonull(ctxt->pctxt->policy);
-  free_nonull(ctxt->pctxt->prog.filter);
+  free(ctxt->pctxt->content);
+  free(ctxt->pctxt->dirname);
+  free(ctxt->pctxt->policy);
+  free(ctxt->pctxt->prog.filter);
 
   free_argv(ctxt->ectxt->argv);
   free_argv(ctxt->ectxt->env);
@@ -162,10 +157,10 @@ void perform_ctxt_free(perform_ctxt_t ctxt) {
   hook_chain_free(ctxt->hctxt->before_fork);
   hook_chain_free(ctxt->hctxt->after_wait);
 
-  free_nonull(ctxt->pctxt);
-  free_nonull(ctxt->ectxt);
-  free_nonull(ctxt->rctxt);
-  free_nonull(ctxt->hctxt);
+  free(ctxt->pctxt);
+  free(ctxt->ectxt);
+  free(ctxt->rctxt);
+  free(ctxt->hctxt);
 
-  free_nonull(ctxt);
+  free(ctxt);
 }

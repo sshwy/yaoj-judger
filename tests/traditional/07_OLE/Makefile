@@ -1,6 +1,6 @@
 include ../../variables.mk
 #limitations
-TIME=1000
+TIME=2000
 V_MEM=30
 A_MEM=30
 S_MEM=30
