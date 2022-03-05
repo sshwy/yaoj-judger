@@ -42,6 +42,8 @@ int main(int argc, char **argv, char **env) {
   if (args_info.output_size_given)
     perform_set_limit(ctxt, OUT, args_info.output_size_arg * MB);
 
+  result.code = OK;
+
   // transform inputs to NULL ended char* array
   int inputs_num = args_info.inputs_num;
   char **inputs = (char **)(malloc((inputs_num + 1) * sizeof(char *)));
@@ -75,7 +77,9 @@ int main(int argc, char **argv, char **env) {
     } else {
       exit(1);
     }
-    result = perform_result(ctxt);
+    if (result.code != SE) {
+      result = perform_result(ctxt);
+    }
 
     log_print_result(&result);
   }
