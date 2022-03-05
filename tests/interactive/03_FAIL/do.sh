@@ -12,8 +12,7 @@ echo -e "Test interactive failure #1"
   -j interactive \
   -r OK \
   --log=.log.local \
-  -P ../../../policy \
-  -p free \
+  -p builtin:free \
   -t 1000
 
 echo -e "Test interactive failure #2"
@@ -22,8 +21,7 @@ echo -e "Test interactive failure #2"
   -j interactive \
   -r OK \
   --log=.log.local \
-  -P ../../../policy \
-  -p free \
+  -p builtin:free \
   -t 1000
 
 echo -e "Test interactive failure #3"
@@ -32,8 +30,7 @@ echo -e "Test interactive failure #3"
   -j interactive \
   -r OK \
   --log=.log.local \
-  -P ../../../policy \
-  -p free \
+  -p builtin:free \
   -t 1000
 
 echo -e "Test interactive failure #4"
@@ -42,8 +39,7 @@ echo -e "Test interactive failure #4"
   -j interactive \
   -r OK \
   --log=.log.local \
-  -P ../../../policy \
-  -p free \
+  -p builtin:free \
   -t 1000 \
   -m -1
 
@@ -53,8 +49,7 @@ echo -e "Test interactive failure #5"
   -j interactive \
   -r OK \
   --log=.log.local \
-  -P ../../../policy \
-  -p free \
+  -p builtin:free \
   -t 1000
 
 echo -e "Test interactive failure #6"
@@ -63,8 +58,7 @@ echo -e "Test interactive failure #6"
   -j interactive \
   -r OK \
   --log=.log.local \
-  -P ../../../policy \
-  -p free \
+  -p builtin:free \
   -t 1000
 
 echo -e "Test interactive failure #7"
@@ -73,8 +67,7 @@ echo -e "Test interactive failure #7"
   -j interactive \
   -r OK \
   --log=.log.local \
-  -P ../../../policy \
-  -p free \
+  -p builtin:free \
   -t 1000 \
   --real-memory=-1
 
@@ -84,8 +77,7 @@ echo -e "Test interactive failure #8"
   -j interactive \
   -r OK \
   --log=.log.local \
-  -P ../../../policy \
-  -p free \
+  -p builtin:free \
   -t 1000 \
   --stack-memory=-1
 

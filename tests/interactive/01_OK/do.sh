@@ -11,8 +11,7 @@ touch interactor.out interactor.err main.err
   -j interactive \
   -r OK \
   --log=.log.local \
-  -P ../../../policy \
-  -p free \
+  -p builtin:free \
   -t 0
 
 # cat .log.local

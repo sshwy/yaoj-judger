@@ -11,8 +11,7 @@ echo "judging..."
   -j traditional \
   -r SE \
   --log=.log.local \
-  -P ../../../policy \
-  -p free \
+  -p builtin:free \
   -t 1000
 
 # cat .log.local
