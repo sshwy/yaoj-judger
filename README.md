@@ -20,17 +20,21 @@
 
 ## Getting Start
 
-如何上手？现在还在 prototype 阶段，还没写文档，~~麻烦您阅读源码……~~
+### From Release
+
+右转 Github Release，下载构建好的（目前适用于 x86_64 架构 Linux 系统）二进制文件。
+
+### Build from source
 
 在构建项目之前请确保您的 Linux 系统安装有 `make`、`flex`（the fast lexical analyser generator） 、 `ausyscall`（a program that allows mapping syscall names and numbers） 和 clang 系列命令。
 
 接下在项目根目录执行：
 
 ```bash
-make                     # 生成 judger_xxx.local 以及一些链接库
-cd tests/traditional/01_DSC   # 测试一下
-gcc main.c -o main.local # 编译测试用的代码
-touch main.out main.err  # 创建测试代码的 stdout, stderr 对应的文件
+make all                    # 生成 judger_xxx.local 以及一些链接库
+cd tests/traditional/01_DSC # 测试一下
+gcc main.c -o main.local    # 编译测试用的代码
+touch main.out main.err     # 创建测试代码的 stdout, stderr 对应的文件
 
 # 除了使用 `-` 和 `--` 指定的参数，其余参数依次是：
 # 可执行文件、读入文件、输出文件、错误输出文件、IO类型（std 或者 file）
@@ -43,6 +47,19 @@ touch main.out main.err  # 创建测试代码的 stdout, stderr 对应的文件
   -p cstdio \
   --log=log.local
 cat log.local # 看看评测结果吧
+```
+
+另外如果想要安装为系统命令：
+
+```
+make all
+sudo make install
+```
+
+删除安装的系统命令
+
+```
+sudo make uninstall
 ```
 
 内建规则见 `src/builtin_policy` 目录。
@@ -182,11 +199,6 @@ fork -->|child| cafh(child_prework) --> rd{{ready}} --> child_run -.-> c_t
 于是，我们将定制化的需求通过魔改 kafel-lang 实现。例如引入 `%[0-9]s` 占位符表示 runner 的参数列表字符串地址。这样可以更好地对 execve 等系统调用进行限制。
 
 已知问题：只能在注册的入口 policy 中使用占位符（没有实现递归替换）。
-
-## Todo
-
-- 更优秀的 cli：目前的 cli 还是过于难读，而且没有自动补全，敲起来很废脑子，可以考虑读取配置文件运行，或者简单交互式 cli
-- 国际化：English readme
 
 ## Reference
 
