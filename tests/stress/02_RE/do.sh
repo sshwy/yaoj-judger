@@ -14,7 +14,7 @@ echo "judging..."
   -P ../../../policy \
   -p free \
   --memory=30 \
-  --timeout=5000
+  --timeout=10000
 #  -p free cstdio \
 
 # cat .log.local
