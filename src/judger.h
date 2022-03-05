@@ -8,9 +8,7 @@
  *
  * The implementation of judger consists of two parts: common part and perform
  * part. The common part lies in `helper.c` while perform part (i.e., definition
- * of perform()) lies in `src/judger/` with multiple choices. Basically, each
- * definition of perform() is compiled individually and results in
- * corresponding judger library.
+ * of perform()) lies in `src/judger/`.
  */
 #ifndef YAOJUDGER_H
 #define YAOJUDGER_H

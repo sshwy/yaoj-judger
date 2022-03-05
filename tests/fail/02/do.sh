@@ -66,14 +66,6 @@ echo -e "test failure #9"
   -r SE \
   --log=.log.local \
   -t 1000 -m 128 \
-  -p builtin:free
-
-echo -e "test failure #10"
-../../../yjudger.local script.sh \
-  -j general \
-  -r SE \
-  --log=.log.local \
-  -t 1000 -m 128 \
   -P . -p fre
 
 exit 0

@@ -1,6 +1,6 @@
 SHELL=/bin/sh
 CC=clang
-SUBDIRS=policy src tests
+SUBDIRS=src tests
 PROJECT_ROOT?=
 
 .PHONY: $(SUBDIRS) clean kafel clean_all docs check check_buildenv
@@ -42,7 +42,7 @@ gcovr:
 	$(MAKE) coverage GCOVR=true
 
 # generate gcov files in local.cov dir
-coverage: kafel policy
+coverage: kafel
 	$(MAKE) all -C src PROJECT_ROOT=../$(PROJECT_ROOT) MODE=coverage
 	$(MAKE) test
 	mkdir -p local.cov
