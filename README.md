@@ -20,51 +20,33 @@
 
 ## Getting Start
 
-### From Release
+### Download
 
-右转 Github Release，下载构建好的（目前适用于 x86_64 架构 Linux 系统）二进制文件。
+右转 Github Release 获取构建好的二进制文件和静态链接库。
 
 ### Build from source
 
-在构建项目之前请确保您的 Linux 系统安装有 `make`、`flex`（the fast lexical analyser generator） 、 `ausyscall`（a program that allows mapping syscall names and numbers） 和 clang 系列命令。
+在构建项目之前请确保您的 Linux 系统安装有
+
+- make（GNU Make）
+- flex（the fast lexical analyser generator）
+- ausyscall（a program that allows mapping syscall names and numbers）
+- clang 系列命令
+- gengetopt
+
+命令。或者（前提有 make）手动在项目根目录执行 `make check_buildenv` 看是否报错。
 
 接下在项目根目录执行：
 
 ```bash
-make all                    # 生成 judger_xxx.local 以及一些链接库
-cd tests/traditional/01_DSC # 测试一下
-gcc main.c -o main.local    # 编译测试用的代码
-touch main.out main.err     # 创建测试代码的 stdout, stderr 对应的文件
-
-# 除了使用 `-` 和 `--` 指定的参数，其余参数依次是：
-# 可执行文件、读入文件、输出文件、错误输出文件、IO类型（std 或者 file）
-# 注意所有文件都要存在（main.out，main.err 至少需要创建空白的文件）
-# interactive 用法类似，详见 src/judger/interactive.c 的注释
-../../../yaoj-judger main.local main.in main.out main.err std \
-  -j traditional \
-  -r DSC \
-  -P ../../../policy \
-  -p cstdio \
-  --log=log.local
-cat log.local # 看看评测结果吧
-```
-
-另外如果想要安装为系统命令：
-
-```
 make all
-sudo make install
 ```
 
-删除安装的系统命令
+## Usage
 
-```
-sudo make uninstall
-```
+一个简单易懂的例子见 `tests/stress/01_OK`。
 
-内建规则见 `src/builtin_policy` 目录。
-
-```
+```bash
 $ ./yaoj-judger --detailed-help
 Usage: yaoj-judger [OPTION]... [arguments]...
 judger for the future yaoj
@@ -117,6 +99,31 @@ Resource Limitations:
   -g, --output-size=integer     specify the output limit in MB
 ```
 
+### Resource Limitation
+
+`realtime` 指实际的运行时间，例如包括 sleep 占用的时间。而 `cputime` 只考虑 cpu 使用时间。事实上如今大多数 OJ 都是限制 cputime，realtime 一般做为一个超时阈值。毕竟考虑到多个进程同时评测，realtime 很多时候是不准的。`timeout` 会同时设置 `realtime` 和 `cputime` 的限制。
+
+`virtual-memory` 表示对进程内存地址空间的限制，而 `real-memory` 表示对实际使用的内存的限制。例如大多数 OI 选手所知，数组开了很大一般是用不完的，而大多数 OJ 显示的是实际被使用的内存，也是在这上面做出的限制。而 CCF 评测会出现数组开爆的情况，大概是因为他们对前者也做出了相同的限制。`stack-memory` 则是栈空间限制。`memory` 会同时设置上述三个限制。
+
+`output-size` 则限制进程创建文件的大小，即输出限制。
+
+### Notes
+
+另外如果想要安装为系统命令：
+
+```bash
+make all
+sudo make install
+```
+
+删除安装的系统命令
+
+```bash
+sudo make uninstall
+```
+
+内建规则见 `src/builtin_policy` 目录。
+
 对于更多使用方法，您可以去 [tests/](https://github.com/sshwy/yaoj-judger/tree/master/tests) 了解一下！
 
 如果你在尝试链接库文件来自己写 main，那么在编译时需加上 `-Lpath/to/libyjudger -lpthread -lyjudger`，并且链接的顺序有时候会影响编译结果（[Why does the order in which libraries are linked sometimes cause errors in GCC?](https://stackoverflow.com/questions/45135/why-does-the-order-in-which-libraries-are-linked-sometimes-cause-errors-in-gcc)）。解决方法就是穷举……一般来说 `-lyjudger` 放最前面就可以。
@@ -140,7 +147,7 @@ make gcovr
 make docs
 ```
 
-可以在 docs/web 里查看文档。
+可以在 `docs/web` 里查看文档。
 
 测试：
 
