@@ -1,4 +1,4 @@
-SHELL=/bin/sh
+SHELL=/bin/bash
 SUBDIRS=traditional interactive general fail stress
 .PHONY: all test clean force
 all:

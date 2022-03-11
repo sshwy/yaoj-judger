@@ -1,4 +1,4 @@
-SHELL=/bin/sh
+SHELL=/bin/bash
 GCOV=llvm-cov gcov
 CC=clang
 COMMON_FLAGS=-g --std=gnu17 -Wall -Wextra

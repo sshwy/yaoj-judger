@@ -15,3 +15,4 @@ docs/web
 *.profraw
 *.profdata
 /yaoj-judger
+yaoj-judger*.tar.gz

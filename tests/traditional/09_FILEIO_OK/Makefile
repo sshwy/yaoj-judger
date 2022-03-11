@@ -8,7 +8,7 @@ OUTPUT=64
 R_CODE=$(OK)
 IO=file
 
-SHELL=/bin/sh
+SHELL=/bin/bash
 .PHONY=test compile clean
 
 test: compile

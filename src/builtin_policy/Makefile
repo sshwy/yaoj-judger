@@ -1,4 +1,4 @@
-SHELL=/bin/sh
+SHELL=/bin/bash
 
 # do it for each run
 # write all available system call definition into syscall.policy

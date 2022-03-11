@@ -1,4 +1,4 @@
-SHELL=/bin/sh
+SHELL=/bin/bash
 CC=clang
 SUBDIRS=src tests
 PROJECT_ROOT?=
@@ -38,6 +38,7 @@ clean:
 	@for dir in $(SUBDIRS); do \
 		$(MAKE) clean -C $$dir PROJECT_ROOT=../$(PROJECT_ROOT); \
 	done
+	$(RM) yaoj-judger*.tar.gz
 
 clean_all: clean
 	$(MAKE) clean -C kafel 
@@ -79,3 +80,8 @@ else ifeq (, $(shell which $(CC) 2> /dev/null))
 else ifeq (, $(shell which gengetopt 2> /dev/null))
 	$(error command gengetopt not found, please install it)
 endif
+
+githubasserts:
+	$(MAKE) clean
+	$(MAKE) build
+	tar cvzf yaoj-judger-$$(git describe --tags).tar.gz yaoj-judger libyjudger.a
