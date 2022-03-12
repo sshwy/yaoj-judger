@@ -41,14 +41,14 @@ enum rsclim_type {
 };
 
 enum result_code {
-  OK = 0, //!< all correct
-  RE,     //!< runtime error
-  MLE,    //!< memory limit exceed
-  TLE,    //!< time limit exceed
-  OLE,    //!< output limit exceed
-  SE,     //!< system error (judger error)
-  DSC,    //!< dangerous system call
-  ECE,    //!< exit code exception
+  OK = 0,  //!< all correct
+  RE = 1,  //!< runtime error
+  MLE = 2, //!< memory limit exceed
+  TLE = 3, //!< time limit exceed
+  OLE = 4, //!< output limit exceed
+  SE = 5,  //!< system error (judger error)
+  DSC = 6, //!< dangerous system call
+  ECE = 7, //!< exit code exception
 };
 
 /**

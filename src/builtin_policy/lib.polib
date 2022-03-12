@@ -8,6 +8,6 @@ POLICY basic_allow {
     uname, arch_prctl, brk, access, exit_group,
     close, readlink, sysinfo, pread64, writev, lseek, clock_gettime,
     newfstatat, openat, 
-    rseq, prlimit64, set_tid_address, futex, set_robust_list, getrandom
+    rseq, prlimit64, set_tid_address, futex, set_robust_list, getrandom, stat
   }
 }

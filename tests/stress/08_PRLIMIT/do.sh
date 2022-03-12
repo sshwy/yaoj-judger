@@ -12,5 +12,5 @@ strace -o main.log.local -ff ../../../yaoj-judger main.local main.in main.out ma
   -j traditional \
   -r ECE \
   --log=.log.local \
-  -p builtin:cstdio \
+  -p builtin:_coverage \
   -t 1000
