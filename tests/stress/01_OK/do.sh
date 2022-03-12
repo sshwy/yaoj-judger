@@ -3,13 +3,13 @@
 rm -f main.out main.err
 
 echo "compiling source..."
-clang++ main.cpp -o main.local -O2
+clang++ main.cpp -o main.local -O2 -static
 touch main.out main.err
 
 echo "judging..."
 ../../../yaoj-judger main.local main.in main.out main.err std \
   -j traditional \
-  -r OK \
+  -r ECE \
   --log=.log.local \
   -p builtin:_coverage \
   --memory=128 \
