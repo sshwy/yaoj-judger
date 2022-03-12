@@ -27,6 +27,7 @@
 #define E_APP_POL 24
 #define E_EXEC 25
 #define E_BULTIN_POL 26
+#define E_CHILDEXEC 27
 
 extern int yerrno;
 
