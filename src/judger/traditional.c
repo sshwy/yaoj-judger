@@ -110,7 +110,7 @@ int perform_traditional(perform_ctxt_t ctxt) {
     }
     write(p_run[1], ready, sizeof(ready));
     child_run(ctxt);
-    exit(E_CHILDEXEC); // child process doesn't terminate
+    exit(E_EXEC); // child process doesn't terminate
   }
   // parent process
   ctxt->pchild = child_pid;
