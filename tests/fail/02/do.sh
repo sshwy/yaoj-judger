@@ -68,4 +68,12 @@ echo -e "test failure #9"
   -t 1000 -m 128 \
   -P . -p fre
 
+echo -e "test failure #10"
+../../../yaoj-judger script.sh \
+  -j general \
+  -r SE \
+  --log=.log.local \
+  -P . -p invalid \
+  -t 1000 -m 128
+
 exit 0
