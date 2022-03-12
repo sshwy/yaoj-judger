@@ -5,11 +5,7 @@ POLICY main {
   ALLOW {
     execve(path, argv, envp) {
       path == %0s
-    },
-    rt_sigprocmask,
-    getpid,
-    gettid,
-    tgkill
+    }
   }
 }
 
