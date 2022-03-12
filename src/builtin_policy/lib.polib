@@ -7,6 +7,7 @@ POLICY basic_allow {
     open, write, read, fstat, mmap, mprotect, munmap,
     uname, arch_prctl, brk, access, exit_group,
     close, readlink, sysinfo, pread64, writev, lseek, clock_gettime,
-    newfstatat, openat
+    newfstatat, openat, 
+    rseq, prlimit64, set_tid_address, futex, set_robust_list, getrandom
   }
 }
