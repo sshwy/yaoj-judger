@@ -136,6 +136,8 @@ int perform_set_limit(perform_ctxt_t ctxt, int type, int lim);
  */
 struct perform_result perform_result(perform_ctxt_t ctxt);
 
+char *json_result(struct perform_result);
+
 /**
  * @brief set perform log file.
  */
