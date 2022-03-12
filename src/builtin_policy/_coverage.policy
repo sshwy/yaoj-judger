@@ -1,18 +1,14 @@
 #include "lib.polib"
 
-POLICY coverage {
+POLICY main {
   USE basic_allow,
   ALLOW {
-    dup3,
     execve(path, argv, envp) {
       path == %0s
     },
-    rt_sigprocmask,
-    getpid,
-    gettid,
-    fcntl,
-    tgkill
+    dup3,
+    fcntl
   }
 }
 
-USE coverage DEFAULT KILL
+USE main DEFAULT KILL
