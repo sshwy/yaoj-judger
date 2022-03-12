@@ -16,13 +16,19 @@
 #include "cli.h"
 #include "judger.h"
 
+struct gengetopt_args_info args_info;
+struct perform_result result;
+
 int main(int argc, char **argv, char **env) {
-  struct gengetopt_args_info args_info;
-  struct perform_result result;
-  int result_code;
+  result.code = OK;
+
+  int result_code = -1;
 
   if (cmdline_parser(argc, argv, &args_info))
     exit(1);
+
+  // required
+  log_set(args_info.log_arg);
 
   perform_ctxt_t ctxt = perform_ctxt_create();
   if (args_info.timeout_given)
@@ -41,8 +47,8 @@ int main(int argc, char **argv, char **env) {
     perform_set_limit(ctxt, STK_MEM, args_info.stack_memory_arg * MB);
   if (args_info.output_size_given)
     perform_set_limit(ctxt, OUT, args_info.output_size_arg * MB);
-
-  result.code = OK;
+  if (args_info.result_given)
+    result_code = atorc(args_info.result_arg);
 
   // transform inputs to NULL ended char* array
   int inputs_num = args_info.inputs_num;
@@ -50,9 +56,6 @@ int main(int argc, char **argv, char **env) {
   memcpy(inputs, args_info.inputs, inputs_num * sizeof(char *));
   inputs[inputs_num] = NULL;
 
-  // required
-  log_set(args_info.log_arg);
-  result_code = atorc(args_info.result_arg);
   if (perform_set_policy(ctxt, args_info.policy_dir_arg,
                          args_info.policy_arg)) {
     result.code = SE;
@@ -61,18 +64,15 @@ int main(int argc, char **argv, char **env) {
 
     if (strcmp(args_info.judger_arg, "traditional") == 0) {
       if (perform_traditional(ctxt)) {
-        result.code = SE;
-        fprintf(stderr, "SE: %s\n", ystrerr(yerrno));
+        result.code = SE; // fprintf(stderr, "SE: %s\n", ystrerr(yerrno));
       }
     } else if (strcmp(args_info.judger_arg, "interactive") == 0) {
       if (perform_interactive(ctxt)) {
-        result.code = SE;
-        fprintf(stderr, "SE: %s\n", ystrerr(yerrno));
+        result.code = SE; // fprintf(stderr, "SE: %s\n", ystrerr(yerrno));
       }
     } else if (strcmp(args_info.judger_arg, "general") == 0) {
       if (perform_general(ctxt)) {
-        result.code = SE;
-        fprintf(stderr, "SE: %s\n", ystrerr(yerrno));
+        result.code = SE; // fprintf(stderr, "SE: %s\n", ystrerr(yerrno));
       }
     } else {
       exit(1);
@@ -84,18 +84,22 @@ int main(int argc, char **argv, char **env) {
     log_print_result(&result);
   }
 
+  int return_code = 0;
+
   if ((int)result.code != result_code) {
     fprintf(stderr, "test failed (result=%d, expect=%d)\n", (int)result.code,
             result_code);
-
-    cmdline_parser_free(&args_info);
-    perform_ctxt_free(ctxt);
-    log_close();
-    return 1;
+    return_code = 1;
   }
 
-  cmdline_parser_free(&args_info);
+  if (args_info.json_given && args_info.json_flag) {
+    char *jdump = json_result(result);
+    printf("%s\n", jdump);
+    free(jdump);
+  }
+
   perform_ctxt_free(ctxt);
   log_close();
-  return 0;
+  cmdline_parser_free(&args_info);
+  return return_code;
 }

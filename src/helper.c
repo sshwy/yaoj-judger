@@ -1,3 +1,5 @@
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "common.h"
@@ -155,6 +157,21 @@ static void free_argv(char **p) {
 
 struct perform_result perform_result(perform_ctxt_t ctxt) {
   return ctxt->result;
+}
+
+char *json_result(struct perform_result result) {
+  char *s = malloc(200);
+  sprintf(s,
+          "{\"result\":%d,"
+          "\"signal\":%d,"
+          "\"exit_code\":%d,"
+          "\"real_time\":%d,"
+          "\"cpu_time\":%d,"
+          "\"memory\":%d"
+          "}",
+          result.code, result.signal, result.exit_code, result.real_time,
+          result.cpu_time, result.real_memory);
+  return s;
 }
 
 void perform_ctxt_free(perform_ctxt_t ctxt) {

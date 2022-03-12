@@ -38,13 +38,14 @@ const char *gengetopt_args_info_detailed_help[] = {
   "      --detailed-help           Print help, including all details and hidden\n                                  options, and exit",
   "  -V, --version                 Print version and exit",
   "  -j, --judger=judgername       specify which judger to use  (possible\n                                  values=\"traditional\", \"interactive\",\n                                  \"general\") (required)",
-  "  -r, --result=string           specify the result code using name  (possible\n                                  values=\"OK\", \"RE\", \"MLE\", \"TLE\",\n                                  \"OLE\", \"SE\", \"DSC\", \"ECE\") (required)",
+  "  -r, --result=string           predict judgement result  (possible\n                                  values=\"OK\", \"RE\", \"MLE\", \"TLE\",\n                                  \"OLE\", \"SE\", \"DSC\", \"ECE\") (required)",
   "  \n    Meanings of those shortname:\n      OK: all correct\n      RE: runtime error\n      MLE: memory limitation exceed\n      TLE: time limitation exceed\n      OLE: output limitation exceed\n      SE: system error, aka judger error\n      DSC: dangerous system call\n      ECE: exit code error\n    ",
   "      --log=filename            specify judger result file (required)",
   "  -p, --policy=filename         specify policy name (required)",
   "  \n    Note that if using builtin policy, add 'builtin:' prefix to policy's name.\n    ",
   "  -P, --policy-dir=filename     specify policy search directory, depend on\n                                  'policy' option  (default=`.')",
   "  \n    If using builtin policy, this option is meaningless.\n    ",
+  "      --json                    output judgement result to stdout in JSON\n                                  format  (default=off)",
   "\nResource Limitations:",
   "  note that 'timeout' and 'memory' option can be override by their\n  corresponding detailed options, such as realtime, stack-memory.",
   "  -t, --timeout=integer         specify both time limits in milliseconds",
@@ -79,13 +80,15 @@ init_help_array(void)
   gengetopt_args_info_help[15] = gengetopt_args_info_detailed_help[18];
   gengetopt_args_info_help[16] = gengetopt_args_info_detailed_help[19];
   gengetopt_args_info_help[17] = gengetopt_args_info_detailed_help[20];
-  gengetopt_args_info_help[18] = 0; 
+  gengetopt_args_info_help[18] = gengetopt_args_info_detailed_help[21];
+  gengetopt_args_info_help[19] = 0; 
   
 }
 
-const char *gengetopt_args_info_help[19];
+const char *gengetopt_args_info_help[20];
 
 typedef enum {ARG_NO
+  , ARG_FLAG
   , ARG_STRING
   , ARG_INT
 } cmdline_parser_arg_type;
@@ -119,6 +122,7 @@ void clear_given (struct gengetopt_args_info *args_info)
   args_info->log_given = 0 ;
   args_info->policy_given = 0 ;
   args_info->policy_dir_given = 0 ;
+  args_info->json_given = 0 ;
   args_info->timeout_given = 0 ;
   args_info->realtime_given = 0 ;
   args_info->cputime_given = 0 ;
@@ -143,6 +147,7 @@ void clear_args (struct gengetopt_args_info *args_info)
   args_info->policy_orig = NULL;
   args_info->policy_dir_arg = gengetopt_strdup (".");
   args_info->policy_dir_orig = NULL;
+  args_info->json_flag = 0;
   args_info->timeout_orig = NULL;
   args_info->realtime_orig = NULL;
   args_info->cputime_orig = NULL;
@@ -167,14 +172,15 @@ void init_args_info(struct gengetopt_args_info *args_info)
   args_info->log_help = gengetopt_args_info_detailed_help[6] ;
   args_info->policy_help = gengetopt_args_info_detailed_help[7] ;
   args_info->policy_dir_help = gengetopt_args_info_detailed_help[9] ;
-  args_info->timeout_help = gengetopt_args_info_detailed_help[13] ;
-  args_info->realtime_help = gengetopt_args_info_detailed_help[14] ;
-  args_info->cputime_help = gengetopt_args_info_detailed_help[15] ;
-  args_info->memory_help = gengetopt_args_info_detailed_help[16] ;
-  args_info->virtual_memory_help = gengetopt_args_info_detailed_help[17] ;
-  args_info->real_memory_help = gengetopt_args_info_detailed_help[18] ;
-  args_info->stack_memory_help = gengetopt_args_info_detailed_help[19] ;
-  args_info->output_size_help = gengetopt_args_info_detailed_help[20] ;
+  args_info->json_help = gengetopt_args_info_detailed_help[11] ;
+  args_info->timeout_help = gengetopt_args_info_detailed_help[14] ;
+  args_info->realtime_help = gengetopt_args_info_detailed_help[15] ;
+  args_info->cputime_help = gengetopt_args_info_detailed_help[16] ;
+  args_info->memory_help = gengetopt_args_info_detailed_help[17] ;
+  args_info->virtual_memory_help = gengetopt_args_info_detailed_help[18] ;
+  args_info->real_memory_help = gengetopt_args_info_detailed_help[19] ;
+  args_info->stack_memory_help = gengetopt_args_info_detailed_help[20] ;
+  args_info->output_size_help = gengetopt_args_info_detailed_help[21] ;
   
 }
 
@@ -386,6 +392,8 @@ cmdline_parser_dump(FILE *outfile, struct gengetopt_args_info *args_info)
     write_into_file(outfile, "policy", args_info->policy_orig, 0);
   if (args_info->policy_dir_given)
     write_into_file(outfile, "policy-dir", args_info->policy_dir_orig, 0);
+  if (args_info->json_given)
+    write_into_file(outfile, "json", 0, 0 );
   if (args_info->timeout_given)
     write_into_file(outfile, "timeout", args_info->timeout_orig, 0);
   if (args_info->realtime_given)
@@ -630,6 +638,9 @@ int update_arg(void *field, char **orig_field,
     val = possible_values[found];
 
   switch(arg_type) {
+  case ARG_FLAG:
+    *((int *)field) = !*((int *)field);
+    break;
   case ARG_INT:
     if (val) *((int *)field) = strtol (val, &stop_char, 0);
     break;
@@ -660,6 +671,7 @@ int update_arg(void *field, char **orig_field,
   /* store the original value */
   switch(arg_type) {
   case ARG_NO:
+  case ARG_FLAG:
     break;
   default:
     if (value && orig_field) {
@@ -728,6 +740,7 @@ cmdline_parser_internal (
         { "log",	1, NULL, 0 },
         { "policy",	1, NULL, 'p' },
         { "policy-dir",	1, NULL, 'P' },
+        { "json",	0, NULL, 0 },
         { "timeout",	1, NULL, 't' },
         { "realtime",	1, NULL, 0 },
         { "cputime",	1, NULL, 0 },
@@ -767,7 +780,7 @@ cmdline_parser_internal (
             goto failure;
         
           break;
-        case 'r':	/* specify the result code using name.  */
+        case 'r':	/* predict judgement result.  */
         
         
           if (update_arg( (void *)&(args_info->result_arg), 
@@ -857,6 +870,18 @@ cmdline_parser_internal (
                 &(local_args_info.log_given), optarg, 0, 0, ARG_STRING,
                 check_ambiguity, override, 0, 0,
                 "log", '-',
+                additional_error))
+              goto failure;
+          
+          }
+          /* output judgement result to stdout in JSON format.  */
+          else if (strcmp (long_options[option_index].name, "json") == 0)
+          {
+          
+          
+            if (update_arg((void *)&(args_info->json_flag), 0, &(args_info->json_given),
+                &(local_args_info.json_given), optarg, 0, 0, ARG_FLAG,
+                check_ambiguity, override, 1, 0, "json", '-',
                 additional_error))
               goto failure;
           
