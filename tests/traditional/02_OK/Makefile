@@ -14,13 +14,13 @@ SHELL=/bin/bash
 test: compile
 	@$(RM) main.out main.err
 	@touch main.out main.err
+	strace -c ./main.local < main.in
 	$(PROJECT_ROOT)yaoj-judger main.local main.in main.out main.err $(IO) \
 		-j traditional \
 		-r $(R_CODE) --log=.log.local \
 		-t $(TIME) -g $(OUTPUT) --virtual-memory=$(V_MEM) \
 		--real-memory=$(A_MEM) --stack-memory=$(S_MEM) \
 		-p builtin:_coverage
-#		-P $(PROJECT_ROOT)policy -p cstdio \
 
 compile:
 	@$(CC) main.c -o main.local $(EXTRA_FLAG)
