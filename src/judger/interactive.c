@@ -98,7 +98,7 @@ static void child_process(perform_ctxt_t ctxt, int *p_run) { // child process
     // use chmod could reset the suid/sgid mode
     write(i_run[1], ready, sizeof(ready));
     run_executable(ctxt->ectxt);
-    exit(1); // process doesn't terminate
+    exit(E_EXEC); // process doesn't terminate
   }
   // process for interactor
   if (dup2(etoi[0], fileno(stdin)) == -1 ||
@@ -119,7 +119,7 @@ static void child_process(perform_ctxt_t ctxt, int *p_run) { // child process
 
   fflush(log_fp);
   run_interactor(ctxt->ectxt);
-  exit(1); // process doesn't terminate
+  exit(E_EXEC); // process doesn't terminate
 }
 
 int perform_interactive(perform_ctxt_t ctxt) {
