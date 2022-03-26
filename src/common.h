@@ -64,14 +64,14 @@ extern char log_buf[1000];
  *
  * It will directly output error message to stderr.
  */
-#define ASSERT(condition, args...)                                             \
-  do {                                                                         \
-    if (!(condition)) {                                                        \
-      fprintf(stderr, RED("ERROR") "(" AT ") ");                               \
-      fprintf(stderr, ##args);                                                 \
-      exit(1);                                                                 \
-    }                                                                          \
-  } while (0)
+// #define ASSERT(condition, args...)                                             \
+//   do {                                                                         \
+//     if (!(condition)) {                                                        \
+//       fprintf(stderr, RED("ERROR") "(" AT ") ");                               \
+//       fprintf(stderr, ##args);                                                 \
+//       exit(1);                                                                 \
+//     }                                                                          \
+//   } while (0)
 
 #define CPU_TIME_H_LIMIT 300 //!< 5 minutes
 #define FSIZE_H_LIMIT (64 * MB)
