@@ -16,10 +16,13 @@ FILE *log_fp = NULL;
 int log_fd = -1;
 char log_buf[1000];
 
-void log_set(const char *filename) {
+int log_set(const char *filename) {
   log_fp = fopen(filename, "w");
-  ASSERT(log_fp != NULL, "invalid log file\n");
+  if (log_fp == NULL) {
+    yreturn(E_FP);
+  }
   log_fd = fileno(log_fp);
+  return 0;
 }
 
 char *path_join(const char *first, char seperator, const char *second) {
@@ -29,7 +32,7 @@ char *path_join(const char *first, char seperator, const char *second) {
     --flen; // remove trailing '/'
   size_t len = flen + slen + 1;
   char *rv = malloc(len + 1);
-  ASSERT(rv != NULL, "assertion failed\n"); // OOM
+  // ASSERT(rv != NULL, "assertion failed\n"); // OOM
   memcpy(rv, first, flen);
   rv[flen] = seperator;
   memcpy(rv + flen + 1, second, slen);

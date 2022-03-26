@@ -100,6 +100,9 @@ void perform_ctxt_free(perform_ctxt_t ctxt);
 /**
  * @brief Set kafel policy (enhanced) for the runner.
  *
+ * if `policy` is prefixed with "builtin:" and matches existing builtin policy,
+ * `dirname` will be ignored
+ *
  * @param ctxt
  * @param dirname see policy_ctxt
  * @param policy see policy_ctxt
@@ -141,7 +144,7 @@ char *json_result(struct perform_result);
 /**
  * @brief set perform log file.
  */
-void log_set(const char *filename);
+int log_set(const char *filename);
 
 /**
  * @brief print a result message to log file.

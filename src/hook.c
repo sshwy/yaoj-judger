@@ -41,7 +41,7 @@ void register_hook(hook_ctxt_t ctxt, enum HOOK_TYPE type, hook_func_t hook) {
     WORK(after_wait);
     break;
   default:
-    ASSERT(0, "unknown hook type (%d)", type);
+    LOG_ERROR("unknown hook type (%d)", type);
   }
 #undef WORK
 }
