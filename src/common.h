@@ -34,20 +34,31 @@
 #define AT __FILE__ ":" TOSTRING(__LINE__)
 
 extern FILE *log_fp;
-extern int log_fd;
+extern int log_fd, log_level, log_color;
 extern char log_buf[1000];
 
 #define LOG(prefix, fmt, args...)                                              \
   do {                                                                         \
     fprintf(log_fp, prefix "(" AT "): " fmt ".\n", ##args);                    \
   } while (0)
+
+#define LOG_CTL(level, colored, origin, fmt, args...)                          \
+  do {                                                                         \
+    if (level >= log_level) {                                                  \
+      if (log_color) {                                                         \
+        fprintf(log_fp, colored "(" AT "): " fmt ".\n", ##args);               \
+      } else {                                                                 \
+        fprintf(log_fp, origin "(" AT "): " fmt ".\n", ##args);                \
+      }                                                                        \
+    }                                                                          \
+  } while (0)
 // write(log_fd, log_buf, sizeof(char) * strlen(log_buf));
 
 /// output formatted messages to the file determined by `log_fp`
-#define LOG_INFO(fmt, args...) LOG(GREEN("INFO"), fmt, ##args)
-#define LOG_DEBUG(fmt, args...) LOG(BLUE("DEBUG"), fmt, ##args)
-#define LOG_WARN(fmt, args...) LOG(YELLOW("WARN"), fmt, ##args)
-#define LOG_ERROR(fmt, args...) LOG(RED("ERROR"), fmt, ##args)
+#define LOG_DEBUG(args...) LOG_CTL(0, BLUE("DEBUG"), "DEBUG", ##args)
+#define LOG_INFO(args...) LOG_CTL(1, GREEN("INFO"), "INFO", ##args)
+#define LOG_WARN(args...) LOG_CTL(2, YELLOW("WARN"), "WARN", ##args)
+#define LOG_ERROR(args...) LOG_CTL(3, RED("ERROR"), "ERROR", ##args)
 
 /**
  * @brief confirm if the condition is true, otherwise exit with code 1.
