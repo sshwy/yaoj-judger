@@ -63,7 +63,7 @@ int run_hook_chain(hook_chain_t phead, perform_ctxt_t ctxt);
 /**
  * @brief Create an empty hook chain, returning its head pointer.
  */
-hook_chain_t create_hook_chain();
+hook_chain_t hook_chain_create();
 
 void hook_chain_free(hook_chain_t phead);
 
