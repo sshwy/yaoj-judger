@@ -19,45 +19,35 @@
 #include "judger.h"
 #include "yerr.h"
 
-/// wrap the string with ASCII's red color character
+/// ASCII's red character wrapper
 #define RED(s) "\033[31m" s "\033[0m"
-/// wrap the string with ASCII's green color character
+/// ASCII's green character wrapper
 #define GREEN(s) "\033[32m" s "\033[0m"
-/// wrap the string with ASCII's yellow color character
+/// ASCII's yellow color character wrapper
 #define YELLOW(s) "\033[33m" s "\033[0m"
-/// wrap the string with ASCII's blue color character
+/// ASCII's blue color character wrapper
 #define BLUE(s) "\033[34m" s "\033[0m"
 
 #define STRINGIFY(x) #x
 #define TOSTRING(x) STRINGIFY(x)
+/// location of current line
 #define AT __FILE__ ":" TOSTRING(__LINE__)
 
 extern FILE *log_fp;
 extern int log_fd;
 extern char log_buf[1000];
 
-/// output formatted messages to the file determined by `log_fp`
-#define LOG_INFO(fmt, args...)                                                 \
+#define LOG(prefix, fmt, args...)                                              \
   do {                                                                         \
-    fprintf(log_fp, GREEN("INFO") "(" AT "): " fmt ".\n", ##args);             \
+    fprintf(log_fp, prefix "(" AT "): " fmt ".\n", ##args);                    \
   } while (0)
 // write(log_fd, log_buf, sizeof(char) * strlen(log_buf));
 
-#define LOG_DEBUG(fmt, args...)                                                \
-  do {                                                                         \
-    fprintf(log_fp, BLUE("DEBUG") "(" AT "): " fmt ".\n", ##args);             \
-    fflush(log_fp);                                                            \
-  } while (0)
-
-#define LOG_WARN(fmt, args...)                                                 \
-  do {                                                                         \
-    fprintf(log_fp, YELLOW("WARN") "(" AT "): " fmt ".\n", ##args);            \
-  } while (0)
-
-#define LOG_ERROR(fmt, args...)                                                \
-  do {                                                                         \
-    fprintf(log_fp, RED("ERROR") "(" AT "): " fmt ".\n", ##args);              \
-  } while (0)
+/// output formatted messages to the file determined by `log_fp`
+#define LOG_INFO(fmt, args...) LOG(GREEN("INFO"), fmt, ##args)
+#define LOG_DEBUG(fmt, args...) LOG(BLUE("DEBUG"), fmt, ##args)
+#define LOG_WARN(fmt, args...) LOG(YELLOW("WARN"), fmt, ##args)
+#define LOG_ERROR(fmt, args...) LOG(RED("ERROR"), fmt, ##args)
 
 /**
  * @brief confirm if the condition is true, otherwise exit with code 1.
@@ -81,7 +71,7 @@ extern char log_buf[1000];
 
 #define yerrlog(errnum)                                                        \
   do {                                                                         \
-    fprintf(log_fp, RED("ERROR") "(" AT "): %s.\n", ystrerr(errnum));          \
+    LOG_ERROR("%s.\n", ystrerr(errnum));                                       \
     fflush(log_fp);                                                            \
   } while (0)
 

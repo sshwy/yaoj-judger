@@ -39,9 +39,9 @@ static policy_ctxt_t policy_ctxt_create() {
 
 static hook_ctxt_t hook_ctxt_create() {
   hook_ctxt_t ctxt = malloc(sizeof(struct hook_ctxt));
-  ctxt->after_fork = create_hook_chain();
-  ctxt->before_fork = create_hook_chain();
-  ctxt->after_wait = create_hook_chain();
+  ctxt->after_fork = hook_chain_create();
+  ctxt->before_fork = hook_chain_create();
+  ctxt->after_wait = hook_chain_create();
   return ctxt;
 }
 
