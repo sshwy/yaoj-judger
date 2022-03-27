@@ -28,7 +28,7 @@ int main(int argc, char **argv, char **env) {
     exit(1);
 
   // required
-  if (log_set(args_info.log_arg)) {
+  if (log_set(args_info.log_arg, 0, 1)) {
     exit(1);
   }
 

@@ -13,14 +13,16 @@
 #include "judger.h"
 
 FILE *log_fp = NULL;
-int log_fd = -1;
+int log_fd = -1, log_level = 0, log_color = 1;
 char log_buf[1000];
 
-int log_set(const char *filename) {
+int log_set(const char *filename, int _log_level, int _with_color) {
   log_fp = fopen(filename, "w");
   if (log_fp == NULL) {
     yreturn(E_FP);
   }
+  log_level = _log_level;
+  log_color = _with_color;
   log_fd = fileno(log_fp);
   return 0;
 }

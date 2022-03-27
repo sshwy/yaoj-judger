@@ -142,9 +142,13 @@ struct perform_result perform_result(perform_ctxt_t ctxt);
 char *json_result(struct perform_result);
 
 /**
- * @brief set perform log file.
+ * @brief set logging options
+ * @param filename set perform log file.
+ * @param log_level determine minimum log level (DEBUG, INFO, WARN, ERROR = 0,
+ * 1, 2, 3)
+ * @param with_color whether use ASCII color controller character
  */
-int log_set(const char *filename);
+int log_set(const char *filename, int log_level, int with_color);
 
 /**
  * @brief print a result message to log file.
