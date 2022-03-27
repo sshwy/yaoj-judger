@@ -24,9 +24,8 @@
 #include "lib/resource.h"
 
 static void runner_run(struct runner_ctxt *ctxt) {
-  execle(ctxt->argv[0], "main", (char *)NULL, ctxt->env);
+  execve(ctxt->argv[0], ctxt->argv, ctxt->env);
 }
-static void child_run(perform_ctxt_t ctxt) { runner_run(ctxt->ectxt); }
 
 /**
  * @return 0 on success, 1 otherwise
@@ -48,9 +47,6 @@ int perform_general(perform_ctxt_t ctxt) {
   int p_run[2];
   if (pipe(p_run)) {
     yreturn(E_PIPE);
-  }
-  if (ctxt->ectxt->argc != 1) {
-    yreturn(E_ARGC);
   }
 
   register_builtin_hook(ctxt->hctxt);
@@ -77,7 +73,7 @@ int perform_general(perform_ctxt_t ctxt) {
     write(p_run[1], ready, sizeof(ready));
     fflush(log_fp);
 
-    child_run(ctxt);
+    runner_run(ctxt->ectxt);
     if (errno == EACCES) {
       LOG_ERROR("exec error getting access");
     }
