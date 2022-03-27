@@ -53,14 +53,6 @@ echo -e "test failure #7"
   -t 1000 -m 128
 
 echo -e "test failure #8"
-../../../yaoj-judger script.sh 2 \
-  -j general \
-  -r SE \
-  --log=.log.local \
-  -t 1000 -m 128 \
-  -p builtin:free
-
-echo -e "test failure #9"
 ../../../yaoj-judger script.sh \
   -j general \
   -r SE \
@@ -68,7 +60,7 @@ echo -e "test failure #9"
   -t 1000 -m 128 \
   -P . -p fre
 
-echo -e "test failure #10"
+echo -e "test failure #9"
 ../../../yaoj-judger script.sh \
   -j general \
   -r SE \

@@ -74,8 +74,6 @@ static int child_prework(perform_ctxt_t ctxt) {
   return 0;
 }
 
-static void child_run(perform_ctxt_t ctxt) { runner_run(ctxt->ectxt); }
-
 int perform_traditional(perform_ctxt_t ctxt) {
   const char ready[] = "ready";
   const char notready[] = "not";
@@ -109,7 +107,7 @@ int perform_traditional(perform_ctxt_t ctxt) {
       yexit(yerrno);
     }
     write(p_run[1], ready, sizeof(ready));
-    child_run(ctxt);
+    runner_run(ctxt->ectxt);
     exit(E_EXEC); // child process doesn't terminate
   }
   // parent process
