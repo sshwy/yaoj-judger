@@ -4,8 +4,8 @@
 #define FOR(i, a, b) for (int i = (a); i <= (b); ++i)
 
 int a, b;
-int main() {
-  FILE *inf = fopen("interactor.in", "r"), *ouf = fopen("interactor.out", "w");
+int main(int argc, char **argv) {
+  FILE *inf = fopen(argv[1], "r"), *ouf = fopen(argv[2], "w");
   fscanf(inf, "%d%d", &a, &b);
   fclose(inf);
   fprintf(stderr, "a=%d b=%d\n", a, b);
