@@ -2,6 +2,7 @@
 #include "judger.h"
 #include "yerr.h"
 #include <pthread.h>
+#include <stdio.h>
 
 pthread_mutex_t lock;
 
@@ -15,6 +16,7 @@ int flog(const char *fmt, ...) {
   va_start(ptr, fmt);
   result = vfprintf(log_fp, fmt, ptr);
   va_end(ptr);
+  fflush(log_fp);
   pthread_mutex_unlock(&lock);
   return result;
 }
