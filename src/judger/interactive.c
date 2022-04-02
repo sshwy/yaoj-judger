@@ -64,6 +64,24 @@ static void yexit_notready(int code, int write_pipe) {
   yexit(code);
 }
 
+static void child_exec_process(yjudger_ctxt_t ctxt, int i_run[2]) {
+  if (getpgrp() != ctxt->pchild) {
+    yexit_notready(E_PGID, i_run[1]);
+  }
+  if (executable_prework(ctxt->ectxt) || apply_resource_limit(ctxt) ||
+      apply_policy(ctxt)) {
+    yexit_notready(yerrno, i_run[1]);
+  }
+  LOG_INFO("executable prepared");
+  fflush(log_fp);
+  // assume that exec* doesn't change pgid
+  // https://www.cs.uleth.ca/~holzmann/C/system/pipeforkexec.html
+  // use chmod could reset the suid/sgid mode
+  write(i_run[1], ready, sizeof(ready));
+  run_executable(ctxt->ectxt);
+  exit(E_EXEC); // process doesn't terminate
+}
+
 static void child_process(yjudger_ctxt_t ctxt, int *p_run) { // child process
   ctxt->pchild = getpid();
   int itoe[2], etoi[2], i_run[2];
@@ -80,25 +98,11 @@ static void child_process(yjudger_ctxt_t ctxt, int *p_run) { // child process
   // https://unix.stackexchange.com/questions/139222/why-is-the-pgid-of-my-child-processes-not-the-pid-of-the-parent
   const pid_t exec_pid = fork(); // fork again
   if (exec_pid == 0) {           // process for executable
-    if (getpgrp() != ctxt->pchild) {
-      yexit_notready(E_PGID, i_run[1]);
-    }
     if (dup2(itoe[0], fileno(stdin)) == -1 ||
         dup2(etoi[1], fileno(stdout)) == -1) {
       yexit_notready(E_DUP, i_run[1]);
     }
-    if (executable_prework(ctxt->ectxt) || apply_resource_limit(ctxt) ||
-        apply_policy(ctxt)) {
-      yexit_notready(yerrno, i_run[1]);
-    }
-    LOG_INFO("executable prepared");
-    fflush(log_fp);
-    // assume that exec* doesn't change pgid
-    // https://www.cs.uleth.ca/~holzmann/C/system/pipeforkexec.html
-    // use chmod could reset the suid/sgid mode
-    write(i_run[1], ready, sizeof(ready));
-    run_executable(ctxt->ectxt);
-    exit(E_EXEC); // process doesn't terminate
+    child_exec_process(ctxt, i_run);
   }
   // process for interactor
   if (dup2(etoi[0], fileno(stdin)) == -1 ||
