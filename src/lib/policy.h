@@ -55,12 +55,12 @@ struct builtin_policy *policy_list_get();
 
 int policy_set(policy_ctxt_t ctxt, const char *dirname, const char *policy);
 
-int compile_policy_before_fork(perform_ctxt_t ctxt);
+int compile_policy_before_fork(yjudger_ctxt_t ctxt);
 
 /**
  * @brief apply policy set in `ctxt` to current process
  * @return 0 on success, 1 otherwise
  */
-int apply_policy(perform_ctxt_t ctxt);
+int apply_policy(yjudger_ctxt_t ctxt);
 
 #endif

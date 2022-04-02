@@ -45,8 +45,8 @@ static hook_ctxt_t hook_ctxt_create() {
   return ctxt;
 }
 
-perform_ctxt_t perform_ctxt_create() {
-  perform_ctxt_t ctxt = malloc(sizeof(struct perform_ctxt));
+yjudger_ctxt_t yjudger_ctxt_create() {
+  yjudger_ctxt_t ctxt = malloc(sizeof(struct yjudger_ctxt));
   ctxt->pself = -1;
   ctxt->pchild = -1;
   ctxt->status = -1;
@@ -57,7 +57,7 @@ perform_ctxt_t perform_ctxt_create() {
   return ctxt;
 }
 
-int perform_set_policy(perform_ctxt_t ctxt, char *dirname, char *policy) {
+int yjudger_set_policy(yjudger_ctxt_t ctxt, char *dirname, char *policy) {
   return policy_set(ctxt->pctxt, dirname, policy);
 }
 
@@ -83,14 +83,14 @@ static char **strsdupn(char **strs) {
   return strsndupn(strs, n);
 }
 
-int perform_set_runner(perform_ctxt_t ctxt, int argc, char **argv, char **env) {
+int yjudger_set_runner(yjudger_ctxt_t ctxt, int argc, char **argv, char **env) {
   ctxt->ectxt->argc = argc;
   ctxt->ectxt->argv = strsndupn(argv, argc);
   ctxt->ectxt->env = strsdupn(env);
   return 0;
 }
 
-int perform_set_limit(perform_ctxt_t ctxt, int type, int lim) {
+int yjudger_set_limit(yjudger_ctxt_t ctxt, int type, int lim) {
   rsclim_ctxt_t rctxt = ctxt->rctxt;
   switch (type) {
   case REAL_TIME:
@@ -155,11 +155,11 @@ static void free_argv(char **p) {
   free(p);
 }
 
-struct perform_result perform_result(perform_ctxt_t ctxt) {
+struct yjudger_result yjudger_result(yjudger_ctxt_t ctxt) {
   return ctxt->result;
 }
 
-char *json_result(struct perform_result result) {
+char *json_result(struct yjudger_result result) {
   char *s = malloc(200);
   sprintf(s,
           "{\"result\":%d,"
@@ -174,7 +174,7 @@ char *json_result(struct perform_result result) {
   return s;
 }
 
-void perform_ctxt_free(perform_ctxt_t ctxt) {
+void yjudger_ctxt_free(yjudger_ctxt_t ctxt) {
   if (ctxt->pctxt->is_builtin) {
     rmtree_depth1(ctxt->pctxt->dirname);
   }

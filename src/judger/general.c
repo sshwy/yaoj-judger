@@ -30,7 +30,7 @@ static void runner_run(struct runner_ctxt *ctxt) {
 /**
  * @return 0 on success, 1 otherwise
  */
-static int child_prework(perform_ctxt_t ctxt) {
+static int child_prework(yjudger_ctxt_t ctxt) {
   LOG_DEBUG("perform child (%d)", ctxt->pchild);
   if (apply_resource_limit(ctxt) || apply_policy(ctxt))
     yreturn(yerrno);
@@ -38,7 +38,7 @@ static int child_prework(perform_ctxt_t ctxt) {
   return 0;
 }
 
-int perform_general(perform_ctxt_t ctxt) {
+int yjudger_general(yjudger_ctxt_t ctxt) {
   const char ready[] = "ready";
   const char notready[] = "not";
 

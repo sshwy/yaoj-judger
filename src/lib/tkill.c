@@ -48,7 +48,7 @@ int stop_timeout_killer(pthread_t tid) {
 
 static pthread_t tid = 0;
 
-int start_killer_after_fork(perform_ctxt_t ctxt) {
+int start_killer_after_fork(yjudger_ctxt_t ctxt) {
   fflush(log_fp); // must!
 
   struct tkill_ctxt tctxt = {
@@ -65,7 +65,7 @@ int start_killer_after_fork(perform_ctxt_t ctxt) {
   return 0;
 }
 
-int stop_killer_after_wait(perform_ctxt_t ctxt) {
+int stop_killer_after_wait(yjudger_ctxt_t ctxt) {
   if (ctxt->rctxt->real_time != RSC_UNLIMITED) {
     if (stop_timeout_killer(tid)) {
       LOG_WARN("[ignored] stop timeout killer failed");

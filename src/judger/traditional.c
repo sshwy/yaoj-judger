@@ -64,7 +64,7 @@ static void runner_run(const struct runner_ctxt *ctxt) {
   execl(ctxt->argv[0], "main", (char *)NULL);
 }
 
-static int child_prework(perform_ctxt_t ctxt) {
+static int child_prework(yjudger_ctxt_t ctxt) {
   LOG_INFO("perform child (%d)", ctxt->pchild);
   // sleep(1); // simulate heavy work
   if (runner_prework(ctxt->ectxt) || apply_resource_limit(ctxt) ||
@@ -74,7 +74,7 @@ static int child_prework(perform_ctxt_t ctxt) {
   return 0;
 }
 
-int perform_traditional(perform_ctxt_t ctxt) {
+int yjudger_traditional(yjudger_ctxt_t ctxt) {
   const char ready[] = "ready";
   const char notready[] = "not";
 

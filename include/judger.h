@@ -61,7 +61,7 @@ enum result_code atorc(char *arg);
 /**
  * @brief Describe result of a terminated process.
  */
-struct perform_result {
+struct yjudger_result {
   /// return code of the judgement (often set during perform)
   enum result_code code;
   /**
@@ -81,21 +81,21 @@ struct perform_result {
   int real_memory; //!< in bytes.
 };
 
-typedef struct perform_ctxt *perform_ctxt_t;
+typedef struct yjudger_ctxt *yjudger_ctxt_t;
 
 /**
  * @brief Perform a judgement.
  */
-int perform_general(perform_ctxt_t ctxt);
-int perform_interactive(perform_ctxt_t ctxt);
-int perform_traditional(perform_ctxt_t ctxt);
+int yjudger_general(yjudger_ctxt_t ctxt);
+int yjudger_interactive(yjudger_ctxt_t ctxt);
+int yjudger_traditional(yjudger_ctxt_t ctxt);
 
 /**
  * @brief Create a perform context
  */
-perform_ctxt_t perform_ctxt_create();
+yjudger_ctxt_t yjudger_ctxt_create();
 
-void perform_ctxt_free(perform_ctxt_t ctxt);
+void yjudger_ctxt_free(yjudger_ctxt_t ctxt);
 
 /**
  * @brief Set kafel policy (enhanced) for the runner.
@@ -108,7 +108,7 @@ void perform_ctxt_free(perform_ctxt_t ctxt);
  * @param policy see policy_ctxt
  * @return 0 on success, 1 otherwise
  */
-int perform_set_policy(perform_ctxt_t ctxt, char *dirname, char *policy);
+int yjudger_set_policy(yjudger_ctxt_t ctxt, char *dirname, char *policy);
 
 /**
  * @brief Set runner (program to be judged) arguments
@@ -117,7 +117,7 @@ int perform_set_policy(perform_ctxt_t ctxt, char *dirname, char *policy);
  *
  * @return 0 on success, 1 otherwise
  */
-int perform_set_runner(perform_ctxt_t ctxt, int argc, char **argv, char **env);
+int yjudger_set_runner(yjudger_ctxt_t ctxt, int argc, char **argv, char **env);
 
 /**
  * @brief Set resource limitation for the runner.
@@ -127,19 +127,19 @@ int perform_set_runner(perform_ctxt_t ctxt, int argc, char **argv, char **env);
  * @param lim see rsclim_ctxt
  * @return 0 on success, 1 otherwise
  */
-int perform_set_limit(perform_ctxt_t ctxt, int type, int lim);
+int yjudger_set_limit(yjudger_ctxt_t ctxt, int type, int lim);
 
 /**
  * @brief get result of perform
  *
- * shall be valid before calling perform_ctxt_free().
+ * shall be valid before calling yjudger_ctxt_free().
  *
  * @param ctxt
  * @return struct result
  */
-struct perform_result perform_result(perform_ctxt_t ctxt);
+struct yjudger_result yjudger_result(yjudger_ctxt_t ctxt);
 
-char *json_result(struct perform_result);
+char *json_result(struct yjudger_result);
 
 /**
  * @brief set logging options
@@ -153,7 +153,7 @@ int log_set(const char *filename, int log_level, int with_color);
 /**
  * @brief print a result message to log file.
  */
-void log_print_result(struct perform_result *pres);
+void log_print_result(struct yjudger_result *pres);
 
 /**
  * @brief close log file.
