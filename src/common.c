@@ -12,21 +12,6 @@
 #include "common.h"
 #include "judger.h"
 
-FILE *log_fp = NULL;
-int log_fd = -1, log_level = 0, log_color = 1;
-char log_buf[1000];
-
-int log_set(const char *filename, int _log_level, int _with_color) {
-  log_fp = fopen(filename, "w");
-  if (log_fp == NULL) {
-    yreturn(E_FP);
-  }
-  log_level = _log_level;
-  log_color = _with_color;
-  log_fd = fileno(log_fp);
-  return 0;
-}
-
 char *path_join(const char *first, char seperator, const char *second) {
   size_t flen = strlen(first);
   size_t slen = strlen(second);
@@ -68,8 +53,6 @@ void fprint_result(FILE *fp, struct yjudger_result *pres) {
 void log_print_result(struct yjudger_result *pres) {
   fprint_result(log_fp, pres);
 }
-void log_close() { fclose(log_fp); }
-
 // void fprint_rusage(FILE *fp, struct rusage *rsp) {
 //   fprintf(fp, "ru_utime: %ld %ld\n", rsp->ru_utime.tv_sec,
 //           rsp->ru_utime.tv_usec);
