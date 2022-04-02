@@ -109,12 +109,12 @@ struct runner_ctxt {
 
 typedef struct runner_ctxt *runner_ctxt_t;
 typedef struct result *result_t;
-typedef struct perform_ctxt *perform_ctxt_t;
+typedef struct yjudger_ctxt *yjudger_ctxt_t;
 
 /**
- * @brief Context of perform.
+ * @brief Context of yjudger.
  */
-struct perform_ctxt {
+struct yjudger_ctxt {
   /// pid of the current process
   pid_t pself;
   /// pid of the forked child (It's often assumed that the `perform` will do at
@@ -123,7 +123,7 @@ struct perform_ctxt {
 
   int status;                   //!< child process termination status
   struct rusage rusage;         //!< resource usage of child process (getrusage)
-  struct perform_result result; //!< perform result of child process
+  struct yjudger_result result; //!< perform result of child process
 
   // these member are not considered to be exposed
   /// pointer at the policy context (used by builtin_hooks).
@@ -138,7 +138,7 @@ struct perform_ctxt {
 
 int max(int a, int b);
 
-void fprint_result(FILE *fp, struct perform_result *resp);
+void fprint_result(FILE *fp, struct yjudger_result *resp);
 
 // void fprint_rusage(FILE *fp, struct rusage *rsp);
 

@@ -20,7 +20,7 @@
 static struct timeval start, end;
 
 // optional builtin hook
-int check_runner_duplicate_before_fork(perform_ctxt_t ctxt) {
+int check_runner_duplicate_before_fork(yjudger_ctxt_t ctxt) {
   const int count = ctxt->ectxt->argc;
   for (int i = 0; i < count; i++) {
     for (int j = i + 1; j < count; j++) {
@@ -32,21 +32,21 @@ int check_runner_duplicate_before_fork(perform_ctxt_t ctxt) {
   return 0;
 }
 
-static int timer_after_fork(perform_ctxt_t ctxt) {
+static int timer_after_fork(yjudger_ctxt_t ctxt) {
   // actually immediately after receiving "ready to run"
   LOG_DEBUG("get start time");
   gettimeofday(&start, NULL);
   return 0;
 }
 
-static int timer_after_wait(perform_ctxt_t ctxt) {
+static int timer_after_wait(yjudger_ctxt_t ctxt) {
   gettimeofday(&end, NULL);
   ctxt->result.real_time = to_millisecond(end) - to_millisecond(start);
   LOG_INFO("get end time, real time: %.3lfs", ctxt->result.real_time / 1000.0);
   return 0;
 }
 
-static int init_result_before_fork(perform_ctxt_t ctxt) {
+static int init_result_before_fork(yjudger_ctxt_t ctxt) {
   ctxt->result.code = SE;
   ctxt->result.exit_code = 0;
   ctxt->result.signal = 0;
@@ -60,20 +60,20 @@ static int init_result_before_fork(perform_ctxt_t ctxt) {
   return 0;
 }
 
-static int real_tle(perform_ctxt_t ctxt) {
+static int real_tle(yjudger_ctxt_t ctxt) {
   return ctxt->rctxt->real_time != RSC_UNLIMITED &&
          ctxt->result.real_time > ctxt->rctxt->real_time;
 }
-static int cpu_tle(perform_ctxt_t ctxt) {
+static int cpu_tle(yjudger_ctxt_t ctxt) {
   return ctxt->rctxt->cpu_time != RSC_UNLIMITED &&
          ctxt->result.cpu_time > ctxt->rctxt->cpu_time;
 }
-static int real_mle(perform_ctxt_t ctxt) {
+static int real_mle(yjudger_ctxt_t ctxt) {
   return ctxt->rctxt->actual_memory != RSC_UNLIMITED &&
          ctxt->result.real_memory > ctxt->rctxt->actual_memory;
 }
 
-static void set_signal_status(perform_ctxt_t ctxt, int signal) {
+static void set_signal_status(yjudger_ctxt_t ctxt, int signal) {
   ctxt->result.signal = signal;
 
   switch (signal) {
@@ -106,7 +106,7 @@ static void set_signal_status(perform_ctxt_t ctxt, int signal) {
   }
 }
 
-static void set_exitcode_status(perform_ctxt_t ctxt, int code) {
+static void set_exitcode_status(yjudger_ctxt_t ctxt, int code) {
   ctxt->result.exit_code = code;
   if (code == 0) {
     if (real_mle(ctxt))
@@ -120,7 +120,7 @@ static void set_exitcode_status(perform_ctxt_t ctxt, int code) {
   }
 }
 
-static int analyze_after_wait(perform_ctxt_t ctxt) {
+static int analyze_after_wait(yjudger_ctxt_t ctxt) {
   ctxt->result.real_memory = ctxt->rusage.ru_maxrss * KB;
 
   if (WIFSIGNALED(ctxt->status)) {

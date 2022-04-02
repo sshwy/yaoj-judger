@@ -16,7 +16,7 @@
  * @brief Hook function definition
  * @return 0 on success, 1 otherwise
  */
-typedef int (*hook_func_t)(perform_ctxt_t);
+typedef int (*hook_func_t)(yjudger_ctxt_t);
 
 /**
  * @brief Link list storing hook functions. Note that it's a typical FILO list
@@ -55,10 +55,10 @@ enum HOOK_TYPE {
 /**
  * @brief Run all hooks one by one in the list with context specified.
  * @param phead Header of the hook chain.
- * @param ctxt Provide the perform context.
+ * @param ctxt Provide the yjudger_context.
  * @return 0 on success, 1 otherwise
  */
-int run_hook_chain(hook_chain_t phead, perform_ctxt_t ctxt);
+int run_hook_chain(hook_chain_t phead, yjudger_ctxt_t ctxt);
 
 /**
  * @brief Create an empty hook chain, returning its head pointer.

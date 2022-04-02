@@ -80,7 +80,7 @@ int policy_set(policy_ctxt_t ctxt, const char *dirname, const char *policy) {
  * @brief replace identifier in content.
  */
 int policy_identifier_handler(const char *content,
-                              const perform_ctxt_t per_ctxt, char **res) {
+                              const yjudger_ctxt_t per_ctxt, char **res) {
   int res_len = 1;
   char *result = malloc(res_len * sizeof(char));
   *result = '\0';
@@ -142,7 +142,7 @@ int policy_identifier_handler(const char *content,
   return 0;
 }
 
-int compile_policy_before_fork(perform_ctxt_t per_ctxt) {
+int compile_policy_before_fork(yjudger_ctxt_t per_ctxt) {
   char *esc_content;
   if (policy_identifier_handler(per_ctxt->pctxt->content, per_ctxt,
                                 &esc_content))
@@ -170,6 +170,6 @@ int apply_policy_prog(struct sock_fprog prog) {
   return 0;
 }
 
-int apply_policy(perform_ctxt_t per_ctxt) {
+int apply_policy(yjudger_ctxt_t per_ctxt) {
   return apply_policy_prog(per_ctxt->pctxt->prog);
 }

@@ -29,11 +29,11 @@ typedef struct rsclim_ctxt *rsclim_ctxt_t;
 /**
  * @return 0 on success, 1 otherwise
  */
-int apply_resource_limit(perform_ctxt_t ctxt);
+int apply_resource_limit(yjudger_ctxt_t ctxt);
 
 /**
  * @return 0 on success, 1 otherwise
  */
-int get_usage_after_wait(perform_ctxt_t ctxt);
+int get_usage_after_wait(yjudger_ctxt_t ctxt);
 
 #endif

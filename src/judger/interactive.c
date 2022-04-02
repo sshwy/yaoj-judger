@@ -64,7 +64,7 @@ static void yexit_notready(int code, int write_pipe) {
   yexit(code);
 }
 
-static void child_process(perform_ctxt_t ctxt, int *p_run) { // child process
+static void child_process(yjudger_ctxt_t ctxt, int *p_run) { // child process
   ctxt->pchild = getpid();
   int itoe[2], etoi[2], i_run[2];
   // set process group ID to itself
@@ -122,7 +122,7 @@ static void child_process(perform_ctxt_t ctxt, int *p_run) { // child process
   exit(E_EXEC); // process doesn't terminate
 }
 
-int perform_interactive(perform_ctxt_t ctxt) {
+int yjudger_interactive(yjudger_ctxt_t ctxt) {
   ctxt->pself = getpid();
   ctxt->pchild = -1;
   int p_run[2];

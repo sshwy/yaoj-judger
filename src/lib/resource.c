@@ -59,7 +59,7 @@ int apply_resource_limit_rsc(struct rsclim_ctxt *rctxt) {
   return 0;
 }
 
-int get_usage_after_wait(perform_ctxt_t ctxt) {
+int get_usage_after_wait(yjudger_ctxt_t ctxt) {
   struct rusage r2;
   if (getrusage(RUSAGE_CHILDREN, &r2)) {
     yreturn(E_GETRUSAGE);
@@ -72,6 +72,6 @@ int get_usage_after_wait(perform_ctxt_t ctxt) {
   return 0;
 }
 
-int apply_resource_limit(perform_ctxt_t ctxt) {
+int apply_resource_limit(yjudger_ctxt_t ctxt) {
   return apply_resource_limit_rsc(ctxt->rctxt);
 }
