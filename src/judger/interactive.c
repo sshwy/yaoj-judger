@@ -40,7 +40,8 @@ static int interactor_prework(struct runner_ctxt *ctxt) {
 }
 
 static void run_interactor(struct runner_ctxt *ctxt) {
-  execl(ctxt->argv[1], "interactor", (char *)NULL);
+  execl(ctxt->argv[1], "interactor", ctxt->argv[2], ctxt->argv[3],
+        (char *)NULL);
 }
 
 static int executable_prework(struct runner_ctxt *ctxt) {
