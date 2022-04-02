@@ -23,7 +23,7 @@ else # production mode
 	CLI_CFLAGS+=-O2
 endif
 
-COMMON_NAME=common helper hook yerr\
+COMMON_NAME=common helper hook yerr async_log\
 	lib/builtin_hook lib/policy lib/resource lib/tkill lib/builtin_policy.gen
 JUDGER_NAME=traditional interactive general
 

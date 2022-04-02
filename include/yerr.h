@@ -37,6 +37,18 @@ extern "C" {
 int yerr(int errnum);
 char *ystrerr(int errnum);
 
+#define yreturn(errnum)                                                        \
+  do {                                                                         \
+    LOG_ERROR("%s", ystrerr(errnum));                                          \
+    return yerr(errnum);                                                       \
+  } while (0)
+
+#define yexit(errnum)                                                          \
+  do {                                                                         \
+    LOG_ERROR("%s", ystrerr(errnum));                                          \
+    exit(errnum);                                                              \
+  } while (0)
+
 #ifdef __cplusplus
 }
 #endif
