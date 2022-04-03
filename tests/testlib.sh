@@ -21,8 +21,17 @@ function declare_test_stderr {
 }
 
 function run_judger {
-  ../yaoj-judger $@ > .log/${test_count}.out  2> .log/${test_count}.err
-  ret=$?
+  retry=3
+  ret=
+  while [ $retry -ne 0 ]; do
+    retry=$((retry - 1))
+    ../yaoj-judger $@ > .log/${test_count}.out  2> .log/${test_count}.err
+    ret=$?
+    if [ $ret -eq 0 ]; then
+      break
+    fi
+  done
+
   if [ $ret -ne 0 ]; then
     declare_test_failed
     strace ../yaoj-judger $@
