@@ -5,13 +5,14 @@
  * @date 2022-02-08
  * @copyright Copyright (c) 2022
  *
- * For runner arguments: argv contains one argument: the executable script file.
+ * For runner arguments: input output outerr arguments...
  *
  * envp is an array of pointers to strings, conventionally of the form
  * `key=value`, which are passed as the environment of the new program.  The
  * envp array must be terminated by a NULL pointer.
  */
 #include <errno.h>
+#include <fcntl.h>
 #include <signal.h>
 #include <sys/wait.h>
 #include <unistd.h>
@@ -23,8 +24,30 @@
 #include "lib/policy.h"
 #include "lib/resource.h"
 
+static int runner_prework(const struct runner_ctxt *ctxt) {
+  if (ctxt->argc < 4) {
+    yreturn(E_ARGC);
+  }
+
+  const int input_fd = open(ctxt->argv[0], O_RDONLY),
+            output_fd = open(ctxt->argv[1], O_WRONLY | O_TRUNC),
+            error_fd = open(ctxt->argv[2], O_WRONLY | O_TRUNC);
+
+  if (input_fd < 0 || output_fd < 0 || error_fd < 0) {
+    yreturn(E_FILEFD);
+  }
+
+  if (dup2(input_fd, fileno(stdin)) < 0 ||
+      dup2(output_fd, fileno(stdout)) < 0 ||
+      dup2(error_fd, fileno(stderr)) < 0) {
+    yreturn(E_DUP);
+  }
+
+  return 0;
+}
+
 static void runner_run(struct runner_ctxt *ctxt) {
-  execve(ctxt->argv[0], ctxt->argv, ctxt->env);
+  execve(ctxt->argv[3], ctxt->argv + 3, ctxt->env);
 }
 
 /**
@@ -32,7 +55,8 @@ static void runner_run(struct runner_ctxt *ctxt) {
  */
 static int child_prework(yjudger_ctxt_t ctxt) {
   LOG_DEBUG("perform child (%d)", ctxt->pchild);
-  if (apply_resource_limit(ctxt) || apply_policy(ctxt))
+  if (runner_prework(ctxt->ectxt) || apply_resource_limit(ctxt) ||
+      apply_policy(ctxt))
     yreturn(yerrno);
   fflush(log_fp);
   return 0;

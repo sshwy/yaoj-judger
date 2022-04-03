@@ -13,18 +13,18 @@ compile_c asserts/sigusr1.c sigusr1.local
 compile_c asserts/prlimit.c prlimit.local
 compile_cpp asserts/stress.cpp stress.local
 
-touch t.out t.err t2.err
+touch t.out t.err t2.err t.in
 rm -rf .log
 mkdir .log
 
 declare_test
-run_general asserts/ls.sh -r OK -P asserts -p free -t 1000
+run_general t.in t.out t.err asserts/ls.sh -r OK -P asserts -p free -t 1000
 
 declare_test
-run_general asserts/ls.sh -r OK -p builtin:free -t 1000 -m 128
+run_general t.in t.out t.err asserts/ls.sh -r OK -p builtin:free -t 1000 -m 128
 
 declare_test
-run_general asserts/ls.sh -p builtin:free -t 1000 -m 128 --json
+run_general t.in t.out t.err asserts/ls.sh -p builtin:free -t 1000 -m 128 --json
 
 declare_test
 run_traditional aplusb.local asserts/aplusb.in t.out t.err\
@@ -56,25 +56,25 @@ run_traditional aplusb.local asserts/aplusb.in t.err t.err std\
   -r SE -p builtin:free -t 1000
 
 declare_test
-run_general asserts/ls.sh -r SE -p builtin:free -t -1
+run_general t.in t.out t.err asserts/ls.sh -r SE -p builtin:free -t -1
 
 declare_test
-run_general asserts/ls.sh -r SE -p builtin:free -m -128
+run_general t.in t.out t.err asserts/ls.sh -r SE -p builtin:free -m -128
 
 declare_test
-run_general asserts/ls.sh -r SE -p builtin:free -g -128
+run_general t.in t.out t.err asserts/ls.sh -r SE -p builtin:free -g -128
 
 declare_test
-run_general asserts/noexec_script.sh -r ECE -p builtin:free
+run_general t.in t.out t.err asserts/noexec_script.sh -r ECE -p builtin:free
 
 declare_test #15
-run_general asserts/ls.sh -r SE -t 1000 -m 128 -P asserts -p fre
+run_general t.in t.out t.err asserts/ls.sh -r SE -t 1000 -m 128 -P asserts -p fre
 
 declare_test
-run_general asserts/ls.sh -r SE -P asserts -p invalid -t 1000 -m 128
+run_general t.in t.out t.err asserts/ls.sh -r SE -P asserts -p invalid -t 1000 -m 128
 
 declare_test
-run_general asserts/run_judger.sh -r ECE -p builtin:free -t 1000 -m 128
+run_general t.in t.out t.err asserts/run_judger.sh -r ECE -p builtin:free -t 1000 -m 128
 
 declare_test
 run_interactive guess.local interactor.local asserts/interactor.in \
@@ -148,5 +148,17 @@ run_traditional aplusb.local asserts/aplusb.in t.out t.err std \
 declare_test "prlimit" #35
 run_traditional prlimit.local asserts/aplusb.in t.out t.err std \
   -r ECE -p builtin:_coverage -t 1000
+
+declare_test
+run_general t.in t.out t.err -r SE -p builtin:free -t 1000 -m 128
+
+declare_test
+run_general t.in t.out no.err asserts/ls.sh -r SE -P asserts -p free -t 1000
+
+declare_test
+run_general t.in no.out t.err asserts/ls.sh -r SE -P asserts -p free -t 1000
+
+declare_test
+run_general no.in t.out t.err asserts/ls.sh -r SE -P asserts -p free -t 1000
 
 test_finish
