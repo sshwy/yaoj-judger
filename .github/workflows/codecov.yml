@@ -8,7 +8,8 @@ jobs:
         uses: actions/checkout@master
       - name: Install neccessary commands
         run: |
-          sudo apt-get install -y auditd flex make gengetopt
+          sudo apt-get update -y
+          sudo apt-get install -y auditd flex make gengetopt bison xxd strace
       - name: Install LLVM and Clang
         uses: KyleMayes/install-llvm-action@v1
         with:
