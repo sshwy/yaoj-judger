@@ -4,7 +4,7 @@ SHELL=/bin/bash
 test: compile
 	@$(RM) main.out main.err
 	@touch main.out main.err
-	@$(PROJECT_ROOT)yaoj-judger main.local main.in main.out main.err $(IO) \
+	@strace -c $(PROJECT_ROOT)yaoj-judger main.local main.in main.out main.err $(IO) \
 		-j traditional \
 		-r $(R_CODE) --log=.log.local \
 		-p builtin:_coverage \
