@@ -1,6 +1,8 @@
 #!/bin/bash
 
 test_count=0
+fail_test=
+exit_code=0
 
 function declare_test {
   test_count=$((test_count + 1))
@@ -14,16 +16,23 @@ function declare_test_failed {
 function declare_test_log {
   printf "\033[33mTest Log #${test_count}\033[0m\n"
 }
+function declare_test_stderr {
+  printf "\033[33mTest Stderr #${test_count}\033[0m\n"
+}
 
 function run_judger {
-  ../yaoj-judger $@
+  ../yaoj-judger $@ > .log/${test_count}.out  2> .log/${test_count}.err
   ret=$?
   if [ $ret -ne 0 ]; then
     declare_test_failed
     strace ../yaoj-judger $@
     declare_test_log
     cat < .log/${test_count}.log
-    exit $ret
+    declare_test_stderr
+    cat < .log/${test_count}.err
+    fail_test+=" #${test_count}"
+    exit_code=1
+    # exit $ret
   fi
 }
 
@@ -51,4 +60,14 @@ function compile_c {
 
 function compile_cpp {
   clang++ $1 -o $2 -O2
+}
+
+function test_finish {
+  if [ $exit_code -ne 0 ]; then
+    printf "\033[31mFailed Test: $fail_test\033[0m\n"
+    exit $exit_code
+  else
+    printf "\033[32mAll Test Passed\033[0m\n"
+    exit 0
+  fi
 }

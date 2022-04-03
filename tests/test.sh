@@ -11,8 +11,11 @@ compile_c asserts/cpu_1_7.c cpu_1_7.local
 compile_c asserts/sigsegv.c sigsegv.local
 compile_c asserts/sigusr1.c sigusr1.local
 compile_c asserts/prlimit.c prlimit.local
+compile_cpp asserts/stress.cpp stress.local
 
 touch t.out t.err t2.err
+rm -rf .log
+mkdir .log
 
 declare_test
 run_general asserts/ls.sh -r OK -P asserts -p free -t 1000
@@ -114,12 +117,11 @@ run_interactive guess.local interactor.local asserts/interactor.in \
   t.out t.err t2.err -r SE -p builtin:free -t 1000 --stack-memory=-1
 
 declare_test "stress"
-compile_cpp asserts/stress.cpp stress.local
 
 run_traditional stress.local asserts/stress.in t.out t.err std \
-  -r OK -p builtin:_coverage --memory=128 --timeout=5000
+  -r OK -p builtin:_coverage --memory=128 --timeout=10000
 
-declare_test
+declare_test "stress RE"
 run_traditional stress.local asserts/stress.in t.out t.err std \
   -r RE -p builtin:free --memory=30 --timeout=10000
 
@@ -147,5 +149,4 @@ declare_test "prlimit" #35
 run_traditional prlimit.local asserts/aplusb.in t.out t.err std \
   -r ECE -p builtin:_coverage -t 1000
 
-# clean
-rm *.local t.out t.err t2.err *.log
+test_finish
