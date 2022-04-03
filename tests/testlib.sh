@@ -11,11 +11,17 @@ function declare_test_failed {
   printf "\033[31mRun Test #${test_count} failed\033[0m\n"
 }
 
+function declare_test_log {
+  printf "\033[33mTest Log #${test_count}\033[0m\n"
+}
+
 function run_judger {
   ../yaoj-judger $@
   ret=$?
   if [ $ret -ne 0 ]; then
     declare_test_failed
+    strace ../yaoj-judger $@
+    declare_test_log
     cat < .log/${test_count}.log
     exit $ret
   fi
