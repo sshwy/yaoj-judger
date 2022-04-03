@@ -60,26 +60,19 @@ int main(int argc, char **argv, char **env) {
 
   if (yjudger_set_policy(ctxt, args_info.policy_dir_arg,
                          args_info.policy_arg)) {
-    result.code = SE;
   } else {
     yjudger_set_runner(ctxt, inputs_num, inputs, env);
 
     if (strcmp(args_info.judger_arg, "traditional") == 0) {
-      if (yjudger_traditional(ctxt)) {
-        result.code = SE; // fprintf(stderr, "SE: %s\n", ystrerr(yerrno));
-      }
+      yjudger_traditional(ctxt);
     } else if (strcmp(args_info.judger_arg, "interactive") == 0) {
-      if (yjudger_interactive(ctxt)) {
-        result.code = SE; // fprintf(stderr, "SE: %s\n", ystrerr(yerrno));
-      }
+      yjudger_interactive(ctxt);
     } else if (strcmp(args_info.judger_arg, "general") == 0) {
-      if (yjudger_general(ctxt)) {
-        result.code = SE; // fprintf(stderr, "SE: %s\n", ystrerr(yerrno));
-      }
+      yjudger_general(ctxt);
     } else {
       exit(1);
     }
-    if (result.code != SE) {
+    if (yerrno == 0) {
       result = yjudger_result(ctxt);
     }
 
@@ -87,6 +80,11 @@ int main(int argc, char **argv, char **env) {
   }
 
   int return_code = 0;
+
+  if (yerrno) {
+    fprintf(stderr, "System Error: %s\n", ystrerr(yerrno));
+    result.code = SE;
+  }
 
   if (args_info.result_given) {
     if ((int)result.code != result_code) {
