@@ -6,6 +6,7 @@
 #include <string.h>
 #include <sys/prctl.h>
 
+#include "async_log.h"
 #include "common.h"
 #include "judger.h"
 #include "kafel.h"
@@ -111,6 +112,8 @@ int policy_identifier_handler(const char *content,
       num_str[len - 1] = 0;
       num = atoi(num_str);
       if (!(0 <= num && num < per_ctxt->ectxt->argc)) {
+        LOG_DEBUG("num_str=\"%s\", num=%d, argc=%d", num_str, num,
+                  per_ctxt->ectxt->argc);
         yreturn(E_POL_IDT);
       }
       sprintf(address, "%p", per_ctxt->ectxt->argv[num]);
