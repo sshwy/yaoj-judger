@@ -11,6 +11,7 @@ compile_c asserts/cpu_1_7.c cpu_1_7.local
 compile_c asserts/sigsegv.c sigsegv.local
 compile_c asserts/sigusr1.c sigusr1.local
 compile_c asserts/prlimit.c prlimit.local
+compile_c asserts/03_tle.c 03_tle.local
 compile_cpp asserts/stress.cpp stress.local
 
 touch t.out t.err t2.err t.in
@@ -160,5 +161,9 @@ run_general t.in no.out t.err asserts/ls.sh -r SE -P asserts -p free -t 1000
 
 declare_test
 run_general no.in t.out t.err asserts/ls.sh -r SE -P asserts -p free -t 1000
+
+declare_test #40
+run_traditional 03_tle.local asserts/aplusb.in t.out t.err std \
+	-r TLE -m 30 -t 1000 -g 64 -p builtin:_coverage
 
 test_finish
