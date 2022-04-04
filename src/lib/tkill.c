@@ -2,6 +2,7 @@
 
 #include <signal.h>
 
+#include "async_log.h"
 #include "common.h"
 #include "judger.h"
 #include "lib/resource.h"
@@ -49,7 +50,7 @@ int stop_timeout_killer(pthread_t tid) {
 static pthread_t tid = 0;
 
 int start_killer_after_fork(yjudger_ctxt_t ctxt) {
-  fflush(log_fp); // must!
+  // fflush(log_fp); // must!
 
   struct tkill_ctxt tctxt = {
       .pid = ctxt->pchild,
@@ -59,8 +60,10 @@ int start_killer_after_fork(yjudger_ctxt_t ctxt) {
     if (pthread_create(&tid, NULL, timeout_killer, (void *)(&tctxt)) != 0) {
       // make sure pgid has set for child
       killpg(tctxt.pid, SIGKILL);
+      LOG_ERROR("tkill create failed");
       yreturn(E_TKILL_PTHREAD);
     }
+    LOG_DEBUG("tkill create succeed");
   }
   return 0;
 }

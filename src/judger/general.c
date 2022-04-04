@@ -100,6 +100,8 @@ int yjudger_general(yjudger_ctxt_t ctxt) {
     runner_run(ctxt->ectxt);
     if (errno == EACCES) {
       LOG_ERROR("exec error getting access");
+    } else {
+      LOG_ERROR("child process doesn't terminate, errno=%d", errno);
     }
     yexit(E_EXEC); // child process doesn't terminate
   }

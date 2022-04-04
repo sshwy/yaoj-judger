@@ -138,7 +138,8 @@ int yjudger_interactive(yjudger_ctxt_t ctxt) {
     yreturn(E_ARGC);
   }
 
-  register_hook(ctxt->hctxt, BEFORE_FORK, check_runner_duplicate_before_fork);
+  // register_hook(ctxt->hctxt, BEFORE_FORK,
+  // check_runner_duplicate_before_fork);
   register_builtin_hook(ctxt->hctxt);
   if (run_hook_chain(ctxt->hctxt->before_fork, ctxt))
     yreturn(yerrno);
