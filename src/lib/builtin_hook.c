@@ -20,17 +20,17 @@
 static struct timeval start, end;
 
 // optional builtin hook
-int check_runner_duplicate_before_fork(yjudger_ctxt_t ctxt) {
-  const int count = ctxt->ectxt->argc;
-  for (int i = 0; i < count; i++) {
-    for (int j = i + 1; j < count; j++) {
-      if (strcmp(ctxt->ectxt->argv[i], ctxt->ectxt->argv[j]) == 0) {
-        yreturn(E_DUPLICATE_FILE);
-      }
-    }
-  }
-  return 0;
-}
+// int check_runner_duplicate_before_fork(yjudger_ctxt_t ctxt) {
+//   const int count = ctxt->ectxt->argc;
+//   for (int i = 0; i < count; i++) {
+//     for (int j = i + 1; j < count; j++) {
+//       if (strcmp(ctxt->ectxt->argv[i], ctxt->ectxt->argv[j]) == 0) {
+//         yreturn(E_DUPLICATE_FILE);
+//       }
+//     }
+//   }
+//   return 0;
+// }
 
 static int timer_after_fork(yjudger_ctxt_t ctxt) {
   // actually immediately after receiving "ready to run"
