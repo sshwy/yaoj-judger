@@ -34,7 +34,7 @@ function run_judger {
 
   if [ $ret -ne 0 ]; then
     declare_test_failed
-    strace ../yaoj-judger $@
+    strace -o .log/${test_count}.trace -ff ../yaoj-judger $@
     declare_test_log
     cat < .log/${test_count}.log
     declare_test_stderr

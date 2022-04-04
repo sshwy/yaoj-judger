@@ -88,7 +88,6 @@ typedef struct yjudger_ctxt *yjudger_ctxt_t;
  */
 int yjudger_general(yjudger_ctxt_t ctxt);
 int yjudger_interactive(yjudger_ctxt_t ctxt);
-int yjudger_traditional(yjudger_ctxt_t ctxt);
 
 /**
  * @brief Create a perform context

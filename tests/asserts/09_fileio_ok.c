@@ -1,8 +1,8 @@
 #include <stdio.h>
 
 int main() {
-  freopen("main.in", "r", stdin);
-  freopen("main.out", "w", stdout);
+  freopen("asserts/aplusb.in", "r", stdin);
+  freopen("t.out", "w", stdout);
 
   int a, b;
   scanf("%d%d", &a, &b);
