@@ -16,3 +16,5 @@ docs/web
 *.profdata
 /yaoj-judger
 yaoj-judger*.tar.gz
+tests/t.in
+tests/t.out
