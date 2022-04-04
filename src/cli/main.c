@@ -63,9 +63,7 @@ int main(int argc, char **argv, char **env) {
   } else {
     yjudger_set_runner(ctxt, inputs_num, inputs, env);
 
-    if (strcmp(args_info.judger_arg, "traditional") == 0) {
-      yjudger_traditional(ctxt);
-    } else if (strcmp(args_info.judger_arg, "interactive") == 0) {
+    if (strcmp(args_info.judger_arg, "interactive") == 0) {
       yjudger_interactive(ctxt);
     } else if (strcmp(args_info.judger_arg, "general") == 0) {
       yjudger_general(ctxt);

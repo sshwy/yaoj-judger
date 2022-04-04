@@ -25,7 +25,7 @@ endif
 
 COMMON_NAME=common helper hook yerr async_log\
 	lib/builtin_hook lib/policy lib/resource lib/tkill lib/builtin_policy.gen
-JUDGER_NAME=traditional interactive general
+JUDGER_NAME=interactive general
 
 LIB_OBJECTS=$(COMMON_NAME:%=%.o) $(JUDGER_NAME:%=judger/%.o)
 GCDA_FILES=$(LIB_OBJECTS:%.o=%.gcda)
@@ -76,7 +76,6 @@ helper.o: common.h $(PROJECT_ROOT)include/judger.h lib/policy.h lib/resource.h h
 hook.o: common.h hook.h
 judger/general.o: common.h $(PROJECT_ROOT)include/judger.h hook.h lib/builtin_hook.h lib/policy.h lib/resource.h
 judger/interactive.o: common.h $(PROJECT_ROOT)include/judger.h hook.h lib/builtin_hook.h lib/policy.h lib/resource.h
-judger/traditional.o: common.h $(PROJECT_ROOT)include/judger.h hook.h lib/builtin_hook.h lib/policy.h lib/resource.h
 lib/builtin_hook.o: common.h hook.h lib/builtin_hook.h lib/policy.h lib/resource.h lib/tkill.h
 lib/builtin_policy.gen.o: common.h lib/policy.h
 lib/policy.o: common.h lib/policy.h

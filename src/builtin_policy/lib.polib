@@ -9,6 +9,6 @@ POLICY basic_allow {
     close, readlink, sysinfo, pread64, writev, lseek, clock_gettime,
     newfstatat, openat, 
     rseq, prlimit64, set_tid_address, futex, set_robust_list, getrandom, stat,
-    rt_sigprocmask, getpid, gettid, tgkill, msync
+    rt_sigprocmask, getpid, gettid, tgkill, msync, getdents64, ioctl
   }
 }

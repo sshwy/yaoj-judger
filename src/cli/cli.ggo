@@ -9,7 +9,7 @@ args "--file-name=cli --unnamed-opts=arguments --show-required=(required)"
 # Options
 
 option "judger" j "specify which judger to use"
-  typestr="judgername" values="traditional","interactive","general" required
+  typestr="judgername" values="interactive","general" required
 
 option "result" r "predict judgement result"
   typestr="string" optional

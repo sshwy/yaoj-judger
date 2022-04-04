@@ -37,7 +37,7 @@ const char *gengetopt_args_info_detailed_help[] = {
   "  -h, --help                    Print help and exit",
   "      --detailed-help           Print help, including all details and hidden\n                                  options, and exit",
   "  -V, --version                 Print version and exit",
-  "  -j, --judger=judgername       specify which judger to use  (possible\n                                  values=\"traditional\", \"interactive\",\n                                  \"general\") (required)",
+  "  -j, --judger=judgername       specify which judger to use  (possible\n                                  values=\"interactive\", \"general\")\n                                  (required)",
   "  -r, --result=string           predict judgement result  (possible\n                                  values=\"OK\", \"RE\", \"MLE\", \"TLE\",\n                                  \"OLE\", \"SE\", \"DSC\", \"ECE\")",
   "  \n    Meanings of those shortname:\n      OK: all correct\n      RE: runtime error\n      MLE: memory limitation exceed\n      TLE: time limitation exceed\n      OLE: output limitation exceed\n      SE: system error, aka judger error\n      DSC: dangerous system call\n      ECE: exit code error\n    ",
   "      --log=filename            specify judger result file (required)",
@@ -105,7 +105,7 @@ cmdline_parser_internal (int argc, char **argv, struct gengetopt_args_info *args
 static int
 cmdline_parser_required2 (struct gengetopt_args_info *args_info, const char *prog_name, const char *additional_error);
 
-const char *cmdline_parser_judger_values[] = {"traditional", "interactive", "general", 0}; /*< Possible values for judger. */
+const char *cmdline_parser_judger_values[] = {"interactive", "general", 0}; /*< Possible values for judger. */
 const char *cmdline_parser_result_values[] = {"OK", "RE", "MLE", "TLE", "OLE", "SE", "DSC", "ECE", 0}; /*< Possible values for result. */
 
 static char *
