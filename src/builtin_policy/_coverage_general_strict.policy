@@ -1,0 +1,14 @@
+#include "lib.polib"
+
+POLICY main {
+  USE basic_allow,
+  ALLOW {
+    execve(path, argv, envp) {
+      path == %3s
+    },
+    dup3,
+    fcntl
+  }
+}
+
+USE main DEFAULT KILL
