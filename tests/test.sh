@@ -2,6 +2,7 @@
 
 source testlib.sh
 
+cc asserts/10_dsc.c -o 10_dsc.local -static -lpthread
 compile_c asserts/01_dsc.c 01_dsc.local
 compile_c asserts/02_ok.c 02_ok.local
 compile_c asserts/03_tle.c 03_tle.local
@@ -11,7 +12,6 @@ compile_c asserts/06_smle.c 06_smle.local
 compile_c asserts/07_ole.c 07_ole.local
 compile_c asserts/08_dsc.c 08_dsc.local
 compile_c asserts/09_fileio_ok.c 09_fileio_ok.local
-compile_c asserts/10_dsc.c 10_dsc.local
 compile_c asserts/aplusb.c aplusb.local
 compile_c asserts/cpu_1_7.c cpu_1_7.local
 compile_c asserts/exit_1.c exit_1.local
