@@ -64,11 +64,11 @@ function run_interactive {
 }
 
 function compile_c {
-  cc $1 -o $2
+  cc $1 -o $2 -static
 }
 
 function compile_cpp {
-  clang++ $1 -o $2 -O2
+  clang++ $1 -o $2 -O2 -static
 }
 
 function test_finish {
