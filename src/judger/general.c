@@ -17,6 +17,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+#include "async_log.h"
 #include "common.h"
 #include "hook.h"
 #include "judger.h"
@@ -100,6 +101,12 @@ int yjudger_general(yjudger_ctxt_t ctxt) {
     runner_run(ctxt->ectxt);
     if (errno == EACCES) {
       LOG_ERROR("exec error getting access");
+    } else if (errno == ENOENT) {
+      LOG_ERROR("ENOENT: A component of path (or file) does not name an "
+                "existing file or path (or file) is an empty string.");
+      LOG_DEBUG("argc=%d, executable=%s, endwithnull=%d", ctxt->ectxt->argc,
+                ctxt->ectxt->argv[3],
+                ctxt->ectxt->argv[ctxt->ectxt->argc] == NULL);
     } else {
       LOG_ERROR("child process doesn't terminate, errno=%d", errno);
     }
