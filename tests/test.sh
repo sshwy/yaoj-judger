@@ -126,7 +126,7 @@ run_interactive guess.local interactor.local asserts/interactor.in \
 
 declare_test "stress"
 run_general asserts/stress.in t.out /dev/null stress.local \
-  -r OK -p builtin:_coverage_general_strict --memory=128 --timeout=10000 --cputime=5000
+  -r OK -p builtin:_coverage_general_strict --memory=128 --timeout=10000 --cputime=10000
 
 declare_test "stress RE"
 run_general asserts/stress.in t.out /dev/null stress.local \
