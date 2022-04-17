@@ -1,5 +1,5 @@
 #!/bin/bash
-../yaoj-judger asserts/ls.sh \
+../yaoj-judger /dev/null /dev/null /dev/null asserts/ls.sh \
   -j general \
   -r OK \
   -p builtin:free \

@@ -87,7 +87,7 @@ run_general t.in t.out /dev/null asserts/run_judger.sh -r ECE -p builtin:free -t
 
 declare_test
 run_interactive guess.local interactor.local asserts/interactor.in \
-  t.out /dev/null /dev/null -r OK -p builtin:free -t 0
+  t.out /dev/null /dev/null -r OK -p builtin:free -t 0 -f 20
 
 declare_test
 run_interactive exit_1.local interactor.local asserts/interactor.in \
