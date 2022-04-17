@@ -153,7 +153,6 @@ int yjudger_interactive(yjudger_ctxt_t ctxt) {
   ctxt->pchild = child_pid;
 
   // wait until child send "ready"
-  // char receive[6];
   if (wait_signal(p_run) != READY) {
     yreturn(E_CHILD);
   }

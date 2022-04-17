@@ -76,6 +76,7 @@ status report.
       ECE: exit code error
 
       --log=filename            specify judger result file (required)
+      --log-color               whether display colorful log  (default=off)
   -p, --policy=filename         specify policy name (required)
 
     Note that if using builtin policy, add 'builtin:' prefix to policy's name.
@@ -99,6 +100,7 @@ Resource Limitations:
       --real-memory=integer     specify the actual memory limit in MB
       --stack-memory=integer    specify the stack memory limit in MB
   -g, --output-size=integer     specify the output limit in MB
+  -f, --fileno=integer          specify the maximum number of opened fd
 ```
 
 ### Resource Limitation
