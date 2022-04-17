@@ -29,7 +29,9 @@
 #include "lib/builtin_hook.h"
 #include "lib/policy.h"
 #include "lib/resource.h"
+#include "signal_pipe.h"
 
+const int FAILED = 1, READY = 2;
 static int interactor_prework(struct runner_ctxt *ctxt) {
   const int error_fd = open(ctxt->argv[4], O_WRONLY | O_TRUNC);
   if (error_fd < 0)
@@ -57,27 +59,24 @@ static void run_executable(struct runner_ctxt *ctxt) {
   execl(ctxt->argv[0], "main", (char *)NULL);
 }
 
-static const char ready[] = "ready";
-static const char notready[] = "not";
-
-static void yexit_notready(int code, int write_pipe) {
-  write(write_pipe, notready, sizeof(notready));
+static void yexit_notready(int code, int *spipe) {
+  send_signal(spipe, FAILED);
   yexit(code);
 }
 
 static void child_exec_process(yjudger_ctxt_t ctxt, int i_run[2]) {
   if (getpgrp() != ctxt->pchild) {
-    yexit_notready(E_PGID, i_run[1]);
+    yexit_notready(E_PGID, i_run);
   }
   if (executable_prework(ctxt->ectxt) || apply_resource_limit(ctxt) ||
       apply_policy(ctxt)) {
-    yexit_notready(yerrno, i_run[1]);
+    yexit_notready(yerrno, i_run);
   }
   LOG_INFO("executable prepared");
   // assume that exec* doesn't change pgid
   // https://www.cs.uleth.ca/~holzmann/C/system/pipeforkexec.html
   // use chmod could reset the suid/sgid mode
-  write(i_run[1], ready, sizeof(ready));
+  send_signal(i_run, READY);
   run_executable(ctxt->ectxt);
   exit(E_EXEC); // process doesn't terminate
 }
@@ -87,10 +86,10 @@ static void child_process(yjudger_ctxt_t ctxt, int *p_run) { // child process
   int itoe[2], etoi[2], i_run[2];
   // set process group ID to itself
   if (setpgid(0, 0)) {
-    yexit_notready(E_SETPGID, p_run[1]);
+    yexit_notready(E_SETPGID, p_run);
   }
   if (pipe(itoe) || pipe(etoi) || pipe(i_run)) {
-    yexit_notready(E_PIPE, p_run[1]);
+    yexit_notready(E_PIPE, p_run);
   }
 
   // when a process is forked, it inherits its PGID from its parent.
@@ -99,26 +98,25 @@ static void child_process(yjudger_ctxt_t ctxt, int *p_run) { // child process
   if (exec_pid == 0) {           // process for executable
     if (dup2(itoe[0], fileno(stdin)) == -1 ||
         dup2(etoi[1], fileno(stdout)) == -1) {
-      yexit_notready(E_DUP, i_run[1]);
+      yexit_notready(E_DUP, i_run);
     }
     child_exec_process(ctxt, i_run);
   }
   // process for interactor
   if (dup2(etoi[0], fileno(stdin)) == -1 ||
       dup2(itoe[1], fileno(stdout)) == -1) {
-    yexit_notready(E_DUP, p_run[1]);
+    yexit_notready(E_DUP, p_run);
   }
   // apply the same policy for interactor
   if (interactor_prework(ctxt->ectxt) || apply_policy(ctxt)) {
-    yexit_notready(yerrno, p_run[1]);
+    yexit_notready(yerrno, p_run);
   }
   LOG_INFO("interactor prepared");
   // when executable is ready, tell judger that I'm ready
-  char receive[6];
-  if (read(i_run[0], receive, sizeof(ready)) != sizeof(ready)) {
-    yexit_notready(E_INTACT_EXEC, p_run[1]);
+  if (wait_signal(i_run) != READY) {
+    yexit_notready(E_INTACT_EXEC, p_run);
   }
-  write(p_run[1], ready, sizeof(ready));
+  send_signal(p_run, READY);
 
   run_interactor(ctxt->ectxt);
   exit(E_EXEC); // process doesn't terminate
@@ -128,7 +126,7 @@ int yjudger_interactive(yjudger_ctxt_t ctxt) {
   ctxt->pself = getpid();
   ctxt->pchild = -1;
   int p_run[2];
-  if (pipe(p_run)) {
+  if (signal_pipe(p_run)) {
     yreturn(E_PIPE);
   }
   if (ctxt->ectxt->argc != 6) {
@@ -155,8 +153,8 @@ int yjudger_interactive(yjudger_ctxt_t ctxt) {
   ctxt->pchild = child_pid;
 
   // wait until child send "ready"
-  char receive[6];
-  if (read(p_run[0], receive, sizeof(ready)) != sizeof(ready)) {
+  // char receive[6];
+  if (wait_signal(p_run) != READY) {
     yreturn(E_CHILD);
   }
 

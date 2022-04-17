@@ -24,6 +24,7 @@
 #include "lib/builtin_hook.h"
 #include "lib/policy.h"
 #include "lib/resource.h"
+#include "signal_pipe.h"
 
 static int runner_prework(const struct runner_ctxt *ctxt) {
   if (ctxt->argc < 4) {
@@ -63,13 +64,12 @@ static int child_prework(yjudger_ctxt_t ctxt) {
 }
 
 int yjudger_general(yjudger_ctxt_t ctxt) {
-  const char ready[] = "ready";
-  const char notready[] = "not";
+  const int FAILED = 1, READY = 2;
 
   ctxt->pself = getpid();
   ctxt->pchild = -1;
   int p_run[2];
-  if (pipe(p_run)) {
+  if (signal_pipe(p_run)) {
     yreturn(E_PIPE);
   }
 
@@ -86,14 +86,14 @@ int yjudger_general(yjudger_ctxt_t ctxt) {
   if (child_pid == 0) { // child process
     ctxt->pchild = getpid();
     if (setpgid(0, 0)) { // set process group ID to itself
-      write(p_run[1], notready, sizeof(notready));
+      send_signal(p_run, FAILED);
       yexit(E_SETPGID);
     }
     if (child_prework(ctxt)) {
-      write(p_run[1], notready, sizeof(notready));
+      send_signal(p_run, FAILED);
       yexit(yerrno);
     }
-    write(p_run[1], ready, sizeof(ready));
+    send_signal(p_run, READY);
 
     runner_run(ctxt->ectxt);
     if (errno == EACCES) {
@@ -113,8 +113,7 @@ int yjudger_general(yjudger_ctxt_t ctxt) {
   ctxt->pchild = child_pid;
 
   // wait until child send "ready"
-  char receive[6];
-  if (read(p_run[0], receive, sizeof(ready)) != sizeof(ready)) {
+  if (wait_signal(p_run) != READY) {
     yreturn(E_CHILD);
   }
 

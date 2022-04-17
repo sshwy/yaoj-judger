@@ -23,7 +23,7 @@ else # production mode
 	CLI_CFLAGS+=-O2
 endif
 
-COMMON_NAME=common helper hook yerr async_log\
+COMMON_NAME=common helper hook yerr async_log signal_pipe\
 	lib/builtin_hook lib/policy lib/resource lib/tkill lib/builtin_policy.gen
 JUDGER_NAME=interactive general
 
@@ -74,11 +74,12 @@ cli/main.o: cli/cli.h $(PROJECT_ROOT)include/judger.h
 common.o: common.h $(PROJECT_ROOT)include/judger.h
 helper.o: common.h $(PROJECT_ROOT)include/judger.h lib/policy.h lib/resource.h hook.h
 hook.o: common.h hook.h
-judger/general.o: common.h $(PROJECT_ROOT)include/judger.h hook.h lib/builtin_hook.h lib/policy.h lib/resource.h
-judger/interactive.o: common.h $(PROJECT_ROOT)include/judger.h hook.h lib/builtin_hook.h lib/policy.h lib/resource.h
+judger/general.o: common.h $(PROJECT_ROOT)include/judger.h hook.h lib/builtin_hook.h lib/policy.h lib/resource.h signal_pipe.h
+judger/interactive.o: common.h $(PROJECT_ROOT)include/judger.h hook.h lib/builtin_hook.h lib/policy.h lib/resource.h signal_pipe.h
 lib/builtin_hook.o: common.h hook.h lib/builtin_hook.h lib/policy.h lib/resource.h lib/tkill.h
 lib/builtin_policy.gen.o: common.h lib/policy.h
 lib/policy.o: common.h lib/policy.h
 lib/resource.o: common.h lib/resource.h
 lib/tkill.o: common.h $(PROJECT_ROOT)include/judger.h lib/tkill.h lib/resource.h
+signal_pipe.o: signal_pipe.h
 yerr.o: $(PROJECT_ROOT)include/yerr.h
