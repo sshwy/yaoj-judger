@@ -56,6 +56,7 @@ const char *gengetopt_args_info_detailed_help[] = {
   "      --real-memory=integer     specify the actual memory limit in MB",
   "      --stack-memory=integer    specify the stack memory limit in MB",
   "  -g, --output-size=integer     specify the output limit in MB",
+  "  -f, --fileno=integer          specify the maximum number of opened fd",
     0
 };
 
@@ -81,11 +82,12 @@ init_help_array(void)
   gengetopt_args_info_help[16] = gengetopt_args_info_detailed_help[19];
   gengetopt_args_info_help[17] = gengetopt_args_info_detailed_help[20];
   gengetopt_args_info_help[18] = gengetopt_args_info_detailed_help[21];
-  gengetopt_args_info_help[19] = 0; 
+  gengetopt_args_info_help[19] = gengetopt_args_info_detailed_help[22];
+  gengetopt_args_info_help[20] = 0; 
   
 }
 
-const char *gengetopt_args_info_help[20];
+const char *gengetopt_args_info_help[21];
 
 typedef enum {ARG_NO
   , ARG_FLAG
@@ -131,6 +133,7 @@ void clear_given (struct gengetopt_args_info *args_info)
   args_info->real_memory_given = 0 ;
   args_info->stack_memory_given = 0 ;
   args_info->output_size_given = 0 ;
+  args_info->fileno_given = 0 ;
 }
 
 static
@@ -156,6 +159,7 @@ void clear_args (struct gengetopt_args_info *args_info)
   args_info->real_memory_orig = NULL;
   args_info->stack_memory_orig = NULL;
   args_info->output_size_orig = NULL;
+  args_info->fileno_orig = NULL;
   
 }
 
@@ -181,6 +185,7 @@ void init_args_info(struct gengetopt_args_info *args_info)
   args_info->real_memory_help = gengetopt_args_info_detailed_help[19] ;
   args_info->stack_memory_help = gengetopt_args_info_detailed_help[20] ;
   args_info->output_size_help = gengetopt_args_info_detailed_help[21] ;
+  args_info->fileno_help = gengetopt_args_info_detailed_help[22] ;
   
 }
 
@@ -300,6 +305,7 @@ cmdline_parser_release (struct gengetopt_args_info *args_info)
   free_string_field (&(args_info->real_memory_orig));
   free_string_field (&(args_info->stack_memory_orig));
   free_string_field (&(args_info->output_size_orig));
+  free_string_field (&(args_info->fileno_orig));
   
   
   for (i = 0; i < args_info->inputs_num; ++i)
@@ -410,6 +416,8 @@ cmdline_parser_dump(FILE *outfile, struct gengetopt_args_info *args_info)
     write_into_file(outfile, "stack-memory", args_info->stack_memory_orig, 0);
   if (args_info->output_size_given)
     write_into_file(outfile, "output-size", args_info->output_size_orig, 0);
+  if (args_info->fileno_given)
+    write_into_file(outfile, "fileno", args_info->fileno_orig, 0);
   
 
   i = EXIT_SUCCESS;
@@ -743,10 +751,11 @@ cmdline_parser_internal (
         { "real-memory",	1, NULL, 0 },
         { "stack-memory",	1, NULL, 0 },
         { "output-size",	1, NULL, 'g' },
+        { "fileno",	1, NULL, 'f' },
         { 0,  0, 0, 0 }
       };
 
-      c = getopt_long (argc, argv, "hVj:r:p:P:t:m:g:", long_options, &option_index);
+      c = getopt_long (argc, argv, "hVj:r:p:P:t:m:g:f:", long_options, &option_index);
 
       if (c == -1) break;	/* Exit from `while (1)' loop.  */
 
@@ -842,6 +851,18 @@ cmdline_parser_internal (
               &(local_args_info.output_size_given), optarg, 0, 0, ARG_INT,
               check_ambiguity, override, 0, 0,
               "output-size", 'g',
+              additional_error))
+            goto failure;
+        
+          break;
+        case 'f':	/* specify the maximum number of opened fd.  */
+        
+        
+          if (update_arg( (void *)&(args_info->fileno_arg), 
+               &(args_info->fileno_orig), &(args_info->fileno_given),
+              &(local_args_info.fileno_given), optarg, 0, 0, ARG_INT,
+              check_ambiguity, override, 0, 0,
+              "fileno", 'f',
               additional_error))
             goto failure;
         

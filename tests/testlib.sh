@@ -64,10 +64,12 @@ function run_interactive {
 }
 
 function compile_c {
+  printf "compiling $2\n"
   cc $1 -o $2 -static
 }
 
 function compile_cpp {
+  printf "compiling $2\n"
   clang++ $1 -o $2 -O2 -static
 }
 

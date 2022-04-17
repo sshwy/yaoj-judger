@@ -22,6 +22,9 @@ struct rsclim_ctxt {
   int actual_memory;  //!< in bytes, compared with ru_maxrss. 0 for unlimited.
   int stack_memory;   //!< in bptes. 0 for unlimited.
   int output_size;    //!< in bytes. 0 for unlimited.
+  //!< number of opened fileno (affect open(2), pipe(2), dup(2)), 0 for
+  //!< unlimited
+  int fileno;
 };
 
 typedef struct rsclim_ctxt *rsclim_ctxt_t;

@@ -66,3 +66,5 @@ option "stack-memory" - "specify the stack memory limit in MB"
   int typestr="integer" optional
 option "output-size" g "specify the output limit in MB"
   int typestr="integer" optional
+option "fileno" f "specify the maximum number of opened fd"
+  int typestr="integer" optional

@@ -15,6 +15,7 @@ compile_c asserts/09_fileio_ok.c 09_fileio_ok.local
 compile_c asserts/aplusb.c aplusb.local
 compile_c asserts/cpu_1_7.c cpu_1_7.local
 compile_c asserts/exit_1.c exit_1.local
+compile_c asserts/fileno_lim.c fileno_lim.local
 compile_c asserts/guess_interactive.c guess.local
 compile_c asserts/interactor.c interactor.local
 compile_c asserts/prlimit.c prlimit.local
@@ -199,5 +200,9 @@ run_general /dev/null /dev/null /dev/null 09_fileio_ok.local \
 declare_test
 run_general asserts/aplusb.in t.out /dev/null 07_ole.local \
 	-r OLE -m 30 -t 3000 -g 25 -p builtin:_coverage_general_strict 
+
+declare_test "fileno"
+run_general /dev/null t.out /dev/null fileno_lim.local \
+	-r ECE -m 30 -t 3000 -g 25 -f 5 -p builtin:free
 
 test_finish

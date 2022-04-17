@@ -24,6 +24,7 @@
 #define FSIZE_H_LIMIT (64 * MB)
 #define STACK_H_LIMIT (64 * MB)
 #define AS_H_LIMIT (512 * MB)
+#define NOFILE_H_LIMIT 50 //!< 最多打开 50 个文件
 #define RSC_UNLIMITED 0
 
 /**

@@ -25,7 +25,7 @@ int upperbound(double x) {
 int apply_resource_limit_rsc(struct rsclim_ctxt *rctxt) {
   if (rctxt->cpu_time < 0 || rctxt->virtual_memory < 0 ||
       rctxt->actual_memory < 0 || rctxt->stack_memory < 0 ||
-      rctxt->output_size < 0) {
+      rctxt->output_size < 0 || rctxt->fileno < 0) {
     yreturn(E_RSC_LIM);
   }
 
@@ -55,6 +55,12 @@ int apply_resource_limit_rsc(struct rsclim_ctxt *rctxt) {
     if (set_rlimit(RLIMIT_STACK, rctxt->stack_memory, STACK_H_LIMIT))
       yreturn(yerrno);
     LOG_INFO("set stack memory limit: %.3lfMB", rctxt->stack_memory * 1.0 / MB);
+  }
+
+  if (rctxt->fileno > 0) {
+    if (set_rlimit(RLIMIT_NOFILE, rctxt->fileno, NOFILE_H_LIMIT))
+      yreturn(yerrno);
+    LOG_INFO("set fileno limit: %d", rctxt->fileno);
   }
   return 0;
 }

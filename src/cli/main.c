@@ -49,6 +49,8 @@ int main(int argc, char **argv, char **env) {
     yjudger_set_limit(ctxt, STK_MEM, args_info.stack_memory_arg * MB);
   if (args_info.output_size_given)
     yjudger_set_limit(ctxt, OUT, args_info.output_size_arg * MB);
+  if (args_info.fileno_given)
+    yjudger_set_limit(ctxt, FILENO, args_info.fileno_arg);
   if (args_info.result_given)
     result_code = atorc(args_info.result_arg);
 

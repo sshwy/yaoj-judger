@@ -81,6 +81,9 @@ struct gengetopt_args_info
   int output_size_arg;	/**< @brief specify the output limit in MB.  */
   char * output_size_orig;	/**< @brief specify the output limit in MB original value given at command line.  */
   const char *output_size_help; /**< @brief specify the output limit in MB help description.  */
+  int fileno_arg;	/**< @brief specify the maximum number of opened fd.  */
+  char * fileno_orig;	/**< @brief specify the maximum number of opened fd original value given at command line.  */
+  const char *fileno_help; /**< @brief specify the maximum number of opened fd help description.  */
   
   unsigned int help_given ;	/**< @brief Whether help was given.  */
   unsigned int detailed_help_given ;	/**< @brief Whether detailed-help was given.  */
@@ -99,6 +102,7 @@ struct gengetopt_args_info
   unsigned int real_memory_given ;	/**< @brief Whether real-memory was given.  */
   unsigned int stack_memory_given ;	/**< @brief Whether stack-memory was given.  */
   unsigned int output_size_given ;	/**< @brief Whether output-size was given.  */
+  unsigned int fileno_given ;	/**< @brief Whether fileno was given.  */
 
   char **inputs ; /**< @brief unnamed options (options without names) */
   unsigned inputs_num ; /**< @brief unnamed options number */

@@ -38,6 +38,7 @@ enum rsclim_type {
   OUTPUT_SIZE,    //!< limit output file size (rlimit)
   MEM,            //!< shortcut for MEMORY
   MEMORY,         //!< set all three memory limitations
+  FILENO,         //!< limit fileno
 };
 
 enum result_code {

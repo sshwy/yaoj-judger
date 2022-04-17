@@ -16,6 +16,7 @@ static rsclim_ctxt_t rsclim_ctxt_create() {
   ctxt->real_time = 0;
   ctxt->stack_memory = 0;
   ctxt->virtual_memory = 0;
+  ctxt->fileno = 0;
   return ctxt;
 }
 
@@ -124,6 +125,9 @@ int yjudger_set_limit(yjudger_ctxt_t ctxt, int type, int lim) {
     rctxt->virtual_memory = lim;
     rctxt->actual_memory = lim;
     rctxt->stack_memory = lim;
+    break;
+  case FILENO:
+    rctxt->fileno = lim;
     break;
   default:
     return yerr(E_HELPER_INVALID_LIM);
