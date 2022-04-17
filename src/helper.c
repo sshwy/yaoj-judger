@@ -51,6 +51,7 @@ yjudger_ctxt_t yjudger_ctxt_create() {
   ctxt->pself = -1;
   ctxt->pchild = -1;
   ctxt->status = -1;
+  ctxt->tid = 0;
   ctxt->pctxt = policy_ctxt_create();
   ctxt->ectxt = runner_ctxt_create();
   ctxt->rctxt = rsclim_ctxt_create();

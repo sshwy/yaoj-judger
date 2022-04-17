@@ -63,6 +63,8 @@ struct yjudger_ctxt {
   struct runner_ctxt *ectxt;
   /// pointer at the hook context.
   struct hook_ctxt *hctxt;
+  /// tid for tkiller
+  pthread_t tid;
 };
 
 int max(int a, int b);

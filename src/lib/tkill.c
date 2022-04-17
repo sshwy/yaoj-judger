@@ -1,6 +1,7 @@
 #define _GNU_SOURCE
 
 #include <signal.h>
+#include <sys/resource.h>
 
 #include "async_log.h"
 #include "common.h"
@@ -34,41 +35,52 @@ void *timeout_killer(void *_tkill_ctxt) { // return void specified!
   if (killpg(pid, SIGKILL) != 0) {
     return NULL;
   }
+  pthread_exit(0);
   return NULL;
 }
 
 int stop_timeout_killer(pthread_t tid) {
   LOG_DEBUG("stop tkiller");
-
-  int signal;
-  if ((signal = pthread_cancel(tid)) != 0) {
+  int signal = pthread_cancel(tid);
+  // https://stackoverflow.com/a/8706759/18065225
+  signal |= pthread_join(tid, NULL);
+  if (signal != 0) {
     return signal; // let others handle exception
   };
   return 0;
 }
 
-static pthread_t tid = 0;
-
 int start_killer_after_fork(yjudger_ctxt_t ctxt) {
+  static pthread_t tid = 0;
+
   struct tkill_ctxt tctxt = {
       .pid = ctxt->pchild,
       .time = ctxt->rctxt->real_time,
   };
   if (ctxt->rctxt->real_time != RSC_UNLIMITED) {
-    if (pthread_create(&tid, NULL, timeout_killer, (void *)(&tctxt)) != 0) {
+    int flag = pthread_create(&tid, NULL, timeout_killer, (void *)(&tctxt));
+    if (flag == EAGAIN) { // retry once
+      LOG_WARN("tkill create failed EAGAIN, retrying");
+      flag = pthread_create(&tid, NULL, timeout_killer, (void *)(&tctxt));
+    }
+    if (flag != 0) {
       // make sure pgid has set for child
       killpg(tctxt.pid, SIGKILL);
-      LOG_ERROR("tkill create failed");
+      LOG_ERROR("tkill create failed(%d)", flag);
+      struct rlimit rl;
+      getrlimit(RLIMIT_NPROC, &rl);
+      LOG_DEBUG("nproc limit: soft=%d, hard=%d", rl.rlim_cur, rl.rlim_max);
       yreturn(E_TKILL_PTHREAD);
     }
     LOG_DEBUG("tkill create succeed");
   }
+  ctxt->tid = tid; // maybe not thread safe
   return 0;
 }
 
 int stop_killer_after_wait(yjudger_ctxt_t ctxt) {
-  if (ctxt->rctxt->real_time != RSC_UNLIMITED) {
-    if (stop_timeout_killer(tid)) {
+  if (ctxt->rctxt->real_time != RSC_UNLIMITED && ctxt->tid != 0) {
+    if (stop_timeout_killer(ctxt->tid)) {
       LOG_WARN("[ignored] stop timeout killer failed");
       return 0;
     }

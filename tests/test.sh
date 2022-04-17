@@ -83,7 +83,7 @@ declare_test
 run_general t.in t.out /dev/null asserts/ls.sh -r SE -P asserts -p invalid -t 1000 -m 128
 
 declare_test
-run_general t.in t.out /dev/null asserts/run_judger.sh -r ECE -p builtin:free -t 1000 -m 128
+run_general t.in t.out /dev/null asserts/run_judger.sh run1.log -r ECE -p builtin:free -t 1000 -m 128
 
 declare_test
 run_interactive guess.local interactor.local asserts/interactor.in \

@@ -4,4 +4,4 @@
   -r OK \
   -p builtin:free \
   -t 1000 -m 128 \
-  --log=run_judger.log
+  --log=$1 #run_judger.log
