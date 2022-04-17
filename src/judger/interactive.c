@@ -74,7 +74,6 @@ static void child_exec_process(yjudger_ctxt_t ctxt, int i_run[2]) {
     yexit_notready(yerrno, i_run[1]);
   }
   LOG_INFO("executable prepared");
-  fflush(log_fp);
   // assume that exec* doesn't change pgid
   // https://www.cs.uleth.ca/~holzmann/C/system/pipeforkexec.html
   // use chmod could reset the suid/sgid mode
@@ -94,7 +93,6 @@ static void child_process(yjudger_ctxt_t ctxt, int *p_run) { // child process
     yexit_notready(E_PIPE, p_run[1]);
   }
 
-  fflush(log_fp); // avoid multi logging
   // when a process is forked, it inherits its PGID from its parent.
   // https://unix.stackexchange.com/questions/139222/why-is-the-pgid-of-my-child-processes-not-the-pid-of-the-parent
   const pid_t exec_pid = fork(); // fork again
@@ -122,7 +120,6 @@ static void child_process(yjudger_ctxt_t ctxt, int *p_run) { // child process
   }
   write(p_run[1], ready, sizeof(ready));
 
-  fflush(log_fp);
   run_interactor(ctxt->ectxt);
   exit(E_EXEC); // process doesn't terminate
 }
@@ -143,7 +140,6 @@ int yjudger_interactive(yjudger_ctxt_t ctxt) {
   register_builtin_hook(ctxt->hctxt);
   if (run_hook_chain(ctxt->hctxt->before_fork, ctxt))
     yreturn(yerrno);
-  fflush(log_fp); // avoid multi logging
 
   // fork child process
   const pid_t child_pid = fork();

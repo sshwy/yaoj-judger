@@ -59,7 +59,6 @@ static int child_prework(yjudger_ctxt_t ctxt) {
   if (runner_prework(ctxt->ectxt) || apply_resource_limit(ctxt) ||
       apply_policy(ctxt))
     yreturn(yerrno);
-  fflush(log_fp);
   return 0;
 }
 
@@ -77,7 +76,6 @@ int yjudger_general(yjudger_ctxt_t ctxt) {
   register_builtin_hook(ctxt->hctxt);
   if (run_hook_chain(ctxt->hctxt->before_fork, ctxt))
     yreturn(yerrno);
-  fflush(log_fp); // avoid multi logging
 
   // fork child process
   const pid_t child_pid = fork();
@@ -96,7 +94,6 @@ int yjudger_general(yjudger_ctxt_t ctxt) {
       yexit(yerrno);
     }
     write(p_run[1], ready, sizeof(ready));
-    fflush(log_fp);
 
     runner_run(ctxt->ectxt);
     if (errno == EACCES) {

@@ -50,8 +50,6 @@ int stop_timeout_killer(pthread_t tid) {
 static pthread_t tid = 0;
 
 int start_killer_after_fork(yjudger_ctxt_t ctxt) {
-  // fflush(log_fp); // must!
-
   struct tkill_ctxt tctxt = {
       .pid = ctxt->pchild,
       .time = ctxt->rctxt->real_time,
