@@ -49,6 +49,8 @@ struct gengetopt_args_info
   char * log_arg;	/**< @brief specify judger result file.  */
   char * log_orig;	/**< @brief specify judger result file original value given at command line.  */
   const char *log_help; /**< @brief specify judger result file help description.  */
+  int log_color_flag;	/**< @brief whether display colorful log (default=off).  */
+  const char *log_color_help; /**< @brief whether display colorful log help description.  */
   char * policy_arg;	/**< @brief specify policy name.  */
   char * policy_orig;	/**< @brief specify policy name original value given at command line.  */
   const char *policy_help; /**< @brief specify policy name help description.  */
@@ -91,6 +93,7 @@ struct gengetopt_args_info
   unsigned int judger_given ;	/**< @brief Whether judger was given.  */
   unsigned int result_given ;	/**< @brief Whether result was given.  */
   unsigned int log_given ;	/**< @brief Whether log was given.  */
+  unsigned int log_color_given ;	/**< @brief Whether log-color was given.  */
   unsigned int policy_given ;	/**< @brief Whether policy was given.  */
   unsigned int policy_dir_given ;	/**< @brief Whether policy-dir was given.  */
   unsigned int json_given ;	/**< @brief Whether json was given.  */

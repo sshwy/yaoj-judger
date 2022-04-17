@@ -51,12 +51,6 @@ function run_general {
     $@
 }
 
-function run_traditional {
-  run_judger -j traditional \
-    --log=.log/${test_count}.log \
-    $@
-}
-
 function run_interactive {
   run_judger -j interactive \
     --log=.log/${test_count}.log \

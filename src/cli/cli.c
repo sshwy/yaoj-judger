@@ -41,6 +41,7 @@ const char *gengetopt_args_info_detailed_help[] = {
   "  -r, --result=string           predict judgement result  (possible\n                                  values=\"OK\", \"RE\", \"MLE\", \"TLE\",\n                                  \"OLE\", \"SE\", \"DSC\", \"ECE\")",
   "  \n    Meanings of those shortname:\n      OK: all correct\n      RE: runtime error\n      MLE: memory limitation exceed\n      TLE: time limitation exceed\n      OLE: output limitation exceed\n      SE: system error, aka judger error\n      DSC: dangerous system call\n      ECE: exit code error\n    ",
   "      --log=filename            specify judger result file (required)",
+  "      --log-color               whether display colorful log  (default=off)",
   "  -p, --policy=filename         specify policy name (required)",
   "  \n    Note that if using builtin policy, add 'builtin:' prefix to policy's name.\n    ",
   "  -P, --policy-dir=filename     specify policy search directory, depend on\n                                  'policy' option  (default=`.')",
@@ -70,8 +71,8 @@ init_help_array(void)
   gengetopt_args_info_help[4] = gengetopt_args_info_detailed_help[4];
   gengetopt_args_info_help[5] = gengetopt_args_info_detailed_help[6];
   gengetopt_args_info_help[6] = gengetopt_args_info_detailed_help[7];
-  gengetopt_args_info_help[7] = gengetopt_args_info_detailed_help[9];
-  gengetopt_args_info_help[8] = gengetopt_args_info_detailed_help[11];
+  gengetopt_args_info_help[7] = gengetopt_args_info_detailed_help[8];
+  gengetopt_args_info_help[8] = gengetopt_args_info_detailed_help[10];
   gengetopt_args_info_help[9] = gengetopt_args_info_detailed_help[12];
   gengetopt_args_info_help[10] = gengetopt_args_info_detailed_help[13];
   gengetopt_args_info_help[11] = gengetopt_args_info_detailed_help[14];
@@ -83,11 +84,12 @@ init_help_array(void)
   gengetopt_args_info_help[17] = gengetopt_args_info_detailed_help[20];
   gengetopt_args_info_help[18] = gengetopt_args_info_detailed_help[21];
   gengetopt_args_info_help[19] = gengetopt_args_info_detailed_help[22];
-  gengetopt_args_info_help[20] = 0; 
+  gengetopt_args_info_help[20] = gengetopt_args_info_detailed_help[23];
+  gengetopt_args_info_help[21] = 0; 
   
 }
 
-const char *gengetopt_args_info_help[21];
+const char *gengetopt_args_info_help[22];
 
 typedef enum {ARG_NO
   , ARG_FLAG
@@ -122,6 +124,7 @@ void clear_given (struct gengetopt_args_info *args_info)
   args_info->judger_given = 0 ;
   args_info->result_given = 0 ;
   args_info->log_given = 0 ;
+  args_info->log_color_given = 0 ;
   args_info->policy_given = 0 ;
   args_info->policy_dir_given = 0 ;
   args_info->json_given = 0 ;
@@ -146,6 +149,7 @@ void clear_args (struct gengetopt_args_info *args_info)
   args_info->result_orig = NULL;
   args_info->log_arg = NULL;
   args_info->log_orig = NULL;
+  args_info->log_color_flag = 0;
   args_info->policy_arg = NULL;
   args_info->policy_orig = NULL;
   args_info->policy_dir_arg = gengetopt_strdup (".");
@@ -174,18 +178,19 @@ void init_args_info(struct gengetopt_args_info *args_info)
   args_info->judger_help = gengetopt_args_info_detailed_help[3] ;
   args_info->result_help = gengetopt_args_info_detailed_help[4] ;
   args_info->log_help = gengetopt_args_info_detailed_help[6] ;
-  args_info->policy_help = gengetopt_args_info_detailed_help[7] ;
-  args_info->policy_dir_help = gengetopt_args_info_detailed_help[9] ;
-  args_info->json_help = gengetopt_args_info_detailed_help[11] ;
-  args_info->timeout_help = gengetopt_args_info_detailed_help[14] ;
-  args_info->realtime_help = gengetopt_args_info_detailed_help[15] ;
-  args_info->cputime_help = gengetopt_args_info_detailed_help[16] ;
-  args_info->memory_help = gengetopt_args_info_detailed_help[17] ;
-  args_info->virtual_memory_help = gengetopt_args_info_detailed_help[18] ;
-  args_info->real_memory_help = gengetopt_args_info_detailed_help[19] ;
-  args_info->stack_memory_help = gengetopt_args_info_detailed_help[20] ;
-  args_info->output_size_help = gengetopt_args_info_detailed_help[21] ;
-  args_info->fileno_help = gengetopt_args_info_detailed_help[22] ;
+  args_info->log_color_help = gengetopt_args_info_detailed_help[7] ;
+  args_info->policy_help = gengetopt_args_info_detailed_help[8] ;
+  args_info->policy_dir_help = gengetopt_args_info_detailed_help[10] ;
+  args_info->json_help = gengetopt_args_info_detailed_help[12] ;
+  args_info->timeout_help = gengetopt_args_info_detailed_help[15] ;
+  args_info->realtime_help = gengetopt_args_info_detailed_help[16] ;
+  args_info->cputime_help = gengetopt_args_info_detailed_help[17] ;
+  args_info->memory_help = gengetopt_args_info_detailed_help[18] ;
+  args_info->virtual_memory_help = gengetopt_args_info_detailed_help[19] ;
+  args_info->real_memory_help = gengetopt_args_info_detailed_help[20] ;
+  args_info->stack_memory_help = gengetopt_args_info_detailed_help[21] ;
+  args_info->output_size_help = gengetopt_args_info_detailed_help[22] ;
+  args_info->fileno_help = gengetopt_args_info_detailed_help[23] ;
   
 }
 
@@ -394,6 +399,8 @@ cmdline_parser_dump(FILE *outfile, struct gengetopt_args_info *args_info)
     write_into_file(outfile, "result", args_info->result_orig, cmdline_parser_result_values);
   if (args_info->log_given)
     write_into_file(outfile, "log", args_info->log_orig, 0);
+  if (args_info->log_color_given)
+    write_into_file(outfile, "log-color", 0, 0 );
   if (args_info->policy_given)
     write_into_file(outfile, "policy", args_info->policy_orig, 0);
   if (args_info->policy_dir_given)
@@ -740,6 +747,7 @@ cmdline_parser_internal (
         { "judger",	1, NULL, 'j' },
         { "result",	1, NULL, 'r' },
         { "log",	1, NULL, 0 },
+        { "log-color",	0, NULL, 0 },
         { "policy",	1, NULL, 'p' },
         { "policy-dir",	1, NULL, 'P' },
         { "json",	0, NULL, 0 },
@@ -885,6 +893,18 @@ cmdline_parser_internal (
                 &(local_args_info.log_given), optarg, 0, 0, ARG_STRING,
                 check_ambiguity, override, 0, 0,
                 "log", '-',
+                additional_error))
+              goto failure;
+          
+          }
+          /* whether display colorful log.  */
+          else if (strcmp (long_options[option_index].name, "log-color") == 0)
+          {
+          
+          
+            if (update_arg((void *)&(args_info->log_color_flag), 0, &(args_info->log_color_given),
+                &(local_args_info.log_color_given), optarg, 0, 0, ARG_FLAG,
+                check_ambiguity, override, 1, 0, "log-color", '-',
                 additional_error))
               goto failure;
           
