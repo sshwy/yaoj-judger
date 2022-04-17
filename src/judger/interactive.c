@@ -33,7 +33,7 @@
 
 const int FAILED = 1, READY = 2;
 static int interactor_prework(struct runner_ctxt *ctxt) {
-  const int error_fd = open(ctxt->argv[4], O_WRONLY | O_TRUNC);
+  const int error_fd = open(ctxt->argv[4], O_WRONLY | O_TRUNC | O_CREAT, 0644);
   if (error_fd < 0)
     yreturn(E_ERRFD);
   if (dup2(error_fd, fileno(stderr)) < 0)
@@ -47,7 +47,7 @@ static void run_interactor(struct runner_ctxt *ctxt) {
 }
 
 static int executable_prework(struct runner_ctxt *ctxt) {
-  const int error_fd = open(ctxt->argv[5], O_WRONLY | O_TRUNC);
+  const int error_fd = open(ctxt->argv[5], O_WRONLY | O_TRUNC | O_CREAT, 0644);
   if (error_fd < 0)
     yreturn(E_ERRFD);
   if (dup2(error_fd, fileno(stderr)) < 0)

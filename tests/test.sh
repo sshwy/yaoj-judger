@@ -28,6 +28,9 @@ touch t.out t.in
 rm -rf .log
 mkdir .log
 
+touch noaccess.local
+chmod 000 noaccess.local
+
 declare_test
 run_general t.in t.out /dev/null asserts/ls.sh -r OK -P asserts -p free -t 1000
 
@@ -44,17 +47,17 @@ declare_test # 5
 run_general m.in t.out /dev/null aplusb.local\
   -r SE -p builtin:free -t 1000 -m 128
 
-declare_test
-
-run_general asserts/aplusb.in m.out /dev/null aplusb.local\
-  -r SE -p builtin:free -t 1000 -m 128
-
-declare_test
-run_general t.in no.out /dev/null asserts/ls.sh -r SE -P asserts -p free -t 1000
+declare_test "fileno"
+run_general /dev/null t.out /dev/null fileno_lim.local \
+	-r ECE -m 30 -t 3000 -g 25 -f 5 -p builtin:free
 
 declare_test
-run_general asserts/aplusb.in t.out m.err aplusb.local\
-  -r SE -p builtin:free -t 1000 -m 128
+run_general asserts/aplusb.in t.out /dev/null 07_ole.local \
+	-r OLE -m 30 -t 3000 -g 25 -p builtin:_coverage_general_strict 
+
+declare_test
+run_general /dev/null /dev/null /dev/null 09_fileio_ok.local \
+	-r OK -m 30 -t 1000 -g 64 -p builtin:_coverage_general_strict 
 
 declare_test
 run_general asserts/aplusb.in t.out /dev/null aplusb.local\
@@ -94,8 +97,8 @@ run_interactive exit_1.local interactor.local asserts/interactor.in \
   t.out /dev/null /dev/null -r TLE -p builtin:free -t 600
 
 declare_test #20
-run_interactive guess.local interactor.local asserts/interactor.in \
-  t.out i.err /dev/null -r SE -p builtin:free -t 1000
+run_general asserts/aplusb.in t.out /dev/null 02_ok.local \
+	-r OK -m 30 -t 1000 -g 64 -p builtin:_coverage_general_strict
 
 declare_test
 run_interactive m.local interactor.local asserts/interactor.in \
@@ -110,8 +113,8 @@ run_interactive guess.local i.local asserts/interactor.in \
   t.out /dev/null /dev/null -r SE -p builtin:free -t 1000 -m -1
 
 declare_test
-run_interactive guess.local interactor.local asserts/interactor.in \
-  t.out /dev/null m.err -r SE -p builtin:free -t 1000
+run_general asserts/aplusb.in t.out /dev/null 10_dsc.local \
+	-r DSC -m 30 -t 1000 -g 64 -p builtin:_coverage_general_strict 
 
 declare_test #25
 run_interactive guess.local interactor.local asserts/interactor.in \
@@ -161,7 +164,8 @@ declare_test
 run_general t.in t.out /dev/null -r SE -p builtin:free -t 1000 -m 128
 
 declare_test
-run_general t.in t.out no.err asserts/ls.sh -r SE -P asserts -p free -t 1000
+run_general asserts/aplusb.in t.out /dev/null 08_dsc.local \
+	-r DSC -m 30 -t 1000 -g 64 -p builtin:_coverage_general_strict 
 
 declare_test
 run_general asserts/aplusb.in t.out /dev/null 05_amle.local \
@@ -182,27 +186,11 @@ run_general asserts/aplusb.in t.out /dev/null 01_dsc.local \
 	-r DSC -m 30 -t 1000 -g 64 -p builtin:_coverage_general_strict 
 
 declare_test
-run_general asserts/aplusb.in t.out /dev/null 02_ok.local \
-	-r OK -m 30 -t 1000 -g 64 -p builtin:_coverage_general_strict
+run_interactive guess.local interactor.local asserts/interactor.in \
+  t.out noaccess.local /dev/null -r SE -p builtin:free -t 1000
 
 declare_test
-run_general asserts/aplusb.in t.out /dev/null 08_dsc.local \
-	-r DSC -m 30 -t 1000 -g 64 -p builtin:_coverage_general_strict 
-
-declare_test
-run_general asserts/aplusb.in t.out /dev/null 10_dsc.local \
-	-r DSC -m 30 -t 1000 -g 64 -p builtin:_coverage_general_strict 
-
-declare_test #45
-run_general /dev/null /dev/null /dev/null 09_fileio_ok.local \
-	-r OK -m 30 -t 1000 -g 64 -p builtin:_coverage_general_strict 
-
-declare_test
-run_general asserts/aplusb.in t.out /dev/null 07_ole.local \
-	-r OLE -m 30 -t 3000 -g 25 -p builtin:_coverage_general_strict 
-
-declare_test "fileno"
-run_general /dev/null t.out /dev/null fileno_lim.local \
-	-r ECE -m 30 -t 3000 -g 25 -f 5 -p builtin:free
+run_interactive guess.local interactor.local asserts/interactor.in \
+  t.out t.err noaccess.local -r SE -p builtin:free -t 1000
 
 test_finish

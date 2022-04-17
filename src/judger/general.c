@@ -32,10 +32,12 @@ static int runner_prework(const struct runner_ctxt *ctxt) {
   }
 
   const int input_fd = open(ctxt->argv[0], O_RDONLY),
-            output_fd = open(ctxt->argv[1], O_WRONLY | O_TRUNC),
-            error_fd = open(ctxt->argv[2], O_WRONLY | O_TRUNC);
+            output_fd = open(ctxt->argv[1], O_WRONLY | O_TRUNC | O_CREAT, 0644),
+            error_fd = open(ctxt->argv[2], O_WRONLY | O_TRUNC | O_CREAT, 0644);
 
   if (input_fd < 0 || output_fd < 0 || error_fd < 0) {
+    LOG_ERROR("open fd failed input=%s, output=%s, errput=%d", ctxt->argv[0],
+              ctxt->argv[1], ctxt->argv[2]);
     yreturn(E_FILEFD);
   }
 
