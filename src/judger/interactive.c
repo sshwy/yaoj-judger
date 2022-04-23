@@ -23,6 +23,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+#include "async_log.h"
 #include "common.h"
 #include "hook.h"
 #include "judger.h"
@@ -65,9 +66,10 @@ static void yexit_notready(int code, int *spipe) {
 }
 
 static void child_exec_process(yjudger_ctxt_t ctxt, int i_run[2]) {
-  if (getpgrp() != ctxt->pchild) {
-    yexit_notready(E_PGID, i_run);
-  }
+  LOG_DEBUG("pgid=%d, child pid=%d", getpgrp(), ctxt->pchild);
+  // if (getpgrp() != ctxt->pchild) {
+  //   yexit_notready(E_PGID, i_run);
+  // }
   if (executable_prework(ctxt->ectxt) || apply_resource_limit(ctxt) ||
       apply_policy(ctxt)) {
     yexit_notready(yerrno, i_run);
@@ -84,10 +86,8 @@ static void child_exec_process(yjudger_ctxt_t ctxt, int i_run[2]) {
 static void child_process(yjudger_ctxt_t ctxt, int *p_run) { // child process
   ctxt->pchild = getpid();
   int itoe[2], etoi[2], i_run[2];
-  // set process group ID to itself
-  if (setpgid(0, 0)) {
-    yexit_notready(E_SETPGID, p_run);
-  }
+  // set process group ID to itself, ignore error
+  setpgid(0, 0);
   if (pipe(itoe) || pipe(etoi) || pipe(i_run)) {
     yexit_notready(E_PIPE, p_run);
   }

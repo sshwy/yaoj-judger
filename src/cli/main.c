@@ -60,8 +60,10 @@ int main(int argc, char **argv, char **env) {
   memcpy(inputs, args_info.inputs, inputs_num * sizeof(char *));
   inputs[inputs_num] = NULL;
 
-  if (yjudger_set_policy(ctxt, args_info.policy_dir_arg,
-                         args_info.policy_arg)) {
+  int flag =
+      yjudger_set_policy(ctxt, args_info.policy_dir_arg, args_info.policy_arg);
+  if (flag) {
+    return flag;
   } else {
     yjudger_set_runner(ctxt, inputs_num, inputs, env);
 

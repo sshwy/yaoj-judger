@@ -39,7 +39,7 @@ char *ystrerr(int errnum);
 
 #define yreturn(errnum)                                                        \
   do {                                                                         \
-    LOG_ERROR("%s", ystrerr(errnum));                                          \
+    LOG_ERROR("%s (errnum=%d)", ystrerr(errnum), errnum);                      \
     return yerr(errnum);                                                       \
   } while (0)
 

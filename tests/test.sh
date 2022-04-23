@@ -31,6 +31,8 @@ mkdir .log
 touch noaccess.local
 chmod 000 noaccess.local
 
+# tests
+
 declare_test
 run_general t.in t.out /dev/null asserts/ls.sh -r OK -P asserts -p free -t 1000
 
@@ -195,5 +197,9 @@ run_interactive guess.local interactor.local asserts/interactor.in \
 
 declare_test "setrlimit"
 run_general t.in t.out /dev/null asserts/run_judger.sh run1.log -r ECE -p builtin:free -t 1000 -m 128
+
+declare_test "policy invalid fp" #45
+run_general t.in t.out /dev/null asserts/run_judger2.sh run2.log -r ECE -p builtin:free \
+  -t 1000 -f 4
 
 test_finish
