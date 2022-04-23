@@ -1,5 +1,6 @@
 #define _GNU_SOURCE
 
+#include <pthread.h>
 #include <signal.h>
 #include <sys/resource.h>
 
@@ -35,7 +36,7 @@ void *timeout_killer(void *_tkill_ctxt) { // return void specified!
   if (killpg(pid, SIGKILL) != 0) {
     return NULL;
   }
-  pthread_exit(0);
+  pthread_exit(NULL);
   return NULL;
 }
 
@@ -50,36 +51,49 @@ int stop_timeout_killer(pthread_t tid) {
   return 0;
 }
 
+#define TKILL_STACK_SIZE 16384 // 16kb
+
 int start_killer_after_fork(yjudger_ctxt_t ctxt) {
+  if (ctxt->rctxt->real_time == RSC_UNLIMITED)
+    return 0;
+
   static pthread_t tid = 0;
+  pthread_attr_t attr;
+  pthread_attr_init(&attr);
+  pthread_attr_setstacksize(&attr, TKILL_STACK_SIZE);
 
   struct tkill_ctxt tctxt = {
       .pid = ctxt->pchild,
       .time = ctxt->rctxt->real_time,
   };
-  if (ctxt->rctxt->real_time != RSC_UNLIMITED) {
-    int flag = pthread_create(&tid, NULL, timeout_killer, (void *)(&tctxt));
-    if (flag == EAGAIN) { // retry once
-      LOG_WARN("tkill create failed EAGAIN, retrying");
-      flag = pthread_create(&tid, NULL, timeout_killer, (void *)(&tctxt));
-    }
-    if (flag != 0) {
-      // make sure pgid has set for child
-      killpg(tctxt.pid, SIGKILL);
-      LOG_ERROR("tkill create failed(%d)", flag);
-      struct rlimit rl;
-      getrlimit(RLIMIT_NPROC, &rl);
-      LOG_DEBUG("nproc limit: soft=%d, hard=%d", rl.rlim_cur, rl.rlim_max);
-      yreturn(E_TKILL_PTHREAD);
-    }
-    LOG_DEBUG("tkill create succeed");
+
+  int flag = pthread_create(&tid, &attr, timeout_killer, (void *)(&tctxt));
+  if (flag == EAGAIN) { // retry once
+    LOG_WARN(
+        "tkill create failed EAGAIN, retry with double stack size (%d bytes)\n",
+        TKILL_STACK_SIZE * 2);
+    pthread_attr_init(&attr);
+    pthread_attr_setstacksize(&attr, TKILL_STACK_SIZE * 2);
+    flag = pthread_create(&tid, NULL, timeout_killer, (void *)(&tctxt));
   }
+  if (flag != 0) {
+    // make sure pgid has set for child
+    killpg(tctxt.pid, SIGKILL);
+    LOG_ERROR("tkill create failed(%d)", flag);
+    struct rlimit rl;
+    getrlimit(RLIMIT_NPROC, &rl);
+    LOG_DEBUG("nproc limit: soft=%d, hard=%d", rl.rlim_cur, rl.rlim_max);
+    yreturn(E_TKILL_PTHREAD);
+  }
+  LOG_DEBUG("tkill create succeed");
   ctxt->tid = tid; // maybe not thread safe
   return 0;
 }
 
 int stop_killer_after_wait(yjudger_ctxt_t ctxt) {
-  if (ctxt->rctxt->real_time != RSC_UNLIMITED && ctxt->tid != 0) {
+  if (ctxt->rctxt->real_time == RSC_UNLIMITED)
+    return 0;
+  if (ctxt->tid != 0) {
     if (stop_timeout_killer(ctxt->tid)) {
       LOG_WARN("[ignored] stop timeout killer failed");
       return 0;
