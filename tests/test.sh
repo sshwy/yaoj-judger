@@ -31,6 +31,7 @@ mkdir .log
 touch noaccess.local
 chmod 000 noaccess.local
 
+
 # tests
 
 declare_test
@@ -82,7 +83,7 @@ declare_test
 run_general t.in t.out /dev/null asserts/noexec_script.sh -r ECE -p builtin:free
 
 declare_test #15
-run_general t.in t.out /dev/null asserts/ls.sh -r SE -t 1000 -m 128 -P asserts -p fre
+run_general t.in t.out /dev/null asserts/ls.sh -r SE -t 1000 -m 128 -f 0 -P asserts -p fre
 
 declare_test
 run_general t.in t.out /dev/null asserts/ls.sh -r SE -P asserts -p invalid -t 1000 -m 128
@@ -201,5 +202,12 @@ run_general t.in t.out /dev/null asserts/run_judger.sh run1.log -r ECE -p builti
 declare_test "policy invalid fp" #45
 run_general t.in t.out /dev/null asserts/run_judger2.sh run2.log -r ECE -p builtin:free \
   -t 1000 -f 4
+
+declare_test "interactive pipe failed"
+run_general t.in t.out /dev/null asserts/run_judger2.sh run3.log -r ECE -p builtin:free \
+  -t 1000 -f 10
+
+declare_test "general pipe failed"
+run_general t.in t.out /dev/null asserts/run_judger.sh run4.log -r ECE -p builtin:free -t 1000 -f 10
 
 test_finish

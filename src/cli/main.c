@@ -63,7 +63,6 @@ int main(int argc, char **argv, char **env) {
   int flag =
       yjudger_set_policy(ctxt, args_info.policy_dir_arg, args_info.policy_arg);
   if (flag) {
-    return flag;
   } else {
     yjudger_set_runner(ctxt, inputs_num, inputs, env);
 
