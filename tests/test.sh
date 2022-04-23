@@ -193,4 +193,7 @@ declare_test
 run_interactive guess.local interactor.local asserts/interactor.in \
   t.out t.err noaccess.local -r SE -p builtin:free -t 1000
 
+declare_test "setrlimit"
+run_general t.in t.out /dev/null asserts/run_judger.sh run1.log -r ECE -p builtin:free -t 1000 -m 128
+
 test_finish
