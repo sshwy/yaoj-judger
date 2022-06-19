@@ -1,5 +1,5 @@
 package "yaoj-judger"
-version "1.3.0"
+version "1.4.0"
 purpose "judger for the future yaoj"
 description "A set of program runners with resource limitation, syscall limitation and final status report."
 versiontext "Copyright (c) Sshwy 2022"
