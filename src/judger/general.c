@@ -15,7 +15,6 @@
 #include <fcntl.h>
 #include <signal.h>
 #include <string.h>
-#include <sys/mman.h>
 #include <sys/wait.h>
 #include <unistd.h>
 
@@ -139,28 +138,15 @@ int yjudger_general(yjudger_ctxt_t ctxt) {
   return 0;
 }
 
-void *create_shared_memory(size_t size) {
-  // Our memory buffer will be readable and writable:
-  int protection = PROT_READ | PROT_WRITE;
 
-  // The buffer will be shared (meaning other processes can access it), but
-  // anonymous (meaning third-party processes cannot obtain an address for it),
-  // so only this process and its children will be able to use it:
-  int visibility = MAP_SHARED | MAP_ANONYMOUS;
-
-  // The remaining parameters to `mmap()` are not important for this use case,
-  // but the manpage for `mmap` explains their purpose.
-  return mmap(NULL, size, protection, visibility, -1, 0);
-}
-
-struct yjudger_result yjudger_general_fork(yjudger_ctxt_t ctxt) {
+struct yjudger_result yjudger_forkexec(yjudger_ctxt_t ctxt, int (*fn)(yjudger_ctxt_t ctxt)) {
   LOG_DEBUG("fork the process before run");
   void *pshres = create_shared_memory(sizeof(struct yjudger_result));
 
   int pid = fork();
 
   if (pid == 0) {
-    int flag = yjudger_general(ctxt);
+    int flag = fn(ctxt);
     if (flag != 0) {
       exit(flag);
     }
@@ -185,4 +171,8 @@ struct yjudger_result yjudger_general_fork(yjudger_ctxt_t ctxt) {
   }
   memcpy(&result, pshres, sizeof(struct yjudger_result));
   return result;
+}
+
+struct yjudger_result yjudger_general_fork(yjudger_ctxt_t ctxt) {
+  return yjudger_forkexec(ctxt, yjudger_general);
 }

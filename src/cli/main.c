@@ -68,7 +68,7 @@ int main(int argc, char **argv, char **env) {
 
     if (args_info.fork_flag) {
       if (strcmp(args_info.judger_arg, "interactive") == 0) {
-        exit(1);
+        result = yjudger_interactive_fork(ctxt);
       } else if (strcmp(args_info.judger_arg, "general") == 0) {
         result = yjudger_general_fork(ctxt);
       } else {

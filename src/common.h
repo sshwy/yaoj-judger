@@ -99,4 +99,8 @@ int to_millisecond(struct timeval tv);
 
 int rmtree_depth1(const char *path);
 
+void *create_shared_memory(size_t size);
+
+struct yjudger_result yjudger_forkexec(yjudger_ctxt_t ctxt,
+                                       int (*fn)(yjudger_ctxt_t ctxt));
 #endif

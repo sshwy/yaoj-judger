@@ -175,3 +175,7 @@ int yjudger_interactive(yjudger_ctxt_t ctxt) {
   LOG_INFO("judge finished");
   return 0;
 }
+
+struct yjudger_result yjudger_interactive_fork(yjudger_ctxt_t ctxt) {
+  return yjudger_forkexec(ctxt, yjudger_interactive);
+}

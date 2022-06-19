@@ -213,4 +213,8 @@ run_general t.in t.out /dev/null asserts/run_judger.sh run4.log -r ECE -p builti
 declare_test "general fork"
 run_general t.in t.out /dev/null asserts/ls.sh -r OK -P asserts -p free -t 1000 --fork
 
+declare_test "interactive fork"
+run_interactive guess.local interactor.local asserts/interactor.in \
+  t.out /dev/null /dev/null -r OK -p builtin:free -t 0 -f 20 --fork
+
 test_finish
