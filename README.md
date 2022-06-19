@@ -66,7 +66,7 @@ status report.
   -r, --result=string           predict judgement result  (possible
                                   values="OK", "RE", "MLE", "TLE",
                                   "OLE", "SE", "DSC", "ECE")
-
+  
     Meanings of those shortname:
       OK: all correct
       RE: runtime error
@@ -76,20 +76,21 @@ status report.
       SE: system error, aka judger error
       DSC: dangerous system call
       ECE: exit code error
-
+    
       --log=filename            specify judger result file (required)
       --log-color               whether display colorful log  (default=off)
   -p, --policy=filename         specify policy name (required)
-
+  
     Note that if using builtin policy, add 'builtin:' prefix to policy's name.
-
+    
   -P, --policy-dir=filename     specify policy search directory, depend on
                                   'policy' option  (default=`.')
-
+  
     If using builtin policy, this option is meaningless.
-
+    
       --json                    output judgement result to stdout in JSON
                                   format  (default=off)
+      --fork                    fork a new process to perform  (default=off)
 
 Resource Limitations:
   note that 'timeout' and 'memory' option can be override by their
