@@ -47,6 +47,7 @@ const char *gengetopt_args_info_detailed_help[] = {
   "  -P, --policy-dir=filename     specify policy search directory, depend on\n                                  'policy' option  (default=`.')",
   "  \n    If using builtin policy, this option is meaningless.\n    ",
   "      --json                    output judgement result to stdout in JSON\n                                  format  (default=off)",
+  "      --fork                    fork a new process to perform  (default=off)",
   "\nResource Limitations:",
   "  note that 'timeout' and 'memory' option can be override by their\n  corresponding detailed options, such as realtime, stack-memory.",
   "  -t, --timeout=integer         specify both time limits in milliseconds",
@@ -85,11 +86,12 @@ init_help_array(void)
   gengetopt_args_info_help[18] = gengetopt_args_info_detailed_help[21];
   gengetopt_args_info_help[19] = gengetopt_args_info_detailed_help[22];
   gengetopt_args_info_help[20] = gengetopt_args_info_detailed_help[23];
-  gengetopt_args_info_help[21] = 0; 
+  gengetopt_args_info_help[21] = gengetopt_args_info_detailed_help[24];
+  gengetopt_args_info_help[22] = 0; 
   
 }
 
-const char *gengetopt_args_info_help[22];
+const char *gengetopt_args_info_help[23];
 
 typedef enum {ARG_NO
   , ARG_FLAG
@@ -128,6 +130,7 @@ void clear_given (struct gengetopt_args_info *args_info)
   args_info->policy_given = 0 ;
   args_info->policy_dir_given = 0 ;
   args_info->json_given = 0 ;
+  args_info->fork_given = 0 ;
   args_info->timeout_given = 0 ;
   args_info->realtime_given = 0 ;
   args_info->cputime_given = 0 ;
@@ -155,6 +158,7 @@ void clear_args (struct gengetopt_args_info *args_info)
   args_info->policy_dir_arg = gengetopt_strdup (".");
   args_info->policy_dir_orig = NULL;
   args_info->json_flag = 0;
+  args_info->fork_flag = 0;
   args_info->timeout_orig = NULL;
   args_info->realtime_orig = NULL;
   args_info->cputime_orig = NULL;
@@ -182,15 +186,16 @@ void init_args_info(struct gengetopt_args_info *args_info)
   args_info->policy_help = gengetopt_args_info_detailed_help[8] ;
   args_info->policy_dir_help = gengetopt_args_info_detailed_help[10] ;
   args_info->json_help = gengetopt_args_info_detailed_help[12] ;
-  args_info->timeout_help = gengetopt_args_info_detailed_help[15] ;
-  args_info->realtime_help = gengetopt_args_info_detailed_help[16] ;
-  args_info->cputime_help = gengetopt_args_info_detailed_help[17] ;
-  args_info->memory_help = gengetopt_args_info_detailed_help[18] ;
-  args_info->virtual_memory_help = gengetopt_args_info_detailed_help[19] ;
-  args_info->real_memory_help = gengetopt_args_info_detailed_help[20] ;
-  args_info->stack_memory_help = gengetopt_args_info_detailed_help[21] ;
-  args_info->output_size_help = gengetopt_args_info_detailed_help[22] ;
-  args_info->fileno_help = gengetopt_args_info_detailed_help[23] ;
+  args_info->fork_help = gengetopt_args_info_detailed_help[13] ;
+  args_info->timeout_help = gengetopt_args_info_detailed_help[16] ;
+  args_info->realtime_help = gengetopt_args_info_detailed_help[17] ;
+  args_info->cputime_help = gengetopt_args_info_detailed_help[18] ;
+  args_info->memory_help = gengetopt_args_info_detailed_help[19] ;
+  args_info->virtual_memory_help = gengetopt_args_info_detailed_help[20] ;
+  args_info->real_memory_help = gengetopt_args_info_detailed_help[21] ;
+  args_info->stack_memory_help = gengetopt_args_info_detailed_help[22] ;
+  args_info->output_size_help = gengetopt_args_info_detailed_help[23] ;
+  args_info->fileno_help = gengetopt_args_info_detailed_help[24] ;
   
 }
 
@@ -407,6 +412,8 @@ cmdline_parser_dump(FILE *outfile, struct gengetopt_args_info *args_info)
     write_into_file(outfile, "policy-dir", args_info->policy_dir_orig, 0);
   if (args_info->json_given)
     write_into_file(outfile, "json", 0, 0 );
+  if (args_info->fork_given)
+    write_into_file(outfile, "fork", 0, 0 );
   if (args_info->timeout_given)
     write_into_file(outfile, "timeout", args_info->timeout_orig, 0);
   if (args_info->realtime_given)
@@ -751,6 +758,7 @@ cmdline_parser_internal (
         { "policy",	1, NULL, 'p' },
         { "policy-dir",	1, NULL, 'P' },
         { "json",	0, NULL, 0 },
+        { "fork",	0, NULL, 0 },
         { "timeout",	1, NULL, 't' },
         { "realtime",	1, NULL, 0 },
         { "cputime",	1, NULL, 0 },
@@ -917,6 +925,18 @@ cmdline_parser_internal (
             if (update_arg((void *)&(args_info->json_flag), 0, &(args_info->json_given),
                 &(local_args_info.json_given), optarg, 0, 0, ARG_FLAG,
                 check_ambiguity, override, 1, 0, "json", '-',
+                additional_error))
+              goto failure;
+          
+          }
+          /* fork a new process to perform.  */
+          else if (strcmp (long_options[option_index].name, "fork") == 0)
+          {
+          
+          
+            if (update_arg((void *)&(args_info->fork_flag), 0, &(args_info->fork_given),
+                &(local_args_info.fork_given), optarg, 0, 0, ARG_FLAG,
+                check_ambiguity, override, 1, 0, "fork", '-',
                 additional_error))
               goto failure;
           

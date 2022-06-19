@@ -210,4 +210,7 @@ run_general t.in t.out /dev/null asserts/run_judger2.sh run3.log -r ECE -p built
 declare_test "general pipe failed"
 run_general t.in t.out /dev/null asserts/run_judger.sh run4.log -r ECE -p builtin:free -t 1000 -f 10
 
+declare_test "general fork"
+run_general t.in t.out /dev/null asserts/ls.sh -r OK -P asserts -p free -t 1000 --fork
+
 test_finish

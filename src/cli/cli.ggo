@@ -49,6 +49,9 @@ option "policy-dir" P "specify policy search directory, depend on 'policy' optio
 option "json" - "output judgement result to stdout in JSON format"
   flag off
 
+option "fork" - "fork a new process to perform"
+  flag off
+
 section "Resource Limitations"
   sectiondesc="note that 'timeout' and 'memory' option can be override by their\
   corresponding detailed options, such as realtime, stack-memory."

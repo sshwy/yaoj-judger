@@ -66,15 +66,25 @@ int main(int argc, char **argv, char **env) {
   } else {
     yjudger_set_runner(ctxt, inputs_num, inputs, env);
 
-    if (strcmp(args_info.judger_arg, "interactive") == 0) {
-      yjudger_interactive(ctxt);
-    } else if (strcmp(args_info.judger_arg, "general") == 0) {
-      yjudger_general(ctxt);
+    if (args_info.fork_flag) {
+      if (strcmp(args_info.judger_arg, "interactive") == 0) {
+        exit(1);
+      } else if (strcmp(args_info.judger_arg, "general") == 0) {
+        result = yjudger_general_fork(ctxt);
+      } else {
+        exit(1);
+      }
     } else {
-      exit(1);
-    }
-    if (yerrno == 0) {
-      result = yjudger_result(ctxt);
+      if (strcmp(args_info.judger_arg, "interactive") == 0) {
+        yjudger_interactive(ctxt);
+      } else if (strcmp(args_info.judger_arg, "general") == 0) {
+        yjudger_general(ctxt);
+      } else {
+        exit(1);
+      }
+      if (yerrno == 0) {
+        result = yjudger_result(ctxt);
+      }
     }
 
     log_print_result(&result);

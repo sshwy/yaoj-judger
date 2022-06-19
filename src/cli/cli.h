@@ -59,6 +59,8 @@ struct gengetopt_args_info
   const char *policy_dir_help; /**< @brief specify policy search directory, depend on 'policy' option help description.  */
   int json_flag;	/**< @brief output judgement result to stdout in JSON format (default=off).  */
   const char *json_help; /**< @brief output judgement result to stdout in JSON format help description.  */
+  int fork_flag;	/**< @brief fork a new process to perform (default=off).  */
+  const char *fork_help; /**< @brief fork a new process to perform help description.  */
   int timeout_arg;	/**< @brief specify both time limits in milliseconds.  */
   char * timeout_orig;	/**< @brief specify both time limits in milliseconds original value given at command line.  */
   const char *timeout_help; /**< @brief specify both time limits in milliseconds help description.  */
@@ -97,6 +99,7 @@ struct gengetopt_args_info
   unsigned int policy_given ;	/**< @brief Whether policy was given.  */
   unsigned int policy_dir_given ;	/**< @brief Whether policy-dir was given.  */
   unsigned int json_given ;	/**< @brief Whether json was given.  */
+  unsigned int fork_given ;	/**< @brief Whether fork was given.  */
   unsigned int timeout_given ;	/**< @brief Whether timeout was given.  */
   unsigned int realtime_given ;	/**< @brief Whether realtime was given.  */
   unsigned int cputime_given ;	/**< @brief Whether cputime was given.  */
