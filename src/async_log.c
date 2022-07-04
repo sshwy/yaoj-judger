@@ -21,7 +21,7 @@ int flog(const char *fmt, ...) {
   return result;
 }
 
-int flog_init() {
+int log_init() {
   log_fp = stderr;
   if (pthread_mutex_init(&lock, NULL) != 0) {
     return 1;
@@ -30,9 +30,9 @@ int flog_init() {
 }
 
 int log_set(const char *filename, int _log_level, int _with_color) {
-  if (flog_init()) {
-    yreturn(E_ERROR);
-  }
+  // if (flog_init()) {
+  //   yreturn(E_ERROR);
+  // }
   log_fp = fopen(filename, "w");
   if (log_fp == NULL) {
     yreturn(E_FP);

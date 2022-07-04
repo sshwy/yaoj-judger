@@ -40,9 +40,9 @@ const char *gengetopt_args_info_detailed_help[] = {
   "  -j, --judger=judgername       specify which judger to use  (possible\n                                  values=\"interactive\", \"general\")\n                                  (required)",
   "  -r, --result=string           predict judgement result  (possible\n                                  values=\"OK\", \"RE\", \"MLE\", \"TLE\",\n                                  \"OLE\", \"SE\", \"DSC\", \"ECE\")",
   "  \n    Meanings of those shortname:\n      OK: all correct\n      RE: runtime error\n      MLE: memory limitation exceed\n      TLE: time limitation exceed\n      OLE: output limitation exceed\n      SE: system error, aka judger error\n      DSC: dangerous system call\n      ECE: exit code error\n    ",
-  "      --log=filename            specify judger result file (required)",
+  "      --log=filename            specify judger result file",
   "      --log-color               whether display colorful log  (default=off)",
-  "  -p, --policy=filename         specify policy name (required)",
+  "  -p, --policy=filename         specify policy name  (default=`builtin:free')",
   "  \n    Note that if using builtin policy, add 'builtin:' prefix to policy's name.\n    ",
   "  -P, --policy-dir=filename     specify policy search directory, depend on\n                                  'policy' option  (default=`.')",
   "  \n    If using builtin policy, this option is meaningless.\n    ",
@@ -153,7 +153,7 @@ void clear_args (struct gengetopt_args_info *args_info)
   args_info->log_arg = NULL;
   args_info->log_orig = NULL;
   args_info->log_color_flag = 0;
-  args_info->policy_arg = NULL;
+  args_info->policy_arg = gengetopt_strdup ("builtin:free");
   args_info->policy_orig = NULL;
   args_info->policy_dir_arg = gengetopt_strdup (".");
   args_info->policy_dir_orig = NULL;
@@ -554,18 +554,6 @@ cmdline_parser_required2 (struct gengetopt_args_info *args_info, const char *pro
       error_occurred = 1;
     }
   
-  if (! args_info->log_given)
-    {
-      fprintf (stderr, "%s: '--log' option required%s\n", prog_name, (additional_error ? additional_error : ""));
-      error_occurred = 1;
-    }
-  
-  if (! args_info->policy_given)
-    {
-      fprintf (stderr, "%s: '--policy' ('-p') option required%s\n", prog_name, (additional_error ? additional_error : ""));
-      error_occurred = 1;
-    }
-  
   
   /* checks for dependences among options */
   if (args_info->policy_dir_given && ! args_info->policy_given)
@@ -816,7 +804,7 @@ cmdline_parser_internal (
         
           if (update_arg( (void *)&(args_info->policy_arg), 
                &(args_info->policy_orig), &(args_info->policy_given),
-              &(local_args_info.policy_given), optarg, 0, 0, ARG_STRING,
+              &(local_args_info.policy_given), optarg, 0, "builtin:free", ARG_STRING,
               check_ambiguity, override, 0, 0,
               "policy", 'p',
               additional_error))

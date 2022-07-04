@@ -144,6 +144,11 @@ struct yjudger_result yjudger_result(yjudger_ctxt_t ctxt);
 char *json_result(struct yjudger_result);
 
 /**
+ * initialize mutex log
+ */
+int log_init();
+
+/**
  * @brief set logging options
  * @param filename set perform log file.
  * @param log_level determine minimum log level (DEBUG, INFO, WARN, ERROR = 0,

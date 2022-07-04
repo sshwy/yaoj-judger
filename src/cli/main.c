@@ -27,9 +27,15 @@ int main(int argc, char **argv, char **env) {
   if (cmdline_parser(argc, argv, &args_info))
     exit(1);
 
-  // required
-  if (log_set(args_info.log_arg, 0, args_info.log_color_flag)) {
+  if (log_init()) {
+    fprintf(stderr, "init log failed\n");
     exit(1);
+  }
+  if (args_info.log_given) {
+    if (log_set(args_info.log_arg, 0, args_info.log_color_flag)) {
+      fprintf(stderr, "set log failed\n");
+      exit(1);
+    }
   }
 
   yjudger_ctxt_t ctxt = yjudger_ctxt_create();

@@ -51,7 +51,7 @@ struct gengetopt_args_info
   const char *log_help; /**< @brief specify judger result file help description.  */
   int log_color_flag;	/**< @brief whether display colorful log (default=off).  */
   const char *log_color_help; /**< @brief whether display colorful log help description.  */
-  char * policy_arg;	/**< @brief specify policy name.  */
+  char * policy_arg;	/**< @brief specify policy name (default='builtin:free').  */
   char * policy_orig;	/**< @brief specify policy name original value given at command line.  */
   const char *policy_help; /**< @brief specify policy name help description.  */
   char * policy_dir_arg;	/**< @brief specify policy search directory, depend on 'policy' option (default='.').  */

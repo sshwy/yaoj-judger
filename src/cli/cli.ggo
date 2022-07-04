@@ -27,7 +27,7 @@ option "result" r "predict judgement result"
   "
 
 option "log" - "specify judger result file"
-  string typestr="filename" required
+  string typestr="filename" optional
 
 option "log-color" - "whether display colorful log"
   flag off
@@ -36,7 +36,7 @@ option "policy" p "specify policy name"
   details="
   Note that if using builtin policy, add 'builtin:' prefix to policy's name.
   "
-  string typestr="filename" required
+  string typestr="filename" default="builtin:free" optional
 
 option "policy-dir" P "specify policy search directory, depend on 'policy' option"
   details="

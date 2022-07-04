@@ -217,4 +217,7 @@ declare_test "interactive fork"
 run_interactive guess.local interactor.local asserts/interactor.in \
   t.out /dev/null /dev/null -r OK -p builtin:free -t 0 -f 20 --fork
 
+declare_test "default policy & log" #50
+run_judger -j general t.in t.out /dev/null asserts/ls.sh -r OK -t 1000 --fork
+
 test_finish
