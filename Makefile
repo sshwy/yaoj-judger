@@ -1,8 +1,6 @@
-SHELL=/bin/bash
-CC=clang
+include var.mk
 SUBDIRS=src tests
 PROJECT_ROOT?=
-INSTALL=install
 
 .PHONY: $(SUBDIRS) clean kafel clean_all docs check check_buildenv
 

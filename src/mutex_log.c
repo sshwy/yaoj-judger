@@ -1,4 +1,4 @@
-#include "async_log.h"
+#include "mutex_log.h"
 #include "judger.h"
 #include "yerr.h"
 #include <pthread.h>
@@ -43,6 +43,7 @@ int log_set(const char *filename, int _log_level, int _with_color) {
 }
 
 void log_close() {
-  pthread_mutex_destroy(&lock);
-  fclose(log_fp);
+  if (log_fp != stderr && log_fp != stdout) {
+    fclose(log_fp);
+  }
 }

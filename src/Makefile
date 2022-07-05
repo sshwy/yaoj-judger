@@ -1,6 +1,5 @@
-SHELL=/bin/bash
+include ../var.mk
 GCOV=llvm-cov gcov
-CC=clang
 COMMON_FLAGS=-g --std=gnu17 -Wall -Wextra
 
 CFLAGS+=$(COMMON_FLAGS) -Wno-unused-parameter -Wno-missing-field-initializers \
@@ -23,7 +22,7 @@ else # production mode
 	CLI_CFLAGS+=-O2
 endif
 
-COMMON_NAME=common helper hook yerr async_log signal_pipe\
+COMMON_NAME=common helper hook yerr mutex_log signal_pipe\
 	lib/builtin_hook lib/policy lib/resource lib/tkill lib/builtin_policy.gen
 JUDGER_NAME=interactive general
 
